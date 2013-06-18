@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <qnx xmlns="http://www.qnx.com/schemas/application/1.0">
-    <id>io.SurgeCo</id>
+    <id>reverse.domain</id>
     <name>Reader|YC</name>
     <versionNumber>0.0.1</versionNumber>
     <buildIdFile>1</buildIdFile>
     <description></description>
-    <author>Surge Co.</author>
-    <authorId>gYAAgKEGzhuWYWQSiXG6DeWrqfI</authorId>
+    <author>AUTHOR</author>
+    <authorId>AUTHORID</authorId>
     <initialWindow>
         <autoOrients>protrait</autoOrients>
         <systemChrome>none</systemChrome>
