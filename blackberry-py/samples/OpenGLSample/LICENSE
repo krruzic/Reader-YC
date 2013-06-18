@@ -1,0 +1,9 @@
+Most of the code in this sample is covered by the main
+BlackBerry-Python Project license (MIT).
+
+The file demo.py and the two shader files are covered separately under the
+Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+See http://creativecommons.org/licenses/by-nc-sa/3.0/
+
+The OpenGL code and particle algorithm were ported from JavaScript and WebGL
+code written by emeric florence and found at http://github.com/boblemarin/FLU.

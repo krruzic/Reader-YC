@@ -1,0 +1,6 @@
+Sources
+---------
+
+fluGL:      http://minimal.be/lab/
+License:    http://creativecommons.org/licenses/by-nc-sa/3.0/
+Repository: http://github.com/boblemarin/FLU

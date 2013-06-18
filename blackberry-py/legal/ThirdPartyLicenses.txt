@@ -1,0 +1,16 @@
+The BlackBerry-Py binary package incorporates certain third-party
+software packages under their respective copyrights and licenses.
+
+Your right to use this software is conditional on your acceptance
+of the terms of those licenses, and of the BlackBerry-Py software's
+license (see file BBPY-LICENSE.txt), and using or distributing
+any part of the package implies your acceptance of those terms.
+
+Each third-party package involved uses the license noted here:
+
+...
+
+Copies of the respective licenses follow:
+
+------------------------------------------------------------
+
