@@ -1,7 +1,7 @@
 Reader-YC
 =========
 
-Reader|YC is a native hackernews client built with Cascades for the UI and the Blackberry-tart python entry point for the Logic. Instead of using often unstable APIs, this app directly scrapes Hackernews for posts (and soon comments) to ensure maximum uptime. 
+Reader|YC is a native hackernews client built with Cascades and Python (using Blackberry-tart). Instead of using often unstable APIs, this app directly scrapes Hackernews for posts (and soon comments) to ensure maximum uptime. 
 The post scraping is based heavily off of Dimillian's Sublime plugin found [here] (https://github.com/Dimillian/Sublime-Hacker-News-Reader)
 
 It is currently in a very early alpha stage. More features will be coming quickly, I just decided to push this build to github. 
