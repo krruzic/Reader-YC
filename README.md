@@ -32,6 +32,7 @@ blackberry-deploy -installApp -password DEVICEPASS -device DEVICEIP -package NAM
 Get the main hackernews pages (top, ask HN, new)
 
 ###Current Issues:
+Sometimes the main page (top posts) doesn't load, and I'm not too sure why.
 Does not handle a lack of internet connectivity. At all.
 
 ###Coming Feature roadmap (dates are really guesses):
