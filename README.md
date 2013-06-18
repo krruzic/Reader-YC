@@ -6,6 +6,8 @@ The post scraping is based heavily off of Dimillian's Sublime plugin found [here
 
 It is currently in a very early alpha stage. More features will be coming quickly, I just decided to push this build to github. 
 
+Here is a current screenshot of the main page:
+![image](https://raw.github.com/krruzic/Reader-YC/master/screenshot.png)
 
 ## Steps to build:
 **REQUEST DEBUG TOKEN BAR**
