@@ -15,16 +15,16 @@ blackberry-debugtokenrequest -storepass STOREPASS -devicepin DEVICEPIN debugtoke
 
 note: the storepass is the password you used to first register for debug tokens with RIM
 
-**BUILD DEBUG BAR**
+**BUILD DEBUG BAR:**
 ./build.sh
 
-**BUILD RELEASE BAR**
+**BUILD RELEASE BAR:**
 ./release.sh
 
-**SIGN BAR FILE IF RELEASE**
+**SIGN BAR FILE IF RELEASE:**
 blackberry-signer -storepass STOREPASS NAMEOFBAR
 
-**INSTALL APP TO DEVICE**
+**INSTALL APP TO DEVICE:**
 blackberry-deploy -installApp -password DEVICEPASS -device DEVICEIP -package NAMEOFBAR
 
 ## Features:
@@ -37,18 +37,18 @@ blackberry-deploy -installApp -password DEVICEPASS -device DEVICEIP -package NAM
 * Does not handle a lack of internet connectivity. At all.
 
 ###Coming Feature roadmap (dates are really guesses):
-* View text posts, comments and articles all from within the app V1.0 (Will be available on BB-World at this point)\n
+* View text posts, comments and articles all from within the app V1.0 (Will be available on BB-World at this point)
   ETA: July 1 
   
-* Comment caching for recent articles  V1.1 \n
+* Comment caching for recent articles  V1.1
 	ETA: End of July hopefully
 	
-* Favouriting posts for later viewing from a 'History' option \n
+* Favouriting posts for later viewing from a 'History' option
 	ETA: Week after V1.2
 	
-* Collapsable comments, load more results V1.3 \n
+* Collapsable comments, load more results V1.3
 	ETA: End of Summer
 	
-* Logging in and upvoting/commenting V2.0 \n
+* Logging in and upvoting/commenting V2.0
 	ETA: Probably never, but I do hope to add this
 
