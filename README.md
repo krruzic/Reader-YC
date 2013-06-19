@@ -1,4 +1,4 @@
-Reader-YC
+Reader|YC
 =========
 
 Reader|YC is a native hackernews client built with Cascades and Python (using Blackberry-tart). Instead of using often unstable APIs, this app directly scrapes Hackernews for posts (and soon comments) to ensure maximum uptime. 
@@ -10,7 +10,7 @@ Here is a current screenshot of the main page:
 ![image](https://raw.github.com/krruzic/Reader-YC/master/screenshot.png)
 
 ## Steps to build:
-**REQUEST DEBUG TOKEN BAR**
+**REQUEST DEBUG TOKEN BAR FILE**
 blackberry-debugtokenrequest -storepass STOREPASS -devicepin DEVICEPIN debugtoken.bar
 
 note: the storepass is the password you used to first register for debug tokens with RIM
@@ -29,26 +29,26 @@ blackberry-deploy -installApp -password DEVICEPASS -device DEVICEIP -package NAM
 
 ## Features:
 ###Current Features:
-Get the main hackernews pages (top, ask HN, new)
+* Get the main hackernews pages (top, ask HN, new)
 
 ###Current Issues:
-Sometimes the main page (top posts) doesn't load, and I'm not too sure why.
+* Sometimes the main page (top posts) doesn't load, and I'm not too sure why.
 
-Does not handle a lack of internet connectivity. At all.
+* Does not handle a lack of internet connectivity. At all.
 
 ###Coming Feature roadmap (dates are really guesses):
-View text posts, comments and articles all from within the app V1.0 (Will be available on BB-World at this point)
+* View text posts, comments and articles all from within the app V1.0 (Will be available on BB-World at this point)\n
   ETA: July 1 
   
-Comment caching for recent articles  V1.1
+* Comment caching for recent articles  V1.1 \n
 	ETA: End of July hopefully
 	
-Favouriting posts for later viewing from a 'History' option
+* Favouriting posts for later viewing from a 'History' option \n
 	ETA: Week after V1.2
 	
-Collapsable comments, load more results V1.3
+* Collapsable comments, load more results V1.3 \n
 	ETA: End of Summer
 	
-Logging in and upvoting/commenting V2.0
+* Logging in and upvoting/commenting V2.0 \n
 	ETA: Probably never, but I do hope to add this
 
