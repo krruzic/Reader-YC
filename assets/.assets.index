@@ -13,10 +13,10 @@ images/New.png
 images/Paper.png
 images/CommentBackground.png
 HNPage.qml
-commentPage.qml
 ArticleHeader.qml
 main.qml
 SettingsPage.qml
+webArticle.qml
 Comment.qml
 top.xml
 AppMenuDefinition.qml

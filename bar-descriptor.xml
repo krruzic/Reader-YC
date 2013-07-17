@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <qnx xmlns="http://www.qnx.com/schemas/application/1.0">
-    <id>reverse.domain</id>
+    <id>com.reader-yc</id>
     <name>Reader|YC</name>
     <versionNumber>0.0.1</versionNumber>
     <buildIdFile>1</buildIdFile>

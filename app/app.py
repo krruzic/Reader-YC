@@ -24,18 +24,14 @@ class App(tart.Application):
 
         HNpage = source + '.xml'
         fileToRead = os.getcwd() + '/data/' + HNpage
-        # file_count = sum((len(f) for _, _, f in os.walk(os.getcwd() + '/data/')))
-        # print(str(file_count) + " files")
-        # dirList=os.listdir(os.getcwd() + '/data/')
-        # os.remove(os.getcwd() + '/data/' + 'news.xml')
-        # for fname in dirList:
-        #     print (fname)
-        if int(self.file_age_in_seconds(fileToRead)) <= 300 and forceReload == 'False':
+
+        if int(self.file_age_in_seconds(fileToRead)) <= 300:
             tart.send('updateList', file=fileToRead)
         else:
             articleXML = open(os.getcwd() + '/data/' + HNpage, 'w+')
 
             postList = HS.getPage("http://news.ycombinator.com/" + source)
+            moreLink = HS.getMoreLink("http://news.ycombinator.com/" + source)
 
             articleXML.write('<articles>\n')
             for item in postList:
@@ -44,12 +40,18 @@ class App(tart.Application):
                     articleXML.write("{}\n".format(detail))
                 articleXML.write('\t</item>\n')
             articleXML.write('</articles>')
-            #print (articleXML.read())
-            tart.send('updateList', file=fileToRead)
+            tart.send('updateList', file=fileToRead) # , more=moreLink
             articleXML.close()
 
+    # def onMoreButton(self):
+    #     moreLink = HS.getMoreLink("http://news.ycombinator.com/" + )
+    #     return moreLink
+
     def file_age_in_seconds(self, pathname):
-        return time.time() - os.stat(pathname)[stat.ST_MTIME]
+        if os.path.isfile(pathname):
+            return time.time() - os.stat(pathname)[stat.ST_MTIME]
+        else:
+            return 1000
 
     # def onGetComments(self, source):
     #     HNid = source[source.find('='):-1] + '.xml'

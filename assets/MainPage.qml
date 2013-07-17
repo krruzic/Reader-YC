@@ -10,9 +10,9 @@ Page {
     signal refreshTriggered()
     property bool showList: true
     property bool showLoading: false
-
+    
     onReloadList: {
-        console.log("Loading page from Python!  " + file);
+        console.log("Loading page from Python! " + file);
         pageSource.source = file;
         pageModel.clear();
         console.log('File to load: ' + pageSource.source);
@@ -20,19 +20,19 @@ Page {
         showLoading = false;
         showList = true;
         hnList.scrollToPosition(0, 0x2)
-
+    
     }
-
+    
     onRefreshTriggered: {
         showLoading = true;
         showList = false;
         console.log('loading requested page: ' + pageSelector.selectedOption.text);
-        Tart.send('requestPage',  {source: pageSelector.selectedOption.text, forceReload: 'True'});
+        Tart.send('requestPage', {source: pageSelector.selectedOption.text, forceReload: 'True'});
         refreshButton.enabled = true;
     }
-
-    content: Container {
-
+    
+    Container {
+        
         ActivityIndicator {
             running: true
             visible: page.showLoading
@@ -44,7 +44,7 @@ Page {
                 positionY: 640.0
             }
         }
-
+        
         background: Color.create("#f7fafa")
         layout: AbsoluteLayout {}
         ImageView {
@@ -54,7 +54,7 @@ Page {
                 hnList.scrollToPosition(0, 0x2)
             }
         }
-        ImageButton  {
+        ImageButton {
             id: refreshButton
             layoutProperties: AbsoluteLayoutProperties {
                 positionY: 14.0
@@ -67,65 +67,70 @@ Page {
                 refreshTriggered();
             }
         }
-
-
+        
+        
         ListView {
             id: hnList
             onTriggered: {
+                indexPath.highlightOpacity = 0.5;
                 console.log('Item triggered!')
+                var page = highScoreScreen.createObject();
+                var urlToLoad = indexPath.articleURL;
+                console.log(urlToLoad);
+                nav.push(page);
             }
             dataModel: pageModel
             maxHeight: 1167.0
-            layoutProperties: AbsoluteLayoutProperties {
-                positionY: 113.0
-            }
+            layoutProperties: AbsoluteLayoutProperties { positionY: 113.0 }
             visible: page.showList
-            leadingVisual: DropDown {
-                title: "Page:"
-                id: pageSelector
-                selectedOption: topPosts
-
-                translationX: 20.0
-                Option {
-                    id: topPosts
-                    text: "Top Posts"
-
-                }
-                Option {
-                    id: askPosts
-                    text: "Ask HN"
-
-                }
-                Option {
-                    id: newestPosts
-                    text: "Newest Posts"
-
-                }
-                onSelectedOptionChanged: {
-                    showLoading = true;
-                    showList = false;
-                    console.log('loading requested page: ' + selectedOption.text);
-                    Tart.send('requestPage',  {source: selectedOption.text, forceReload: 'False'});
-                }
-            }
-///app/native/assets/MainPage.qml:69:
-//Error: Invalid write to global property "file"
-
 
             listItemComponents: [
                 ListItemComponent {
                     type: "item"
                     HNPage {
                         id: article
-                        // REAL
                         postTitle: ListItemData.title
                         postURL: ListItemData.domain
                         postUsername: ListItemData.poster
                         postTime: ListItemData.timePosted + "| " + ListItemData.points
                         postComments: ListItemData.commentCount
+//                        onTouch: {
+//                            if (event.isDown())
+//                                highlightOpacity = 0.5;
+//                            if (event.isUp())
+//                                highlightOpacity = 0.0;
+//                        }
                     }
                 }
             ]
+            leadingVisual: DropDown {
+                title: "Page:"
+                id: pageSelector
+                selectedOption: topPosts
+                
+                translationX: 20.0
+                Option {
+                    id: topPosts
+                    text: "Top Posts"
+                
+                }
+                Option {
+                    id: askPosts
+                    text: "Ask HN"
+                
+                }
+                Option {
+                    id: newestPosts
+                    text: "Newest Posts"
+                
+                }
+                onSelectedOptionChanged: {
+                    showLoading = true;
+                    showList = false;
+                    console.log('loading requested page: ' + selectedOption.text);
+                    Tart.send('requestPage', {source: selectedOption.text, forceReload: 'False'});
+                }
+            }
         }
         attachedObjects: [
             GroupDataModel {
@@ -144,8 +149,8 @@ Page {
                 }
             }
         ]
-//        onCreationCompleted: {
-//            pageSource.load();
-//       }
+        // onCreationCompleted: {
+        // pageSource.load();
+        // }
     }
 }

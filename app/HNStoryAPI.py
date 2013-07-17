@@ -105,12 +105,6 @@ Gets the poster username and the time it was posted
 
         return submitter, time
 
-    def getTime(self, source):
-        """
-Gets the time the post was submitted
-"""
-        timeStart = source.find('')
-
     def getCommentCount(self, source):
         """
 Gets the comment count of a story.
@@ -144,6 +138,27 @@ Gets the Hacker News ID of a story.
 Gets the comment URL of a story.
 """
         return "http://news.ycombinator.com/item?id=" + str(self.getHNID(source))
+
+
+    def getMoreLink(self, page):
+        """
+Gets the link for more posts found at the bottom of every page.
+"""
+        source = self.getSource(page)
+        soup = BeautifulSoup(source)
+        story_details = soup.findAll("td", {"class" : "title"})
+        source = str(story_details[len(story_details) - 1])
+        linkStart = source.find('href="') + 6
+
+        if len(source) > 49:
+            linkEnd = source.find('rel=') - 2
+            moreLink = source[linkStart:linkEnd]
+            return 'http://news.ycombinator.com' + moreLink
+        else:
+            linkEnd = source.find('>More<') - 1
+            moreLink = source[linkStart:linkEnd]
+            return 'http://news.ycombinator.com/' + moreLink
+
 
     def getStories(self, source):
         """

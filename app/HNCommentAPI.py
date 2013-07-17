@@ -14,10 +14,16 @@ The class used for searching the HTML for all our comments and their data
         """
 Gets the comment text for a comment
 """
+        linksFound = []
+        soup = BeautifulSoup(source)
+        for a in soup.findAll('a',href=True):
+            linksFound.append(str(a['href']))
         textStart = source.find('font') + 21
         textEnd = source.find('</font', textStart)
         text = source[textStart:textEnd]
-        text = re.sub('<[^<]+?>', '', text) # deletes all tags from the comment EX. links
+
+        for i in range(len(linksFound)):
+            text = re.sub('<[^<]+?>.*<[^<]+?>', linksFound[i], text) # replaces href tags with the full links
         if text == '">[deleted]</span': # deleted comment signature
             text = '[deleted]'
         return text

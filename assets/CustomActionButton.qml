@@ -19,7 +19,7 @@ Container {
         id: count
         text: ""
         textStyle.textAlign: TextAlign.Center
-        minWidth: 74.0
+        minWidth: 70.0
         textStyle {
             base: SystemDefaults.TextStyles.BodyText
             fontSize: FontSize.XXSmall
@@ -27,7 +27,7 @@ Container {
             }
         touchPropagationMode: TouchPropagationMode.None
         layoutProperties: AbsoluteLayoutProperties {
-            positionY: 4.0
+            positionY: 8.0
         }
     }
 }
