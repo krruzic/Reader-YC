@@ -1,12 +1,13 @@
 import bb.cascades 1.0
 
 Container {
-    property alias text: count.text
+    property alias text: buttonText.text
     property alias normal: addButton.defaultImageSource
     property alias pressed: addButton.pressedImageSource
+    property variant textSize: FontSize.XXSmall
     id: account
+    layout: DockLayout {}
     signal buttonClicked()
-    layout: AbsoluteLayout {}
     ImageButton {
         id: addButton
         defaultImageSource: "images/Comment.png"
@@ -14,20 +15,23 @@ Container {
         onClicked: {
             buttonClicked();
         }
+        horizontalAlignment: HorizontalAlignment.Center
+        verticalAlignment: VerticalAlignment.Center
     }
     Label {
-        id: count
-        text: ""
+        id: buttonText
+        text: "9999"
         textStyle.textAlign: TextAlign.Center
-        minWidth: 70.0
+        textStyle.fontSize: textSize
         textStyle {
             base: SystemDefaults.TextStyles.BodyText
-            fontSize: FontSize.XXSmall
             color: Color.White
             }
         touchPropagationMode: TouchPropagationMode.None
-        layoutProperties: AbsoluteLayoutProperties {
-            positionY: 8.0
-        }
+        verticalAlignment: VerticalAlignment.Center
+        horizontalAlignment: HorizontalAlignment.Center
+        translationX: 0.0
+        translationY: -11.0
+
     }
 }

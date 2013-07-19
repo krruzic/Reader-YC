@@ -43,6 +43,15 @@ class App(tart.Application):
             tart.send('updateList', file=fileToRead) # , more=moreLink
             articleXML.close()
 
+    def onRequestComments(self, source):
+        
+        HNPage = source + '.xml'
+        fileToRead = os.getcwd() + '/data/' + HNPage
+        
+        commentsXML = open(fileToRead + HNPage, 'w+')
+        
+        commentList = HC.getComments("")
+    
     # def onMoreButton(self):
     #     moreLink = HS.getMoreLink("http://news.ycombinator.com/" + )
     #     return moreLink

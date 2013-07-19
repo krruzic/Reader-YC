@@ -233,10 +233,6 @@ Looks at source, makes stories from it, returns the stories.
 
     ##### End of internal methods. #####
 
-    # The following methods could be turned into one method with
-    # an argument that switches which page to get stories from,
-    # but I thought it would be simplest if I kept the methods
-    # separate.
 
     def getPage(self, page):
         """

@@ -1,0 +1,8 @@
+I need to add a "load more..." button to the end of the list so I should just automatically append this after a list is filled. Since it is a groupdatamodel I should listen for the onAtEnd signal and when it fires true, show the button. When false delete (or hide????) it if there is one (use removeAt() or remove() or visible: false). 
+Then if/when the button is pressed call the tart function with the URL, delete the button using removeAt(LAST) (since it will always be the last item) and append the XML contents using insertList.
+
+Then I need to modify my python to delete files on exit, EXCEPT the top.xml, new.xml and ask.xml files. That way on restart I can load from there. 
+
+Then I need to add handling no network connection.
+
+Then I push to github as V0.8

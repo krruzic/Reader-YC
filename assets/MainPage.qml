@@ -3,14 +3,13 @@ import bb.cascades 1.0
 import bb.data 1.0
 import "../tart.js" as Tart
 
-
 Page {
     id: page
     signal reloadList(string file)
     signal refreshTriggered()
     property bool showList: true
     property bool showLoading: false
-    
+
     onReloadList: {
         console.log("Loading page from Python! " + file);
         pageSource.source = file;
@@ -20,19 +19,21 @@ Page {
         showLoading = false;
         showList = true;
         hnList.scrollToPosition(0, 0x2)
-    
+
     }
-    
+
     onRefreshTriggered: {
         showLoading = true;
         showList = false;
         console.log('loading requested page: ' + pageSelector.selectedOption.text);
-        Tart.send('requestPage', {source: pageSelector.selectedOption.text, forceReload: 'True'});
+        Tart.send('requestPage', {
+                source: pageSelector.selectedOption.text,
+                forceReload: 'True'
+            });
         refreshButton.enabled = true;
     }
-    
+
     Container {
-        
         ActivityIndicator {
             running: true
             visible: page.showLoading
@@ -44,9 +45,10 @@ Page {
                 positionY: 640.0
             }
         }
-        
-        background: Color.create("#f7fafa")
-        layout: AbsoluteLayout {}
+
+        background: Color.create("#fff2f2f2")
+        layout: AbsoluteLayout {
+        }
         ImageView {
             imageSource: "asset:///images/HN_title.png"
             visible: true
@@ -63,29 +65,34 @@ Page {
             defaultImageSource: "asset:///images/refresh.png"
             pressedImageSource: "asset:///images/refresh.png"
             onClicked: {
-                enabled: false
+                enabled:
+                false
                 refreshTriggered();
             }
         }
-        
-        
+
         ListView {
             id: hnList
+
             onTriggered: {
-                indexPath.highlightOpacity = 0.5;
-                console.log('Item triggered!')
-                var page = highScoreScreen.createObject();
-                var urlToLoad = indexPath.articleURL;
-                console.log(urlToLoad);
+                var urlToLoad = article.postArticle;
+                var page = webPage.createObject();
                 nav.push(page);
+                loading.webDisplay.url = urlToLoad;
+                console.log('Item triggered!');
+                console.log(urlToLoad);
             }
+            
             dataModel: pageModel
             maxHeight: 1167.0
-            layoutProperties: AbsoluteLayoutProperties { positionY: 113.0 }
+            layoutProperties: AbsoluteLayoutProperties {
+                positionY: 113.0
+            }
             visible: page.showList
 
             listItemComponents: [
                 ListItemComponent {
+                    id: articleList
                     type: "item"
                     HNPage {
                         id: article
@@ -94,11 +101,12 @@ Page {
                         postUsername: ListItemData.poster
                         postTime: ListItemData.timePosted + "| " + ListItemData.points
                         postComments: ListItemData.commentCount
-//                        onTouch: {
-//                            if (event.isDown())
-//                                highlightOpacity = 0.5;
-//                            if (event.isUp())
-//                                highlightOpacity = 0.0;
+                        postArticle: ListItemData.articleURL
+//                        onGoTocomments: {
+//                            Tart.send('requestComments', {
+//                                    source: ListItemData.commentsURL,
+//                                    forceReload: 'True'
+//                            });
 //                        }
                     }
                 }
@@ -107,29 +115,36 @@ Page {
                 title: "Page:"
                 id: pageSelector
                 selectedOption: topPosts
-                
+
                 translationX: 20.0
                 Option {
                     id: topPosts
                     text: "Top Posts"
-                
+
                 }
                 Option {
                     id: askPosts
                     text: "Ask HN"
-                
+
                 }
                 Option {
                     id: newestPosts
                     text: "Newest Posts"
-                
+
                 }
                 onSelectedOptionChanged: {
                     showLoading = true;
                     showList = false;
                     console.log('loading requested page: ' + selectedOption.text);
-                    Tart.send('requestPage', {source: selectedOption.text, forceReload: 'False'});
+                    Tart.send('requestPage', {
+                            source: selectedOption.text,
+                            forceReload: 'False'
+                        });
                 }
+            }
+            layout: StackListLayout {
+                headerMode: ListHeaderMode.None
+
             }
         }
         attachedObjects: [
@@ -137,7 +152,7 @@ Page {
                 id: pageModel
                 grouping: ItemGrouping.None
                 sortedAscending: true
-                sortingKeys: ["postNumber"]
+                sortingKeys: [ "postNumber" ]
             },
             DataSource {
                 id: pageSource

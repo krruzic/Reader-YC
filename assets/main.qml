@@ -9,7 +9,7 @@ NavigationPane {
     MainPage { id: mainPage }
     
     attachedObjects: ComponentDefinition {
-        id: highScoreScreen
+        id: webPage
         source: "webArticle.qml"
     }
     

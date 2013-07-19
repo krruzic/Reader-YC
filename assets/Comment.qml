@@ -8,7 +8,7 @@ Container {
     Container {
         id: commmentContainer
         preferredWidth: 768.0
-        leftPadding: 20.0
+        leftPadding: 10.0
         rightPadding: 20.0
         topPadding: 5.0
         bottomPadding: 5.0
@@ -30,7 +30,6 @@ Container {
                 scrollMode: TextAreaScrollMode.Stiff
                 input.submitKeyFocusBehavior: SubmitKeyFocusBehavior.Lose
                 textStyle.fontSize: FontSize.XSmall
-                maximumLength: 100
                 textStyle.color: Color.Black
             }
             attachedObjects: [
