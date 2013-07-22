@@ -11,8 +11,18 @@ HT = HackerNewsText()
 
 
 class App(tart.Application):
+    def onManualExit():
+        print("exiting app, deleting files")
+        folder = os.getcwd() + '/data/stories/'
+        for the_file in os.listdir(folder):
+            if (the_file != ask.xml) or (the_file != new.xml) or (the_file != top.xml):
+                file_path = os.path.join(folder, the_file)
+                if os.path.isfile(file_path):
+                    os.unlink(file_path)
+        tart.send('continueExit')
+
     def onUiReady(self):
-        self.onRequestPage('Top Posts', 'True')
+        self.onRequestPage('Top Posts', 'False')
 
     def onRequestPage(self, source, forceReload):
         if source == 'Top Posts':
@@ -23,16 +33,17 @@ class App(tart.Application):
             source = 'newest'
 
         HNpage = source + '.xml'
-        fileToRead = os.getcwd() + '/data/' + HNpage
+        fileToRead = os.getcwd() + '/data/stories/' + HNpage
 
-        if int(self.file_age_in_seconds(fileToRead)) <= 300:
-            tart.send('updateList', file=fileToRead)
+        if int(self.file_age_in_seconds(fileToRead)) <= 300 and forceReload == False:
+            tart.send('updateList', file=fileToRead, moreLink=news2)
         else:
-            articleXML = open(os.getcwd() + '/data/' + HNpage, 'w+')
+            print("opening file to write...")
+            articleXML = open(fileToRead, 'w+')
 
-            postList = HS.getPage("http://news.ycombinator.com/" + source)
-            moreLink = HS.getMoreLink("http://news.ycombinator.com/" + source)
-
+            postList, moreLink = HS.getPage("http://news.ycombinator.com/" + source)
+            print("Loading more from " + moreLink)
+            print("writing to file....")
             articleXML.write('<articles>\n')
             for item in postList:
                 articleXML.write('\t<item>\n')
@@ -40,18 +51,30 @@ class App(tart.Application):
                     articleXML.write("{}\n".format(detail))
                 articleXML.write('\t</item>\n')
             articleXML.write('</articles>')
-            tart.send('updateList', file=fileToRead) # , more=moreLink
+            tart.send('updateList', file=fileToRead, moreLink=moreLink) # , more=moreLink
             articleXML.close()
 
     def onRequestComments(self, source):
-        
-        HNPage = source + '.xml'
-        fileToRead = os.getcwd() + '/data/' + HNPage
-        
-        commentsXML = open(fileToRead + HNPage, 'w+')
-        
-        commentList = HC.getComments("")
-    
+        HNid = source[source.find('='):-1] + '.xml'
+        HNPage = HNid + '.xml'
+        fileToRead = os.getcwd() + '/data/comments/' + HNPage
+        commentsXML = open(fileToRead, 'w+')
+
+        with urllib.request.urlopen(link) as url:
+            data = url.read()
+        data = urllib.request.urlopen(link).read()
+        commentList = HC.getComments(data)
+
+        commentsXML.write('<comments>\n')
+        for item in commentList:
+            commentsXML.write('\t<item>\n')
+            for detail in item.getDetails():
+                commentsXML.write("{}\n".format(detail))
+            commentsXML.write('\t</item>\n')
+        commentsXML.write('</comments>')
+        tart.send('fillComments', file=fileToRead)
+        commentsXML.close()
+
     # def onMoreButton(self):
     #     moreLink = HS.getMoreLink("http://news.ycombinator.com/" + )
     #     return moreLink

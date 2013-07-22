@@ -12,8 +12,10 @@ The class for slicing and dicing the HTML and turning it into HackerNewsStory ob
         """
 Returns the HTML source code for a URL.
 """
+        print("curling page: " + url)
         with urllib.request.urlopen(url) as url:
             source = url.read()
+        print("page curled")
         return source
 
     def getStoryNumber(self, source):
@@ -119,6 +121,8 @@ Gets the comment count of a story.
             return 0
         else:
             commentCountString = commentCountString.split(' ')[0]
+            if commentCountString == "comments":
+                return 0
             return commentCountString
 
     def getHNID(self, source):
@@ -144,20 +148,20 @@ Gets the comment URL of a story.
         """
 Gets the link for more posts found at the bottom of every page.
 """
-        source = self.getSource(page)
-        soup = BeautifulSoup(source)
+        soup = BeautifulSoup(page)
         story_details = soup.findAll("td", {"class" : "title"})
         source = str(story_details[len(story_details) - 1])
         linkStart = source.find('href="') + 6
 
         if len(source) > 49:
+            linkStart = linkStart + 1
             linkEnd = source.find('rel=') - 2
             moreLink = source[linkStart:linkEnd]
-            return 'http://news.ycombinator.com' + moreLink
+            return moreLink
         else:
             linkEnd = source.find('>More<') - 1
             moreLink = source[linkStart:linkEnd]
-            return 'http://news.ycombinator.com/' + moreLink
+            return moreLink
 
 
     def getStories(self, source):
@@ -239,9 +243,9 @@ Looks at source, makes stories from it, returns the stories.
 Gets the stories from the specified Hacker News page.
 """
         source = self.getSource(page)
+        moreLink = self.getMoreLink(source)
         stories = self.getStories(source)
-        return stories
-
+        return stories, moreLink
 
 class HackerNewsStory:
     """
@@ -260,7 +264,7 @@ A class representing a story on Hacker News.
     number = '%02d' % number # prepends zeroes to the article number
 
     def getDetails(self):
-        self.number = '%02d' % self.number # prepends zeroes to the article number
+        self.number = '%03d' % self.number # prepends zeroes to the article number
         detailList = [1,2,3,4,5,6,7,8,9,10]
         detailList[0] = '\t\t<postNumber>' + str(self.number) + '</postNumber>'
         detailList[1] = '\t\t<title>' + self.title + '</title>'

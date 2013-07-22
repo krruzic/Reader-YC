@@ -100,7 +100,7 @@ Container {
                         id: labelTimePosted
                         preferredHeight: 30.0
                         maxWidth: 400.0
-                        text: "90 Hours ago | 178 points"
+                        text: "90 Hours ago | 4973 points"
                         multiline: false
                         textStyle.fontSize: FontSize.Small
                         textStyle.color: Color.Gray

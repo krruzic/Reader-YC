@@ -126,12 +126,18 @@ A class representing a comment on Hacker News
     poster = ""
     timePosted = ""
 
-    def printComments(self):
+    def getDetails(self):
         """
 Prints the details of the comment in xml format
 """
-        print('\t\t<commentNum>', '%03d' % self.commentNum, '</commentNum>')
-        print('\t\t<poster>' + self.poster + '</poster>')
-        print('\t\t<timePosted>' + self.timePosted + '</timePosted>')
-        print('\t\t<indent>' + self.indent + '</indent>')
-        print('\t\t<text>' + self.text + '</text>')
+        self.commentNum = '%03d' % self.number # prepends zeroes to the comment number
+        detailList = [1,2,3,4,5]
+        detailList[0] = '\t\t<commentNum>' + str(self.commentNum) + '</commentNum>'
+        detailList[1] = '\t\t<poster>' + self.poster + '</poster>'
+        detailList[2] = '\t\t<timePosted>' + self.timePosted + '</timePosted>'
+        detailList[3] = '\t\t<indent>' + self.indent + '</indent>'
+        detailList[4] = '\t\t<text>' + self.text + '</text>'
+
+        for i in range(0,len(detailList)):
+            detailList[i] = detailList[i].encode('ascii', 'xmlcharrefreplace').decode('ascii')
+        return detailList

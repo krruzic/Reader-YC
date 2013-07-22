@@ -5,7 +5,8 @@ import "../tart.js" as Tart
 
 Page {
     id: page
-    signal reloadList(string file)
+    property string morePage: ""
+    signal reloadList(string file, string moreLink)
     signal refreshTriggered()
     property bool showList: true
     property bool showLoading: false
@@ -13,13 +14,13 @@ Page {
     onReloadList: {
         console.log("Loading page from Python! " + file);
         pageSource.source = file;
-        pageModel.clear();
+        morePage = moreLink;
+        console.log('moreLink: ' + morePage)
         console.log('File to load: ' + pageSource.source);
         pageSource.load();
         showLoading = false;
         showList = true;
         hnList.scrollToPosition(0, 0x2)
-
     }
 
     onRefreshTriggered: {
@@ -42,7 +43,7 @@ Page {
             verticalAlignment: VerticalAlignment.Center
             layoutProperties: AbsoluteLayoutProperties {
                 positionX: 200.0
-                positionY: 640.0
+                positionY: 440.0
             }
         }
 
@@ -73,7 +74,6 @@ Page {
 
         ListView {
             id: hnList
-
             onTriggered: {
                 var urlToLoad = article.postArticle;
                 var page = webPage.createObject();
@@ -82,7 +82,7 @@ Page {
                 console.log('Item triggered!');
                 console.log(urlToLoad);
             }
-            
+
             dataModel: pageModel
             maxHeight: 1167.0
             layoutProperties: AbsoluteLayoutProperties {
@@ -102,12 +102,37 @@ Page {
                         postTime: ListItemData.timePosted + "| " + ListItemData.points
                         postComments: ListItemData.commentCount
                         postArticle: ListItemData.articleURL
-//                        onGoTocomments: {
-//                            Tart.send('requestComments', {
-//                                    source: ListItemData.commentsURL,
-//                                    forceReload: 'True'
-//                            });
-//                        }
+                        //                        onGoTocomments: {
+                        //                            Tart.send('requestComments', {
+                        //                                    source: ListItemData.commentsURL,
+                        //                            });
+                        //                        }
+                    }
+                }
+            ]
+            attachedObjects: [
+                GroupDataModel {
+                    id: pageModel
+                    grouping: ItemGrouping.None
+                    sortedAscending: true
+                    sortingKeys: [ "postNumber" ]
+                },
+                DataSource {
+                    id: pageSource
+                    source: ""
+                    query: "/articles/item"
+                    onDataLoaded: {
+                        pageModel.insertList(data);
+                        console.log("List filled...")
+                    }
+                },
+                ListScrollStateHandler {
+                    onAtEndChanged: {
+                        // Request more data (ie send a requestPage to Tart and pass moreLink as the source.
+                        Tart.send('requestPage', {
+                                source: morePage,
+                                forceReload: 'False'
+                        });
                     }
                 }
             ]
@@ -135,6 +160,7 @@ Page {
                 onSelectedOptionChanged: {
                     showLoading = true;
                     showList = false;
+                    pageModel.clear();
                     console.log('loading requested page: ' + selectedOption.text);
                     Tart.send('requestPage', {
                             source: selectedOption.text,
@@ -142,30 +168,6 @@ Page {
                         });
                 }
             }
-            layout: StackListLayout {
-                headerMode: ListHeaderMode.None
-
-            }
         }
-        attachedObjects: [
-            GroupDataModel {
-                id: pageModel
-                grouping: ItemGrouping.None
-                sortedAscending: true
-                sortingKeys: [ "postNumber" ]
-            },
-            DataSource {
-                id: pageSource
-                source: ""
-                query: "/articles/item"
-                onDataLoaded: {
-                    pageModel.insertList(data);
-                    console.log("List filled...")
-                }
-            }
-        ]
-        // onCreationCompleted: {
-        // pageSource.load();
-        // }
     }
 }
