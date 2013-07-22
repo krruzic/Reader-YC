@@ -30,15 +30,18 @@ blackberry-deploy -installApp -password DEVICEPASS -device DEVICEIP -package NAM
 ## Features:
 ###Current Features:
 * Get the main hackernews pages (top, ask HN, new)
+* Infinite scrolling
 
 ###Current Issues:
-* Sometimes the main page (top posts) doesn't load, and I'm not too sure why.
+* ~~Sometimes the main page (top posts) doesn't load, and I'm not too sure why.~~
 
 * Does not handle a lack of internet connectivity. At all.
 
+* If you close the app while it is making a request, the app will go into a greyed-out "zombie" state for a while
+
 ###Coming Feature roadmap (dates are really guesses):
 * View text posts, comments and articles all from within the app V1.0 (Will be available on BB-World at this point)
-  ETA: July 1 
+  ~~ETA: July 1~~ MOVED TO END OF JULY
   
 * Comment caching for recent articles  V1.1
 	ETA: End of July hopefully
