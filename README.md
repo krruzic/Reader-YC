@@ -37,7 +37,7 @@ blackberry-deploy -installApp -password DEVICEPASS -device DEVICEIP -package NAM
 
 * Does not handle a lack of internet connectivity. At all.
 
-* If you close the app while it is making a request, the app will go into a greyed-out "zombie" state for a while
+* If you close the app while it is making a request, the app will go into a greyed-out "zombie" state for a while (less than a minute, but still)
 
 ###Coming Feature roadmap (dates are really guesses):
 * View text posts, comments and articles all from within the app V1.0 (Will be available on BB-World at this point)

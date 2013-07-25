@@ -1,10 +1,9 @@
-// Tabbed Pane project template
 import bb.cascades 1.0
 import bb.data 1.0
 import "../tart.js" as Tart
 
 Page {
-    id: page
+    id: articlePane
     property string morePage: ""
     signal reloadList(string file, string moreLink)
     signal refreshTriggered()
@@ -14,13 +13,11 @@ Page {
     onReloadList: {
         console.log("Loading page from Python! " + file);
         pageSource.source = file;
+        console.log("Setting next page to:" + moreLink);
         morePage = moreLink;
-        console.log('moreLink: ' + morePage)
-        console.log('File to load: ' + pageSource.source);
-        pageSource.load();
+        console.log('inserting file: ' + pageSource.source);
         showLoading = false;
-        showList = true;
-        hnList.scrollToPosition(0, 0x2)
+        pageSource.load();
     }
 
     onRefreshTriggered: {
@@ -28,9 +25,9 @@ Page {
         showList = false;
         console.log('loading requested page: ' + pageSelector.selectedOption.text);
         Tart.send('requestPage', {
-                source: pageSelector.selectedOption.text,
-                forceReload: 'True'
+                source: pageSelector.selectedOption.text
             });
+        pageModel.clear();
         refreshButton.enabled = true;
     }
 
@@ -48,8 +45,7 @@ Page {
         }
 
         background: Color.create("#fff2f2f2")
-        layout: AbsoluteLayout {
-        }
+        layout: AbsoluteLayout {}
         ImageView {
             imageSource: "asset:///images/HN_title.png"
             visible: true
@@ -75,12 +71,12 @@ Page {
         ListView {
             id: hnList
             onTriggered: {
-                var urlToLoad = article.postArticle;
+                var articleItem = dataModel.data(indexPath);
                 var page = webPage.createObject();
-                nav.push(page);
-                loading.webDisplay.url = urlToLoad;
+                page.htmlContent = articleItem.articleURL;
                 console.log('Item triggered!');
-                console.log(urlToLoad);
+                console.log(page.htmlContent);
+                page.push(page);
             }
 
             dataModel: pageModel
@@ -110,32 +106,6 @@ Page {
                     }
                 }
             ]
-            attachedObjects: [
-                GroupDataModel {
-                    id: pageModel
-                    grouping: ItemGrouping.None
-                    sortedAscending: true
-                    sortingKeys: [ "postNumber" ]
-                },
-                DataSource {
-                    id: pageSource
-                    source: ""
-                    query: "/articles/item"
-                    onDataLoaded: {
-                        pageModel.insertList(data);
-                        console.log("List filled...")
-                    }
-                },
-                ListScrollStateHandler {
-                    onAtEndChanged: {
-                        // Request more data (ie send a requestPage to Tart and pass moreLink as the source.
-                        Tart.send('requestPage', {
-                                source: morePage,
-                                forceReload: 'False'
-                        });
-                    }
-                }
-            ]
             leadingVisual: DropDown {
                 title: "Page:"
                 id: pageSelector
@@ -158,16 +128,34 @@ Page {
 
                 }
                 onSelectedOptionChanged: {
-                    showLoading = true;
-                    showList = false;
+                    showLoading = false;
+                    showList = true;
                     pageModel.clear();
                     console.log('loading requested page: ' + selectedOption.text);
                     Tart.send('requestPage', {
-                            source: selectedOption.text,
-                            forceReload: 'False'
+                            source: selectedOption.text
                         });
                 }
             }
+
         }
     }
+    attachedObjects: [
+        GroupDataModel {
+            id: pageModel
+            grouping: ItemGrouping.None
+            sortedAscending: true
+            sortingKeys: [ "postNumber" ]
+        },
+        DataSource {
+            id: pageSource
+            source: ""
+            query: "/articles/item"
+            onDataLoaded: {
+                pageModel.insertList(data);
+                showLoading = false;
+                console.log("List filled...");
+            }
+        }
+    ]
 }

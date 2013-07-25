@@ -1,10 +1,10 @@
 import bb.cascades 1.0
 
 Page {
-    id: loading
+    property alias htmlContent: webDisplay.url
     Container {
-        WebView   {
-        	id: webDisplay
+        WebView {
+            id: webDisplay
         }
     }
 }

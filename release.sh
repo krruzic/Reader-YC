@@ -8,7 +8,7 @@ cd app/
 for f in *.pyc; do mv $f `basename $f .cpython-32.pyc`.pyc; done
 cd ..
 
-TART=blackberry-py/tart
+TART=tart
 blackberry-nativepackager -package ReaderYC-release.bar \
     -configuration Device-Release \
     -target bar \
@@ -24,3 +24,5 @@ blackberry-nativepackager -package ReaderYC-release.bar \
     -C $TART/entry $TART/entry/TartStart.so \
     -C $TART/js $TART/js/*.js \
     -C $TART/python $TART/python
+blackberry-signer -storepass 278lban ReaderYC-release.bar 
+

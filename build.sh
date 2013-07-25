@@ -1,5 +1,5 @@
 #!/bin/bash
-TART=blackberry-py/tart
+TART=tart
 blackberry-nativepackager -package ReaderYC-debug.bar \
     -configuration Device-Debug \
     -devMode \
