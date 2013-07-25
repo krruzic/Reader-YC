@@ -30,7 +30,7 @@ blackberry-deploy -installApp -password DEVICEPASS -device DEVICEIP -package NAM
 ## Features:
 ###Current Features:
 * Get the main hackernews pages (top, ask HN, new)
-* Infinite scrolling
+* Infinite scrolling DOES NOT WORK WELL
 
 ###Current Issues:
 * ~~Sometimes the main page (top posts) doesn't load, and I'm not too sure why.~~
