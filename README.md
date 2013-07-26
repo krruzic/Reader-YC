@@ -4,22 +4,29 @@ Reader|YC
 Reader|YC is a native hackernews client built with Cascades and Python (using Blackberry-tart). Instead of using often unstable APIs, this app directly scrapes Hackernews for posts (and soon comments) to ensure maximum uptime. 
 The post scraping is based heavily off of Dimillian's Sublime plugin found [here] (https://github.com/Dimillian/Sublime-Hacker-News-Reader)
 
-It is currently in a very early alpha stage. More features will be coming quickly, I just decided to push this build to github. 
-
 Here is a current screenshot of the main page:
 ![image](https://raw.github.com/krruzic/Reader-YC/master/screenshot.png)
 
 ## Steps to build:
+Since the release of tart V1, I have switched to the recommended method of building described [here] (http://hg.microcode.ca/blackberry-py/wiki/Building%20HelloWorld)
+
+
+**Install Blackberry Tart**
+To do this you'll need to grab the tartV1 zip found [here] (http://blackberry-py.microcode.ca/downloads/), then clone the Mercurial repo with `hg clone https://bitbucket.org/microcode/blackberry-py`. Take the bin directory and the tart.ini out of that, and place them in the same directory you extracted the zip into.
+
+Now, clone this repo and place into that root directory too.
+
 **REQUEST DEBUG TOKEN BAR FILE**
 blackberry-debugtokenrequest -storepass STOREPASS -devicepin DEVICEPIN debugtoken.bar
 
 note: the storepass is the password you used to first register for debug tokens with RIM
 
+
 **BUILD DEBUG BAR:**
-./build.sh
+cd into the bin folder and execute the tart.sh or tart.cmd file with these parameters: `package -mdebug ../Reader-YC/`. If you want to change some details like permissions, just edit the tart-project.ini file in Reader-YC.
 
 **BUILD RELEASE BAR:**
-./release.sh
+Same as above, except use `-mrelease` instead of `-mdebug`
 
 **SIGN BAR FILE IF RELEASE:**
 blackberry-signer -storepass STOREPASS NAMEOFBAR
@@ -27,10 +34,15 @@ blackberry-signer -storepass STOREPASS NAMEOFBAR
 **INSTALL APP TO DEVICE:**
 blackberry-deploy -installApp -password DEVICEPASS -device DEVICEIP -package NAMEOFBAR
 
+
+NOTE: The bars will be placed in the bin directory after being built.
+
+
 ## Features:
 ###Current Features:
-* Get the main hackernews pages (top, ask HN, new)
-* Infinite scrolling DOES NOT WORK WELL
+* Get the main hackernews pages (top, ask HN, new). Just top in this build
+* Infinite scrolling ~~DOES NOT WORK WELL~~
+* View linked posts
 
 ###Current Issues:
 * ~~Sometimes the main page (top posts) doesn't load, and I'm not too sure why.~~
