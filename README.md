@@ -17,7 +17,7 @@ To do this you'll need to grab the tartV1 zip found [here] (http://blackberry-py
 Now, clone this repo and place into that root directory too.
 
 **REQUEST DEBUG TOKEN BAR FILE**
-blackberry-debugtokenrequest -storepass STOREPASS -devicepin DEVICEPIN debugtoken.bar
+`blackberry-debugtokenrequest -storepass STOREPASS -devicepin DEVICEPIN debugtoken.bar`
 
 note: the storepass is the password you used to first register for debug tokens with RIM
 
@@ -29,10 +29,10 @@ cd into the bin folder and execute the tart.sh or tart.cmd file with these param
 Same as above, except use `-mrelease` instead of `-mdebug`
 
 **SIGN BAR FILE IF RELEASE:**
-blackberry-signer -storepass STOREPASS NAMEOFBAR
+`blackberry-signer -storepass STOREPASS NAMEOFBAR`
 
 **INSTALL APP TO DEVICE:**
-blackberry-deploy -installApp -password DEVICEPASS -device DEVICEIP -package NAMEOFBAR
+`blackberry-deploy -installApp -password DEVICEPASS -device DEVICEIP -package NAMEOFBAR`
 
 
 NOTE: The bars will be placed in the bin directory after being built.
