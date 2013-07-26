@@ -1,15 +1,15 @@
 import bb.cascades 1.0
 Container {
-    property variant postArticle: ''
+    property string postArticle: ''
     property alias postTitle: labelPostTitle.text
-    property alias postURL: labelPostURL.text
+    property alias postDomain: labelPostDomain.text
     property alias postUsername: labelUsername.text
     property alias postTime: labelTimePosted.text
     property alias postComments: labelNumComments.text
     property alias highlightOpacity: highlightContainer.opacity
     property int padding: 19
     
-    signal goTocomments()
+    signal commentPressed()
     
     topPadding: 10
     bottomPadding: 9
@@ -66,7 +66,7 @@ Container {
                     }
                     
                     Label {
-                        id: labelPostURL
+                        id: labelPostDomain
                         maxWidth: 500.0
                         text: "http://www.dailymail.com/"
                         multiline: false
@@ -116,13 +116,11 @@ Container {
                     id: labelNumComments
                     normal: "asset:///images/Comment.png"
                     pressed: "asset:///images/Comment.png"
-                    text: ""
+                    text: "" 
                     onButtonClicked: {
-                    	console.log('Comment button pressed! ' + labelNumComments.text + ' comments');
-                    	goTocomments();
-                    }                   
-                }
-                
+                        commentPressed();
+                    }       
+                }    
             }
         }
     }

@@ -11,16 +11,6 @@ HT = HackerNewsText()
 
 
 class App(tart.Application):
-    def onManualExit(self):
-        print("exiting app, deleting files")
-        folder = os.getcwd() + '/data/'
-        for the_file in os.listdir(folder):
-            if (the_file != 'ask.xml') or (the_file != 'new.xml') or (the_file != 'top.xml'):
-                file_path = os.path.join(folder, the_file)
-                if os.path.isfile(file_path):
-                    os.unlink(file_path)
-        tart.send('continueExit')
-
     def onUiReady(self):
         self.onRequestPage('Top Posts')
 
@@ -34,26 +24,20 @@ class App(tart.Application):
             source = 'newest'
         else:
             source = source
-
-        HNpage = source + '.xml'
-        #print("Page to curl: " + HNpage)
-        fileToRead = os.getcwd() + '/data/' + HNpage
-
-        print("opening file to write...")
-        articleXML = open(fileToRead, 'w+')
-
         postList, moreLink = HS.getPage("http://news.ycombinator.com/" + source)
+        stories = []
+        #print(postList[0])
+        for item in postList:
+            #print(item)
+            #print(item.getDetails)
+            stories.append(item.getDetails())
+        #for thing in stories:
+         #   print(thing)
+        #print(stories)
         print("The next page is at: " + moreLink)
         #print("writing to file....")
-        articleXML.write('<articles>\n')
-        for item in postList:
-            articleXML.write('\t<item>\n')
-            for detail in item.getDetails():
-                articleXML.write("{}\n".format(detail))
-            articleXML.write('\t</item>\n')
-        articleXML.write('</articles>')
-        tart.send('updateList', file=fileToRead, moreLink=moreLink) # , more=moreLink
-        articleXML.close()
+        tart.send('addStories', stories=stories, moreLink=moreLink) # , more=moreLink
+
 
     def onRequestComments(self, source):
         HNid = source[source.find('='):-1] + '.xml'

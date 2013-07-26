@@ -4,8 +4,6 @@ import "../tart.js" as Tart
 NavigationPane {
     id: nav
 
-    signal reloadList(string file, string moreLink)
-    signal loadComments(string file)
     MainPage {
         id: mainPage
     }
@@ -26,20 +24,9 @@ NavigationPane {
 
         Tart.register(nav);
         Tart.send('uiReady');
-
-        reloadList.connect(mainPage.reloadList);
-        loadComments.connect(commentPage.loadComments);
     }
 
     onPopTransitionEnded: {
         page.destroy()
-    }
-
-    function onUpdateList(data) {
-        reloadList(data.file, data.moreLink);
-    }
-
-    function onFillComments(data) {
-        loadComments(data.file)
     }
 }

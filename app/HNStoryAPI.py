@@ -261,22 +261,9 @@ A class representing a story on Hacker News.
     commentCount = -1 # How many comments the story has.
     commentsURL = "" # The HN link for commenting (and upmodding).
     time = "" # The time the HN link was posted
-    number = '%02d' % number # prepends zeroes to the article number
+    number = '%03d' % number # prepends zeroes to the article number
 
     def getDetails(self):
         self.number = '%03d' % self.number # prepends zeroes to the article number
-        detailList = [1,2,3,4,5,6,7,8,9,10]
-        detailList[0] = '\t\t<postNumber>' + str(self.number) + '</postNumber>'
-        detailList[1] = '\t\t<title>' + self.title + '</title>'
-        detailList[2] = '\t\t<domain>' + self.domain + '</domain>'
-        detailList[3] = '\t\t<points>' + str(self.score) + '</points>'
-        detailList[4] = '\t\t<poster>' + self.submitter + '</poster>'
-        detailList[5] = '\t\t<timePosted>' + self.time + '</timePosted>'
-        detailList[6] = '\t\t<commentCount>' + str(self.commentCount) + '</commentCount>'
-        detailList[7] = '\t\t<articleURL>' + self.URL + '</articleURL>'
-        detailList[8] = '\t\t<commentsURL>' + self.commentsURL + '</commentsURL>'
-        detailList[9] = '\t\t<HNID>' + str(self.id) + '</HNID>'
-
-        for i in range(0,len(detailList)):
-            detailList[i] = detailList[i].encode('ascii', 'xmlcharrefreplace').decode('ascii')
+        detailList = (str(self.number), self.title, self.domain, str(self.score), self.submitter, self.time, str(self.commentCount), self.URL, self.commentsURL, str(self.id))
         return detailList

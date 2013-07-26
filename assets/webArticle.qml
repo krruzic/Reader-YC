@@ -5,6 +5,7 @@ Page {
     Container {
         WebView {
             id: webDisplay
+            settings.zoomToFitEnabled: true
         }
     }
 }

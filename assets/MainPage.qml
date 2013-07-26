@@ -4,53 +4,21 @@ import "../tart.js" as Tart
 
 Page {
     id: articlePane
+    onCreationCompleted: {
+        Tart.register(articlePane)
+    }
     property string morePage: ""
-    signal reloadList(string file, string moreLink)
-    signal refreshTriggered()
-    property bool showList: true
-    property bool showLoading: false
-
-    onReloadList: {
-        console.log("Loading page from Python! " + file);
-        pageSource.source = file;
-        console.log("Setting next page to:" + moreLink);
-        morePage = moreLink;
-        console.log('inserting file: ' + pageSource.source);
-        showLoading = false;
-        pageSource.load();
-    }
-
-    onRefreshTriggered: {
-        showLoading = true;
-        showList = false;
-        console.log('loading requested page: ' + pageSelector.selectedOption.text);
-        Tart.send('requestPage', {
-                source: pageSelector.selectedOption.text
-            });
-        pageModel.clear();
-        refreshButton.enabled = true;
-    }
+    property string urlToPass: ""
 
     Container {
-        ActivityIndicator {
-            running: true
-            visible: page.showLoading
-            preferredWidth: 350
-            horizontalAlignment: HorizontalAlignment.Center
-            verticalAlignment: VerticalAlignment.Center
-            layoutProperties: AbsoluteLayoutProperties {
-                positionX: 200.0
-                positionY: 440.0
-            }
-        }
-
         background: Color.create("#fff2f2f2")
-        layout: AbsoluteLayout {}
+        layout: AbsoluteLayout {
+        }
         ImageView {
             imageSource: "asset:///images/HN_title.png"
             visible: true
             onTouch: {
-                hnList.scrollToPosition(0, 0x2)
+                theList.scrollToPosition(0, 0x2)
             }
         }
         ImageButton {
@@ -62,100 +30,73 @@ Page {
             defaultImageSource: "asset:///images/refresh.png"
             pressedImageSource: "asset:///images/refresh.png"
             onClicked: {
-                enabled:
-                false
-                refreshTriggered();
+                Tart.send('requestPage', {
+                        source: 'news'
+                    });
             }
         }
 
         ListView {
-            id: hnList
-            onTriggered: {
-                var articleItem = dataModel.data(indexPath);
-                var page = webPage.createObject();
-                page.htmlContent = articleItem.articleURL;
-                console.log('Item triggered!');
-                console.log(page.htmlContent);
-                page.push(page);
-            }
+            id: theList
 
-            dataModel: pageModel
+            dataModel: ArrayDataModel {
+                id: theModel
+            }
             maxHeight: 1167.0
             layoutProperties: AbsoluteLayoutProperties {
                 positionY: 113.0
             }
-            visible: page.showList
 
             listItemComponents: [
                 ListItemComponent {
-                    id: articleList
-                    type: "item"
+                    type: ''
                     HNPage {
-                        id: article
                         postTitle: ListItemData.title
-                        postURL: ListItemData.domain
+                        postDomain: ListItemData.domain
                         postUsername: ListItemData.poster
                         postTime: ListItemData.timePosted + "| " + ListItemData.points
                         postComments: ListItemData.commentCount
                         postArticle: ListItemData.articleURL
-                        //                        onGoTocomments: {
-                        //                            Tart.send('requestComments', {
-                        //                                    source: ListItemData.commentsURL,
-                        //                            });
-                        //                        }
                     }
                 }
             ]
-            leadingVisual: DropDown {
-                title: "Page:"
-                id: pageSelector
-                selectedOption: topPosts
-
-                translationX: 20.0
-                Option {
-                    id: topPosts
-                    text: "Top Posts"
-
-                }
-                Option {
-                    id: askPosts
-                    text: "Ask HN"
-
-                }
-                Option {
-                    id: newestPosts
-                    text: "Newest Posts"
-
-                }
-                onSelectedOptionChanged: {
-                    showLoading = false;
-                    showList = true;
-                    pageModel.clear();
-                    console.log('loading requested page: ' + selectedOption.text);
-                    Tart.send('requestPage', {
-                            source: selectedOption.text
-                        });
-                }
+            onTriggered: {
+                var selectedItem = dataModel.data(indexPath);
+                urlToPass = selectedItem.articleURL;
+                console.log('Item triggered. ' + selectedItem.articleURL);
+                var page = webPage.createObject();
+                nav.push(page);
+                page.htmlContent = urlToPass;
             }
-
+            attachedObjects: [
+                ListScrollStateHandler {
+                    onAtEndChanged: {
+                        if (atEnd == true && theModel.isEmpty() == false) {
+                            console.log('end reached!')
+                            Tart.send('requestPage', {
+                                    source: morePage
+                                });
+                        }
+                    }
+                }
+            ]
         }
     }
-    attachedObjects: [
-        GroupDataModel {
-            id: pageModel
-            grouping: ItemGrouping.None
-            sortedAscending: true
-            sortingKeys: [ "postNumber" ]
-        },
-        DataSource {
-            id: pageSource
-            source: ""
-            query: "/articles/item"
-            onDataLoaded: {
-                pageModel.insertList(data);
-                showLoading = false;
-                console.log("List filled...");
-            }
+    function onAddStories(data) {
+        var stories = data.stories;
+        morePage = data.moreLink;
+        console.log("Next page: " + morePage);
+        for (var i = 0; i < stories.length; i ++) {
+            var story = stories[i];
+            theModel.append({
+                    title: story[1],
+                    domain: story[2],
+                    points: story[3],
+                    poster: story[4],
+                    timePosted: story[5],
+                    commentCount: story[6],
+                    articleURL: story[7]
+                });
         }
-    ]
+    }
 }
