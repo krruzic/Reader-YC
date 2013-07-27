@@ -24,7 +24,10 @@ class App(tart.Application):
             source = 'newest'
         else:
             source = source
-        postList, moreLink = HS.getPage("http://news.ycombinator.com/" + source)
+        try:
+            postList, moreLink = HS.getPage("http://news.ycombinator.com/" + source)
+        except urllib.error.URLError:
+            tart.send('urlError', text="Error getting feed. Check your connection and try again")
         stories = []
         #print(postList[0])
         for item in postList:

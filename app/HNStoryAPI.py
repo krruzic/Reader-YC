@@ -30,15 +30,14 @@ Parses HTML and returns the number of a story.
         """
 Gets the URL of a story.
 """
+        ask = False
         URLStart = source.find('href="') + 6
         URLEnd = source.find('">', URLStart)
         url = source[URLStart:URLEnd]
         # Check for "Ask HN" links.
         if url[0:4] == "item": # "Ask HN" links start with "item".
             url = "http://news.ycombinator.com/" + url
-
-        # Change "&amp;" to "&"
-        # url = url.replace("&amp;", "&")
+            ask = True
 
         # Remove 'rel="nofollow' from the end of links, since they were causing some bugs.
         if url[len(url)-13:] == "rel=\"nofollow":
@@ -47,7 +46,7 @@ Gets the URL of a story.
         # Weird hack for URLs that end in '" '. Consider removing later if it causes any problems.
         if url[len(url)-2:] == "\" ":
             url = url[:len(url)-2]
-        return url
+        return url, ask
 
     def getStoryDomain(self, source):
         """
@@ -192,6 +191,7 @@ Looks at source, makes stories from it, returns the stories.
             storyNumbers.append(storyNumber)
 
         storyURLs = []
+        storyAsk = []
         storyDomains = []
         storyTitles = []
         storyScores = []
@@ -203,7 +203,9 @@ Looks at source, makes stories from it, returns the stories.
 
         for i in range(1, len(story_details), 2): # Every second cell contains a story.
             story = str(story_details[i])
-            storyURLs.append(self.getStoryURL(story))
+            url, isAsk = self.getStoryURL(story)
+            storyURLs.append(url)
+            storyAsk.append(isAsk)
             storyDomains.append(self.getStoryDomain(story))
             storyTitles.append(self.getStoryTitle(story))
 
@@ -221,6 +223,7 @@ Looks at source, makes stories from it, returns the stories.
         # Associate the values with our newsStories.
         for i in range(0, self.numberOfStoriesOnFrontPage):
             newsStories[i].number = storyNumbers[i]
+            newsStories[i].ask = storyAsk[i]
             newsStories[i].URL = storyURLs[i]
             newsStories[i].domain = storyDomains[i]
             newsStories[i].title = storyTitles[i]
@@ -256,6 +259,7 @@ A class representing a story on Hacker News.
     title = "" # The title of the story.
     domain = "" # The website the story is from.
     URL = "" # The URL of the story.
+    askPost = False
     score = -1 # Current score of the story.
     submitter = "" # The person that submitted the story.
     commentCount = -1 # How many comments the story has.
@@ -265,5 +269,5 @@ A class representing a story on Hacker News.
 
     def getDetails(self):
         self.number = '%03d' % self.number # prepends zeroes to the article number
-        detailList = (str(self.number), self.title, self.domain, str(self.score), self.submitter, self.time, str(self.commentCount), self.URL, self.commentsURL, str(self.id))
+        detailList = (str(self.number), self.title, self.domain, str(self.score), self.submitter, self.time, str(self.commentCount), self.URL, self.commentsURL, str(self.id), str(self.askPost))
         return detailList

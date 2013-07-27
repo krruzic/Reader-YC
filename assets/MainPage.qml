@@ -12,28 +12,45 @@ Page {
 
     Container {
         background: Color.create("#fff2f2f2")
-        layout: AbsoluteLayout {
+        layout: StackLayout {
         }
-        ImageView {
-            imageSource: "asset:///images/HN_title.png"
-            visible: true
-            onTouch: {
-                theList.scrollToPosition(0, 0x2)
+        Container {
+            layout: AbsoluteLayout {}
+            ImageView {
+                imageSource: "asset:///images/HN_title.png"
+                visible: true
+                onTouch: {
+                    theList.scrollToPosition(0, 0x2)
+                }
+            }
+            ImageButton {
+                id: refreshButton
+                layoutProperties: AbsoluteLayoutProperties {
+                    positionX: 600.0
+                    positionY: 20.0
+
+                }
+                defaultImageSource: "asset:///images/refresh.png"
+                pressedImageSource: "asset:///images/refresh.png"
+                onClicked: {
+                    Tart.send('requestPage', {
+                            source: 'news'
+                        });
+                }
             }
         }
-        ImageButton {
-            id: refreshButton
-            layoutProperties: AbsoluteLayoutProperties {
-                positionY: 14.0
-                positionX: 660.0
-            }
-            defaultImageSource: "asset:///images/refresh.png"
-            pressedImageSource: "asset:///images/refresh.png"
-            onClicked: {
-                Tart.send('requestPage', {
-                        source: 'news'
-                    });
-            }
+
+        Label {
+            id: errorLabel
+            text: ""
+            visible: false
+            multiline: true
+            autoSize.maxLineCount: 2
+            textStyle.fontSize: FontSize.Medium
+            textStyle.fontStyle: FontStyle.Italic
+            textStyle.color: Color.DarkGray
+            horizontalAlignment: HorizontalAlignment.Center
+            verticalAlignment: VerticalAlignment.Center
         }
 
         ListView {
@@ -98,5 +115,9 @@ Page {
                     articleURL: story[7]
                 });
         }
+    }
+    function onUrlError(data) {
+        errorLabel.visible = true;
+        errorLabel.text = data.text;
     }
 }
