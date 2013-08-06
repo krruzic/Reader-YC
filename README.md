@@ -11,11 +11,13 @@ Here is a current screenshot of the main page:
 ## Steps to build:
 Since the release of tart V1.1, I have switched to the recommended method of building described [here](http://hg.microcode.ca/blackberry-py/wiki/Building%20HelloWorld)
 
+**First Step**
+First create a root directory, I called mine 'apps', then
 
 **Install Blackberry Tart**
-To do this you'll need to grab the tartV1 zip found [here](http://blackberry-py.microcode.ca/downloads/), then clone the Mercurial repo with `hg clone https://bitbucket.org/microcode/blackberry-py`. Take the bin directory and the tart.ini out of that, and place them in the same directory you extracted the zip into.
+To do this you'll need to grab the tartV1.1 zip found [here](http://blackberry-py.microcode.ca/downloads/), and extract it to the root directory you created previously
 
-Now, clone this repo and place into that root directory too.
+Now, clone this repo and place it in the root directory too.
 
 **REQUEST DEBUG TOKEN BAR FILE**
 `blackberry-debugtokenrequest -storepass STOREPASS -devicepin DEVICEPIN debugtoken.bar`
@@ -23,10 +25,10 @@ Now, clone this repo and place into that root directory too.
 note: the storepass is the password you used to first register for debug tokens with RIM
 
 **BUILD DEBUG BAR:**
-cd into the bin folder and execute the tart.sh or tart.cmd file with these parameters: `package -mdebug ../Reader-YC/`. If you want to change some details like permissions, just edit the tart-project.ini file in Reader-YC.
+cd into the bin folder and execute the tart.sh or tart.cmd file with these parameters: `package ../Reader-YC/`. If you want to change some details like permissions, just edit the tart-project.ini file in Reader-YC.
 
 **BUILD RELEASE BAR:**
-Same as above, except use `-mrelease` instead of `-mdebug`
+Same as above, except specify the `-mrelease` flag after `package`
 
 **SIGN BAR FILE IF RELEASE:**
 `blackberry-signer -storepass STOREPASS NAMEOFBAR`
@@ -43,6 +45,8 @@ NOTE: The bars will be placed in the bin directory after being built.
 * Get the main hackernews pages in a nice tabbed format
 * Infinite scrolling, load more comments
 * View articles, comments, and text posts
+* Different sections of the apps accessible by tabs
+* View user pages
 
 ###Current Issues:
 * ~~Sometimes the main page (top posts) doesn't load, and I'm not too sure why.~~
@@ -62,9 +66,8 @@ NOTE: The bars will be placed in the bin directory after being built.
 	ETA: Never, idea scrapped
 
 * V1.2 
-- A tutorial that shows when first launched, this will add some flair to the app
-- Collapsable comments, Searching for posts and comments 
-    ETA: End of Summer
+        A tutorial that shows when first launched, this will add some flair to the app
+        Collapsable comments, Searching for posts and comments ETA: End of Summer
 
 * Logging in and upvoting/commenting V2.0
 	ETA: Probably never, but I do hope to add this
