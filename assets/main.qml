@@ -1,32 +1,57 @@
 import bb.cascades 1.0
-import "../tart.js" as Tart
+import "tart.js" as Tart
 
-NavigationPane {
-    id: nav
+TabbedPane {
+    id: tabbedPane
 
-    MainPage {
-        id: mainPage
+    Menu.definition: AppMenuDefinition {
+        id: appMenu
     }
 
-    attachedObjects: [
-        ComponentDefinition {
-            id: webPage
-            source: "webArticle.qml"
-        },
-        ComponentDefinition {
-        	id: commentPage
-        	source: "CommentPage.qml"
+    Tab {
+        id: topPosts
+        title: qsTr("Top Posts")
+
+        TopTab {
+            id: top
+            onCreationCompleted: {
+                top.whichPage = 'topPage'
+            }
         }
-    ]
+    }
+    Tab {
+        title: qsTr("Ask HN")
+        AskTab {
+            id: ask
+            onCreationCompleted: {
+                ask.whichPage = 'askPage'
+            }
+        }
+    }
+    Tab {
+        title: qsTr("Newest Posts")
+
+        NewTab {
+            id: newest
+            onCreationCompleted: {
+                newest.whichPage = 'newPage'
+            }
+        }
+    }
+    Tab {
+        title: qsTr("User Pages")
+
+        UserPage {
+            id: userPage
+        }
+    }
 
     onCreationCompleted: {
         Tart.init(_tart, Application);
 
-        Tart.register(nav);
+        Tart.register(tabbedPane);
         Tart.send('uiReady');
     }
-
-    onPopTransitionEnded: {
-        page.destroy()
-    }
+    showTabsOnActionBar: true
+    activeTab: topPosts
 }

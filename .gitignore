@@ -1,5 +1,4 @@
 ## 
-bar-descriptor.xml
-ReaderYC-release.bar
-.cproject
+*.pyc
 .project
+weather.qml

@@ -1,5 +1,5 @@
 import bb.cascades 1.0
-import "../tart.js" as Tart
+import "tart.js" as Tart
 
 
 Page {
