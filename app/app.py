@@ -29,6 +29,12 @@ class App(tart.Application):
         try:
             postList, moreLink = HS.getPage("http://news.ycombinator.com/" + source)
         except urllib.error.URLError:
+            if (sentBy == 'topPage'):
+                tart.send('topListError', text="Error getting news feed, check your connection and try again")
+            if (sentBy == 'askPage'):
+                tart.send('askListError', text="Error getting news feed, check your connection and try again")
+            else:
+                tart.send('newListError', text="Error getting news feed, check your connection and try again")
             print("error from python: " + "URLError")
             return
         except IndexError:
@@ -81,7 +87,7 @@ class App(tart.Application):
         try:
             detailList = HU.getUserPage("http://news.ycombinator.com/user?id=" + source)
             tart.send('userInfoReceived', details=detailList)
-        except userError:
+        except Exception:
             tart.send('userError', text="That user doesn't exist, \nusernames are case sensitive")
             return
         except urllib.error.URLError:

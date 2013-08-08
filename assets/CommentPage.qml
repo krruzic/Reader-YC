@@ -58,6 +58,16 @@ Page {
             onTriggered: {
                 console.log("Comment triggered!")
             }
+            attachedObjects: [
+                ListScrollStateHandler {
+                    onAtBeginningChanged: {
+                        if (atBeginning == false && !commentModel.isEmpty())
+                        	commentHeader.visible = false;
+                        if (atBeginning == true)
+                        	commentHeader.visible = true;
+                    }
+                }
+            ]
             //            attachedObjects: [
             //                ListScrollStateHandler {
             //                    onAtEndChanged: {

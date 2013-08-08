@@ -2,24 +2,39 @@ import bb.cascades 1.0
 Container {
     contextActions: [
         ActionSet {
-            title: ListItemData.title;
+            title: ListItemData.title
             subtitle: ListItemData.poster + "         " + ListItemData.points
             ActionItem {
                 title: "Open Comments"
                 onTriggered: {
-                    console.log("Pushing comments page")
+                    console.log("Pushing comments page");
+                    var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
+                    console.log(selectedItem.title); 
+                    var page = hnItem.ListItem.view.commentPage.createObject();
+                    topPage.push(page);
+                    console.log(selectedItem.commentsURL)
+                    page.commentLink = selectedItem.commentsURL;
+                    page.title = selectedItem.title;
+                    page.titlePoster = selectedItem.poster;
+                    page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
                 }
             }
-            ActionItem {
-                title: "Copy URL"
-            }
-            ActionItem {
-                title: "Share Article"
+            InvokeActionItem {
+                ActionBar.placement: ActionBarPlacement.OnBar
+                title: "Share"
+                query {
+                    mimeType: "text/plain"
+                    invokeActionId: "bb.action.SHARE"
+                }
+                onTriggered: {
+                    var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
+                    data = selectedItem.title + "\n" + selectedItem.articleURL + "\n" + " Shared using Reader|YC "
+                }
             }
         }
-    ] 
+    ]
     layout: DockLayout {
-    
+
     }
     property string postArticle: ''
     property string askPost: ''
@@ -29,13 +44,13 @@ Container {
     property alias postDomain: labelPostDomain.text
     property alias postUsername: labelUsername.text
     property alias postTime: labelTimePosted.text
-    
-    property int padding: 19	
+
+    property int padding: 19
     topPadding: 6
     bottomPadding: 4
     leftPadding: padding
     rightPadding: padding
-    
+
     signal commentsClicked()
     function setHighlight(highlighted) {
         if (highlighted) {
@@ -45,13 +60,13 @@ Container {
         }
     }
     // Highlight function for the highlight Container
-    
+
     // Connect the onActivedChanged signal to the highlight function
-    
+
     ListItem.onActivationChanged: {
         setHighlight(ListItem.active);
     }
-    
+
     // Connect the onSelectedChanged signal to the highlight function
     ListItem.onSelectionChanged: {
         setHighlight(ListItem.selected);
@@ -62,7 +77,7 @@ Container {
             imageSource: "asset:///images/full.png.amd"
         }
     ]
-    
+
     Container {
         horizontalAlignment: horizontalAlignment.Center
         id: mainContainer
@@ -85,7 +100,7 @@ Container {
                 textStyle.fontSize: FontSize.Small
                 bottomMargin: 1
                 textStyle.color: Color.Black
-            
+
             }
             Label {
                 id: labelPostDomain
@@ -118,7 +133,7 @@ Container {
                     horizontalAlignment: HorizontalAlignment.Left
                     textStyle.textAlign: TextAlign.Left
                 }
-                
+
                 Label {
                     id: labelTimePosted
                     layoutProperties: StackLayoutProperties {

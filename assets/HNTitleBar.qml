@@ -4,6 +4,8 @@ Container {
     property alias text: pageTitle.text
     property alias refreshEnabled: refreshButton.enabled
     property alias showButton: refreshButton.visible
+    property alias buttonImage: refreshButton.defaultImageSource
+    property alias buttonPressedImage: refreshButton.pressedImageSource
     minHeight: 120
     maxHeight: 120
     background: Color.create("#fffe8515")

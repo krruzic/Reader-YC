@@ -18,6 +18,7 @@ TabbedPane {
                 top.whichPage = 'topPage'
             }
         }
+
     }
     Tab {
         title: qsTr("Ask HN")
@@ -45,7 +46,9 @@ TabbedPane {
             id: userPage
         }
     }
-
+    onActiveTabChanged: {
+        userPage.searchVisible = false;
+    }
     onCreationCompleted: {
         Tart.init(_tart, Application);
 

@@ -6,16 +6,18 @@ Page {
     onCreationCompleted: {
         Tart.register(userPage);
     }
+    property alias searchVisible: searchField.visible
     property string username: ""
     property string created: ""
     property string karma: ""
     property string about: ""
     property string submitted: ""
     property string comments: ""
+    property bool error: false
+    
     function onUserInfoReceived(data) {
-        console.log(data.details)
-        var results = data.details
         searchIndicator.visible = false;
+        var results = data.details;
         userDetails.visible = true;
         username = results[0]
         created = results[1]
@@ -24,19 +26,31 @@ Page {
         submitted = results[5]
         comments = results[6]
     }
+    
+    function onUserError(data) {
+        searchIndicator.visible = false;
+        errorLabel.text = data.text
+        error = true;
+    }
+    
     Container {
-
         HNTitleBar {
             id: titleBar
             text: "Reader|YC - User"
-            showButton: false
+            showButton: true;
+            buttonImage: "asset:///images/search.png"
+            buttonPressedImage: "asset:///images/search.png"
+            onRefreshPage: {
+                searchField.visible = true;
+                slideSearch.play();
+            }
         }
         Container {
             topPadding: 10
             leftPadding: 19
             rightPadding: 19
             TextField {
-                visible: true
+                visible: false
                 objectName: "searchField"
                 textStyle.color: Color.create("#262626")
                 textStyle.fontSize: FontSize.Medium
@@ -51,30 +65,37 @@ Page {
                 hintText: qsTr("Search users (case sensitive)")
                 id: searchField
                 input.onSubmitted: {
-                    searchIndicator.visible = true
+                    error = false;
+                    searchIndicator.visible = true;
+                    userDetails.visible = false;
                     Tart.send('requestUserPage', {
                             source: text
                         });
                 }
+                animations: [
+                    TranslateTransition {
+                        id: slideSearch
+                        target: searchField
+                        fromX: -600.0
+                        toX: 0.0
+                    
+                    }
+                ]
             }
+            
             ActivityIndicator {
-                topPadding: 80
                 minHeight: 500
                 minWidth: 500
                 id: searchIndicator
                 running: true
-                visible: true
+                visible: false
                 horizontalAlignment: horizontalAlignment.Center
             }
             Container {
                 id: userDetails
-                visible: if (searchIndicator.visible == true) {
-                    userDetails.visible = false;
-                }
+                visible: false
                 Label {
-                    visible: if (username != "")
-                        true
-                    text: username + "	            	" + karma + " points"
+                    text: username + karma + " points"
                     textFormat: TextFormat.Plain
                     textStyle.fontSize: FontSize.XLarge
                     textStyle.textAlign: TextAlign.Center
@@ -82,21 +103,15 @@ Page {
                 }
                 Container {
                     id: aboutText
-                    visible: false
                     background: aboutImage.imagePaint
-                    bottomMargin: 10
                     Label {
                         text: " About: "
                     }
                     Divider {
+                        bottomMargin: 1
+                        topMargin: 1
                     }
                     TextArea {
-                        onTextChanged: {
-                            if (text == "")
-                                aboutText.visible = false;
-                            else
-                                aboutText.visible = true;
-                        }
                         text: about
                         editable: false
                         focusHighlightEnabled: false
@@ -120,8 +135,6 @@ Page {
                     }
                 }
                 Container {
-                    visible: if (comments != "")
-                        true
                     Label {
                         textFormat: textFormat.Html
                         text: " Submitted: " + submitted
@@ -138,7 +151,6 @@ Page {
                     ImagePaintDefinition {
                         id: aboutImage
                         imageSource: "asset:///images/text.amd"
-
                     }
                 ]
             }
