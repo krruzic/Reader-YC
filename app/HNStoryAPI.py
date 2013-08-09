@@ -2,6 +2,8 @@ import urllib.request
 from bs4 import BeautifulSoup
 import re
 
+import tart
+
 class HackerNewsStoryAPI:
     """The class for slicing and dicing the HTML and turning it into
        HackerNewsStory objects.
@@ -237,7 +239,6 @@ class HackerNewsStoryAPI:
             newsStories[i].id = storyIDs[i]
 
         return newsStories
-
 
     def getPage(self, page):
         """Gets the stories from the specified Hacker News page.

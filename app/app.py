@@ -1,4 +1,4 @@
-import urllib.request
+import urllib.request, threading
 from .HNStoryAPI import HackerNewsStoryAPI
 from .HNCommentAPI import HackerNewsCommentAPI
 from .HNUserAPI import HackerNewsUserAPI
@@ -16,7 +16,12 @@ class App(tart.Application):
     def onUiReady(self):
         pass
 
+
     def onRequestPage(self, source, sentBy):
+        t = threading.Thread(target=self.worker_routine, args=(source, sentBy))
+        t.start()
+
+    def worker_routine(self, source, sentBy):
         print("source sent:" + source)
         print("sent by: " + sentBy)
         if source == 'Top Posts':
@@ -87,12 +92,10 @@ class App(tart.Application):
         try:
             detailList = HU.getUserPage("http://news.ycombinator.com/user?id=" + source)
             tart.send('userInfoReceived', details=detailList)
-        except Exception:
+        except ValueError:
             tart.send('userError', text="That user doesn't exist, \nusernames are case sensitive")
-            return
         except urllib.error.URLError:
             tart.send('userError', text="Error getting user page, Check your connection \nand try again")
-        return
 
 
 # class utility(object):

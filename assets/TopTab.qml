@@ -10,7 +10,7 @@ NavigationPane {
     property string whichPage: ""
     property string morePage: ""
     property string errorText: ""
-    property bool busy: true 
+    property bool busy: false; 
 
     onCreationCompleted: {
         Tart.register(topPage)
@@ -115,8 +115,7 @@ NavigationPane {
                             postTitle: ListItemData.title
                             postDomain: ListItemData.domain
                             postUsername: ListItemData.poster
-                            postTime: ListItemData.timePosted + "| " + ListItemData.points
-                            postComments: ListItemData.commentCount
+                            postTime: ListItemData.commentCount + "| " + ListItemData.points
                             postArticle: ListItemData.articleURL
                             askPost: ListItemData.isAsk
                             commentSource: ListItemData.commentsURL
@@ -154,20 +153,20 @@ NavigationPane {
                         page.text = selectedItem.title;
                     }
                 }
-                attachedObjects: [
-                    ListScrollStateHandler {
-                        onAtEndChanged: {
-                            if (atEnd == true && theModel.isEmpty() == false) {
-                                console.log('end reached!')
-                                Tart.send('requestPage', {
-                                        source: morePage,
-                                        sentBy: whichPage
-                                    });
-                                busy = true;
-                            }
-                        }
-                    }
-                ]
+//                attachedObjects: [
+//                    ListScrollStateHandler {
+//                        onAtEndChanged: {
+//                            if (atEnd == true && theModel.isEmpty() == false) {
+//                                console.log('end reached!')
+//                                Tart.send('requestPage', {
+//                                        source: morePage,
+//                                        sentBy: whichPage
+//                                    });
+//                                busy = true;
+//                            }
+//                        }
+//                    }
+//                ]
             }
         }
         attachedObjects: [

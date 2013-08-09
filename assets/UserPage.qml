@@ -13,36 +13,39 @@ Page {
     property string about: ""
     property string submitted: ""
     property string comments: ""
-    property bool error: false
-    
+    property int submitCount: 0
+    property int timerStart: 0
+
     function onUserInfoReceived(data) {
         searchIndicator.visible = false;
+        console.log("User info recieved!")
         var results = data.details;
         userDetails.visible = true;
-        username = results[0]
-        created = results[1]
-        karma = results[2]
-        about = results[4]
-        submitted = results[5]
-        comments = results[6]
+        username = results[0];
+        created = results[1];
+        karma = results[2];
+        about = results[4];
+        submitted = results[5];
+        comments = results[6];
     }
-    
+
     function onUserError(data) {
         searchIndicator.visible = false;
+        errorLabel.visible = true;
         errorLabel.text = data.text
-        error = true;
     }
-    
+
     Container {
         HNTitleBar {
             id: titleBar
             text: "Reader|YC - User"
-            showButton: true;
+            showButton: true
             buttonImage: "asset:///images/search.png"
             buttonPressedImage: "asset:///images/search.png"
             onRefreshPage: {
                 searchField.visible = true;
                 slideSearch.play();
+                timerStart = Date.now()
             }
         }
         Container {
@@ -62,15 +65,32 @@ Page {
                 input {
                     flags: TextInputFlag.AutoCapitalizationOff | TextInputFlag.SpellCheckOff
                 }
+                validator: Validator {
+                    state: ValidationState.Unknown
+                    errorMessage: "Entry cannot have spaces"
+                    validationRequested: true
+
+                }
                 hintText: qsTr("Search users (case sensitive)")
                 id: searchField
                 input.onSubmitted: {
-                    error = false;
+                    submitCount += 1;
+                    errorLabel.visible = false;
                     searchIndicator.visible = true;
                     userDetails.visible = false;
-                    Tart.send('requestUserPage', {
-                            source: text
-                        });
+                    if (throttleTimer.running == false) {
+                        Tart.send('requestUserPage', {
+                                source: text
+                            });
+                    } else if (throttleTimer.running == true) {
+                        searchIndicator.visible = false;
+                        errorLabel.visible = true;
+                        errorLabel.text = "You're doing that too often, try again in " + (timerStart);
+                    }
+                    if (submitCount >= 1) {
+                        throttleTimer.start();
+                        throttleTimer.running = true;
+                    }
                 }
                 animations: [
                     TranslateTransition {
@@ -78,11 +98,11 @@ Page {
                         target: searchField
                         fromX: -600.0
                         toX: 0.0
-                    
+
                     }
                 ]
             }
-            
+
             ActivityIndicator {
                 minHeight: 500
                 minWidth: 500
@@ -90,6 +110,11 @@ Page {
                 running: true
                 visible: false
                 horizontalAlignment: horizontalAlignment.Center
+            }
+            Label {
+                id: errorLabel
+                multiline: true
+
             }
             Container {
                 id: userDetails
@@ -151,6 +176,17 @@ Page {
                     ImagePaintDefinition {
                         id: aboutImage
                         imageSource: "asset:///images/text.amd"
+                    },
+                    QTimer {
+                        id: throttleTimer
+                        property bool running: false
+                        interval: 600000 // 5 minute interval
+                        onTimeout: {
+                            throttleTimer.stop();
+                            timerStart = 0;
+                            throttleTimer.running = false;
+                            submitCount = 0;
+                        }
                     }
                 ]
             }
