@@ -32,13 +32,13 @@ class App(tart.Application):
             source = 'newest'
 
         try:
-            postList, moreLink = HS.getPage("http://news.ycombinator.com/" + source)
+            postList, moreLink = HS.getPage("https://news.ycombinator.com/" + source)
         except urllib.error.URLError:
             if (sentBy == 'topPage'):
                 tart.send('topListError', text="Error getting news feed, check your connection and try again")
-            if (sentBy == 'askPage'):
+            elif (sentBy == 'askPage'):
                 tart.send('askListError', text="Error getting news feed, check your connection and try again")
-            else:
+            elif (sentBy == 'newsetPage'):
                 tart.send('newListError', text="Error getting news feed, check your connection and try again")
             print("error from python: " + "URLError")
             return

@@ -1,22 +1,30 @@
 import bb.cascades 1.0
+import "tart.js" as Tart
+
 Container {
+    id: hnPage
+    onCreationCompleted: {
+        Tart.register(hnPage)
+    }
     contextActions: [
         ActionSet {
             title: ListItemData.title
-            subtitle: ListItemData.poster + "         " + ListItemData.points
+            subtitle: ListItemData.poster + " | " + ListItemData.points
             ActionItem {
                 title: "Open Comments"
                 onTriggered: {
                     console.log("Pushing comments page");
                     var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
-                    console.log(selectedItem.title); 
-                    var page = hnItem.ListItem.view.commentPage.createObject();
-                    topPage.push(page);
-                    console.log(selectedItem.commentsURL)
+                    console.log(selectedItem.title);
+                    var page = hnItem.ListItem.view.pushPage('commentPage');
+                    console.log(selectedItem.commentsURL);
                     page.commentLink = selectedItem.commentsURL;
                     page.title = selectedItem.title;
                     page.titlePoster = selectedItem.poster;
-                    page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
+                    page.titleTime = selectedItem.timePosted + "| " + selectedItem.points;
+                    Tart.send('requestComments', {
+                            source: selectedItem.commentsURL
+                    });
                 }
             }
             InvokeActionItem {

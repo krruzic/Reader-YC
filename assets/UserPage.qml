@@ -87,7 +87,7 @@ Page {
                         errorLabel.visible = true;
                         errorLabel.text = "You're doing that too often, try again in " + (timerStart);
                     }
-                    if (submitCount >= 1) {
+                    if (submitCount >= 25) {
                         throttleTimer.start();
                         throttleTimer.running = true;
                     }

@@ -14,7 +14,6 @@ class HackerNewsStoryAPI:
     def getSource(self, url):
         """Returns the HTML source code for a URL.
         """
-
         print("curling page: " + url)
         with urllib.request.urlopen(url) as url:
             source = url.read()

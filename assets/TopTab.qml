@@ -10,7 +10,9 @@ NavigationPane {
     property string whichPage: ""
     property string morePage: ""
     property string errorText: ""
-    property bool busy: false; 
+    property string lastItemType: ""
+    property bool busy: false
+    
 
     onCreationCompleted: {
         Tart.register(topPage)
@@ -20,10 +22,6 @@ NavigationPane {
         page.destroy()
     }
 
-    //    function itemType(data) {
-    //        console.log('TEST');
-    //        return data.title ? '' : 'errorItem';
-    //    }
 
     function onAddTopStories(data) {
         var stories = data.stories;
@@ -32,6 +30,7 @@ NavigationPane {
         for (var i = 0; i < stories.length; i ++) {
             var story = stories[i];
             theModel.append({
+                	type: 'item',
                     title: story[1],
                     domain: story[2],
                     points: story[3],
@@ -47,15 +46,15 @@ NavigationPane {
     }
 
     function onTopListError(data) {
-        if (! theModel.isEmpty()) {
-            theModel.append({
-                    text: data.text
-                });
-        } else {
-            errorLabel.visible = true;
-            errorLabel.text = data.text;
+        var lastItem = theModel.size() - 1
+        console.log(lastItemType);
+        if (lastItemType == 'error') {
+            theModel.removeAt(lastItem)
         }
-        busy = false;
+        theModel.append({
+            	type: 'error',
+                title: data.text
+            });
     }
     Page {
         Container {
@@ -97,7 +96,7 @@ NavigationPane {
             ActivityIndicator {
                 minHeight: 300
                 minWidth: 300
-                running: true 
+                running: true
                 visible: busy
             }
 
@@ -106,30 +105,43 @@ NavigationPane {
                 dataModel: ArrayDataModel {
                     id: theModel
                 }
-
+                function itemType(data, indexPath) {
+                    if (data.type != 'error') {
+                        lastItemType = 'item';
+                        return 'item';
+                    } else {
+                        lastItemType  = 'error';
+                        return 'error';
+                    }
+                }
                 listItemComponents: [
                     ListItemComponent {
-                        type: ''
+                        type: 'item'
                         HNPage {
                             id: hnItem
+                            property variant commentPage: commentPage
+                            property string type: ListItemData.type
                             postTitle: ListItemData.title
                             postDomain: ListItemData.domain
                             postUsername: ListItemData.poster
-                            postTime: ListItemData.commentCount + "| " + ListItemData.points
+                            postTime: ListItemData.timePosted + "| " + ListItemData.points
                             postArticle: ListItemData.articleURL
                             askPost: ListItemData.isAsk
                             commentSource: ListItemData.commentsURL
-                            onCommentsClicked: {
-                                var selectedItem = ListItem.view.dataModel.data(ListItem.indexPath);
-                                console.log(selectedItem.title);
-                                var page = commentPage.createObject();
-                                topPage.push(page);
-                                console.log(selectedItem.commentsURL)
-                                page.commentLink = selectedItem.commentsURL;
-                                page.title = selectedItem.title;
-                                page.titlePoster = selectedItem.poster;
-                                page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
-                            }
+                        }
+                    },
+                    ListItemComponent {
+                        type: 'error'
+                        Label {
+                            id: errorItem
+                            property string type: ListItemData.type
+                            text: ListItemData.title
+                            visible: true
+                            multiline: true
+                            autoSize.maxLineCount: 2
+                            textStyle.fontSize: FontSize.Medium
+                            textStyle.fontStyle: FontStyle.Italic
+                            textStyle.textAlign: TextAlign.Center
                         }
                     }
                 ]
@@ -153,20 +165,28 @@ NavigationPane {
                         page.text = selectedItem.title;
                     }
                 }
-//                attachedObjects: [
-//                    ListScrollStateHandler {
-//                        onAtEndChanged: {
-//                            if (atEnd == true && theModel.isEmpty() == false) {
-//                                console.log('end reached!')
-//                                Tart.send('requestPage', {
-//                                        source: morePage,
-//                                        sentBy: whichPage
-//                                    });
-//                                busy = true;
-//                            }
-//                        }
-//                    }
-//                ]
+                attachedObjects: [
+                    ListScrollStateHandler {
+                        onAtEndChanged: {
+                            if (atEnd == true && theModel.isEmpty() == false) {
+                                theModel.append({
+                                    
+                                });
+                                console.log('end reached!')
+                                Tart.send('requestPage', {
+                                        source: morePage,
+                                        sentBy: whichPage
+                                    });
+                            }
+                        }
+                    }
+                ]
+                function pushPage(pageToPush) {
+                    console.log(pageToPush)
+                    var page = eval(pageToPush).createObject();
+                    topPage.push(page);
+                    return page;
+                }
             }
         }
         attachedObjects: [

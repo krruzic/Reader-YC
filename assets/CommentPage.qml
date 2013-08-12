@@ -6,9 +6,6 @@ Page {
 
     onCreationCompleted: {
         Tart.register(commentPane);
-        Tart.send('requestComments', {
-                source: commentLink
-            });
     }
     property string moreComments: ""
     property string commentLink: ""

@@ -47,12 +47,14 @@ NOTE: The bars will be placed in the bin directory after being built.
 * View articles, comments, and text posts
 * Different sections of the apps accessible by tabs
 * View user pages
+* Request multiple pages at a time :D
+* Throttling requests on userpages
 
 ###Current Issues:
 * ~~Sometimes the main page (top posts) doesn't load, and I'm not too sure why.~~
 * ~~Does not handle a lack of internet connectivity. At all.~~
 * If you close the app while it is making a request, the app will go into a greyed-out "zombie" state for a while (less than a minute with release only, but still)
-* You can only request one page at a time. This isn't too big of an issue, but increases time spent waiting.
+
 
 ###Coming Feature roadmap (dates are really guesses):
 * View text posts, comments and articles all from within the app V1.0 (Will be available on BB-World at this point)
