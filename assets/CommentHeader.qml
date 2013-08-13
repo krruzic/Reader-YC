@@ -1,5 +1,6 @@
 import bb.cascades 1.0
 import "tart.js" as Tart
+
 Container {
     id: headerPane
     leftPadding: 19
