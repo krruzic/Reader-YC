@@ -21,7 +21,7 @@ NavigationPane {
     }
     
     
-    function onAddNewStories(data) {
+    function onAddAskStories(data) {
         var stories = data.stories;
         morePage = data.moreLink;
         //refreshEnabled = true;
@@ -45,7 +45,7 @@ NavigationPane {
         titleBar.refreshEnabled = !busy;
     }
     
-    function onNewListError(data) {
+    function onAskListError(data) {
         var lastItem = theModel.size() - 1
         console.log(lastItemType);
         if (lastItemType == 'error') {
