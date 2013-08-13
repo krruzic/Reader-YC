@@ -51,11 +51,12 @@ NOTE: The bars will be placed in the bin directory after being built.
 * View user pages
 * Request multiple pages at a time :D
 * Throttling requests on userpages
+* icons, ICONS EVERYWHERE
 
 ###Current Issues:
 * ~~Sometimes the main page (top posts) doesn't load, and I'm not too sure why.~~
 * ~~Does not handle a lack of internet connectivity. At all.~~
-* If you close the app while it is making a request, the app will go into a greyed-out "zombie" state for a while (less than a minute with release only, but still)
+* If you close the app while it is making a request, the app will go into a greyed-out "zombie" state until the request is completed
 
 
 ###Coming Feature roadmap (dates are really guesses):
@@ -76,3 +77,5 @@ NOTE: The bars will be placed in the bin directory after being built.
 * Logging in and upvoting/commenting V2.0
 	ETA: Probably never, but I do hope to add this
 
+###Thanks:
+    Huge thanks to all the developers of The BBPY project (Peter Hansen, Xitij Ritesh Patel, etc.) and special thanks to  Jerónimo Barraco for helping with the comment API.
