@@ -263,7 +263,6 @@ class HackerNewsStory:
     commentCount = -1 # How many comments the story has.
     commentsURL = "" # The HN link for commenting (and upmodding).
     time = "" # The time the HN link was posted
-    number = '%03d' % number # prepends zeroes to the article number
 
     def getDetails(self):
         """Creates a tuple of the story's details

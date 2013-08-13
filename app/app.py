@@ -15,7 +15,9 @@ class App(tart.Application):
 
     def onUiReady(self):
         pass
-
+        # self.onRequestPage("Top Posts", "topPage")
+        # self.onRequestPage("Ask HN", "askPage")
+        # self.onRequestPage("Newest Posts", "newestPage")
 
     def onRequestPage(self, source, sentBy):
         t = threading.Thread(target=self.story_routine, args=(source, sentBy))
@@ -38,7 +40,7 @@ class App(tart.Application):
                 tart.send('topListError', text="Error getting news feed, check your connection and try again")
             elif (sentBy == 'askPage'):
                 tart.send('askListError', text="Error getting news feed, check your connection and try again")
-            elif (sentBy == 'newsetPage'):
+            elif (sentBy == 'newestPage'):
                 tart.send('newListError', text="Error getting news feed, check your connection and try again")
             print("error from python: " + "URLError")
             return
@@ -66,23 +68,10 @@ class App(tart.Application):
     def onRequestComments(self, source):
         print("source sent:" + source)
         try:
-            text, commentList, moreLink = HC.getPage(source)
+            HC.getPage(source)
         except urllib.error.URLError:
             tart.send('commentError', text="Error getting comments. Check your connection \nand try again")
             tart.send('addText', text='')
-            return
-        except IndexError:
-            tart.send('commentError', text="Link expired. \nHit refresh to reload data.")
-            tart.send('addText', text='')
-            return
-        print("TEXT: " + text)
-        tart.send('addText', text=text)
-        comments = []
-
-        for item in commentList:
-            comments.append(item.getDetails())
-        print("More comments at: " + moreLink)
-        tart.send('addComments', comments=comments, moreLink=moreLink)
 
     def onRequestUserPage(self, source):
         print("source sent: " + source)

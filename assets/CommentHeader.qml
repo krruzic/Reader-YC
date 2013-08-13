@@ -15,14 +15,8 @@ Container {
         text = data.text
     }
     Container {
-        leftPadding: 19
-        rightPadding: 19
         bottomPadding: 35
         background: itemBackground.imagePaint
-
-
-
-
         attachedObjects: [
             ImagePaintDefinition {
                 id: itemBackground

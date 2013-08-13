@@ -22,17 +22,13 @@ Page {
     }
 
     function onAddComments(data) {
-        var comments = data.comments;
-        moreComments = data.moreLink;
-        for (var i = 0; i < comments.length; i ++) {
-            var comment = comments[i];
-            commentModel.append({
-                    poster: comment[1],
-                    timePosted: comment[2],
-                    indent: comment[3],
-                    text: comment[4]
-                });
-        }
+        data.comment.replace('__BR__', '\n')
+        commentModel.append({
+                poster: data.comment["username"],
+                timePosted: data.comment["time"],
+                indent: data.comment["level"] * 40,
+                text: data.comment["comment"]
+            });
         busy = false;
     }
     actions: [
@@ -75,9 +71,10 @@ Page {
 
     Container {
         topPadding: 10
-        bottomMargin: 0
 
         CommentHeader {
+            leftPadding: 19
+            rightPadding: 19
             id: commentHeader
         }
         ActivityIndicator {
@@ -88,7 +85,7 @@ Page {
         }
         ListView {
             id: commentList
-            leftPadding: 19
+
             dataModel: ArrayDataModel {
                 id: commentModel
             }
@@ -97,6 +94,8 @@ Page {
                     type: ''
 
                     Comment {
+                        leftPadding: 19
+                        rightPadding: 19
                         id: commentItem
                         poster: ListItemData.poster
                         time: ListItemData.timePosted

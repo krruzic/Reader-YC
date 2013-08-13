@@ -4,8 +4,6 @@ import bb 1.0
 import "tart.js" as Tart
 
 NavigationPane {
-    property alias topPage: topPage
-    property alias commentPage: commentPage
     id: topPage
     property string whichPage: ""
     property string morePage: ""
@@ -39,10 +37,12 @@ NavigationPane {
                     commentCount: story[6],
                     articleURL: story[7],
                     commentsURL: story[8],
+                    hnid: story[9],
                     isAsk: story[10]
                 });
         }
         busy = false;
+        titleBar.refreshEnabled = !busy;
     }
 
     function onTopListError(data) {
@@ -56,12 +56,15 @@ NavigationPane {
                 title: data.text
             });
         busy = false;
+        titleBar.refreshEnabled = !busy;
     }
     Page {
         Container {
             HNTitleBar {
+                id: titleBar
                 text: "Reader|YC - Top Posts"
                 onRefreshPage: {
+                    busy = true;
                     Tart.send('requestPage', {
                             source: "Top Posts",
                             sentBy: whichPage
@@ -71,8 +74,7 @@ NavigationPane {
                     errorLabel.text = "";
                     errorLabel.visible = false;
                     console.log(errorLabel.visible)
-                    //refreshEnabled = false;
-                    busy = true;
+                    refreshEnabled = !busy;
                 }
                 onTouch: {
                     theList.scrollToPosition(0, 0x2)
@@ -106,6 +108,27 @@ NavigationPane {
                 dataModel: ArrayDataModel {
                     id: theModel
                 }
+                shortcuts: [
+                    Shortcut {
+                        key: "T"
+                        onTriggered: {
+                            theList.scrollToPosition(0, 0x2)
+                        }
+                    },
+                    Shortcut {
+                        key: "B"
+                        onTriggered: {
+                            theList.scrollToPosition(0, 0x2)
+                        }
+                    },
+                    Shortcut {
+                        key: "R"
+                        onTriggered: {
+                            if (!busy)
+                            	refreshPage();
+                        }
+                    }
+                ]
                 function itemType(data, indexPath) {
                     if (data.type != 'error') {
                         lastItemType = 'item';
@@ -120,8 +143,8 @@ NavigationPane {
                         type: 'item'
                         HNPage {
                             id: hnItem
-                            property variant commentPage: commentPage
                             property string type: ListItemData.type
+                            postComments: ListItemData.commentCount
                             postTitle: ListItemData.title
                             postDomain: ListItemData.domain
                             postUsername: ListItemData.poster
@@ -129,6 +152,7 @@ NavigationPane {
                             postArticle: ListItemData.articleURL
                             askPost: ListItemData.isAsk
                             commentSource: ListItemData.commentsURL
+                            commentID: ListItemData.hnid
                         }
                     },
                     ListItemComponent {
@@ -158,6 +182,9 @@ NavigationPane {
                         page.title = selectedItem.title;
                         page.titlePoster = selectedItem.poster;
                         page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
+                        Tart.send('requestComments', {
+                                source: selectedItem.commentID
+                        });
                     } else {
                         console.log('Item triggered. ' + selectedItem.articleURL);
                         var page = webPage.createObject();

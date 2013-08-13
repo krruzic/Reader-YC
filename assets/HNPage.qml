@@ -24,8 +24,9 @@ Container {
                     page.titleDomain = selectedItem.domain;
                     page.commentLink = selectedItem.commentsURL;
                     page.articleLink = selectedItem.articleURL;
+                    console.log(selectedItem.hnid);
                     Tart.send('requestComments', {
-                            source: selectedItem.commentsURL
+                            source: selectedItem.hnid
                     });
                 }
             }
@@ -62,14 +63,15 @@ Container {
     property string askPost: ''
     property string commentSource: ''
     property string postComments: ''
+    property string commentID: ''
     property alias postTitle: labelPostTitle.text
     property alias postDomain: labelPostDomain.text
     property alias postUsername: labelUsername.text
     property alias postTime: labelTimePosted.text
 
     property int padding: 19
-    topPadding: 6
-    bottomPadding: 4
+    topPadding: 2
+    bottomPadding: 3
     leftPadding: padding
     rightPadding: padding
 
@@ -99,13 +101,12 @@ Container {
             imageSource: "asset:///images/full.png.amd"
         }
     ]
-
     Container {
-        horizontalAlignment: horizontalAlignment.Center
+        visible: true
         id: mainContainer
         preferredWidth: 730
-        preferredHeight: 155
-        maxHeight: 155
+        preferredHeight: 135
+        maxHeight: 135
         maxWidth: 730
         background: itemBackground.imagePaint
         layout: StackLayout {
@@ -114,7 +115,13 @@ Container {
         Container {
             topPadding: 5
             leftPadding: 10
+            rightPadding: 0
+            rightMargin: 0
+            bottomMargin: 0
+            bottomPadding: 20
+            
             Label {
+                rightMargin: 42
                 id: labelPostTitle
                 preferredWidth: 680
                 maxWidth: 680
@@ -122,21 +129,45 @@ Container {
                 textStyle.fontSize: FontSize.Small
                 bottomMargin: 1
                 textStyle.color: Color.Black
-
-            }
-            Label {
-                id: labelPostDomain
-                topMargin: 1
-                bottomMargin: 1
-                translationX: 10
-                maxWidth: 500.0
-                text: "http://www.dailymail.com/"
-                multiline: false
-                textStyle.fontSize: FontSize.Small
-                textStyle.color: Color.create("#ff69696c")
-                textStyle.fontStyle: FontStyle.Italic
             }
             Container {
+                layout: StackLayout {
+                    orientation: LayoutOrientation.LeftToRight
+                }
+                
+                clipContentToBounds: false
+                Label {
+                    id: labelPostDomain
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 3
+                    }
+                    topMargin: 1
+                    bottomMargin: 1
+                    translationX: 10
+                    text: "http://www.dailymail.com/"
+                    multiline: false
+                    textStyle.fontSize: FontSize.XSmall
+                    textStyle.color: Color.create("#ff69696c")
+                    textStyle.fontStyle: FontStyle.Italic
+                }
+                Label {
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 1
+                    }
+                    topMargin: 1
+                    bottomMargin: 1
+                    translationX: -10
+                    maxWidth: 400.0
+                    text: postComments + " comments"
+                    multiline: false
+                    textStyle.fontSize: FontSize.XSmall
+                    textStyle.color: Color.create("#ff69696c")
+                    textStyle.fontStyle: FontStyle.Italic
+                
+                }
+            }
+            Container {
+                translationY: -5
                 topMargin: 0
                 leftMargin: 1
                 rightPadding: 15
@@ -155,13 +186,13 @@ Container {
                     horizontalAlignment: HorizontalAlignment.Left
                     textStyle.textAlign: TextAlign.Left
                 }
-
+                
                 Label {
                     id: labelTimePosted
                     layoutProperties: StackLayoutProperties {
                         spaceQuota: 2
                     }
-                    text: "some time ago | some points"
+                    text: "some comments | some points"
                     multiline: false
                     textStyle.fontSize: FontSize.Small
                     textStyle.color: Color.Gray
@@ -170,9 +201,13 @@ Container {
                 }
             }
         }
+        //        Label {
+        //            translationX: -30
+        //            text: "130"
+        //            textStyle.fontSize: FontSize.XSmall
+        //        }
     }
     ImageView {
-        horizontalAlignment: horizontalAlignment.Center
         id: highlightContainer
         imageSource: "asset:///images/listHighlight.amd"
         preferredWidth: 730

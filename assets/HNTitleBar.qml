@@ -11,7 +11,6 @@ Container {
     background: Color.create("#fffe8515")
     signal refreshPage()
     Container {
-        
         layout: StackLayout {
             orientation: LayoutOrientation.LeftToRight
         
@@ -22,7 +21,6 @@ Container {
             scrollViewProperties.scrollMode: ScrollMode.Horizontal
             scrollViewProperties.pinchToZoomEnabled: false
             scrollViewProperties.overScrollEffectMode: OverScrollEffectMode.OnScroll
-            maxWidth: 900
             TextArea  {
                 id: pageTitle
                 text: "Reader|YC - Top Posts"

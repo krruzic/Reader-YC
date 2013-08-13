@@ -12,24 +12,6 @@ Container {
     rightPadding: 20
     topPadding: 5.0
     bottomPadding: 5.0
-    contextActions: [
-        ActionSet {
-            ActionItem {
-                title: "Hide children"
-                onTriggered: {
-                    var selectedItem = commentItem.ListItem.indexInSection;
-                    commentItem.ListItem.view.hideChildren(selectedItem);
-                }
-            }
-            ActionItem {
-                title: "Show children"
-                onTriggered: {
-                    var selectedItem = commentItem.ListItem.indexInSection;
-                    commentItem.ListItem.view.hideChildren(selectedItem);
-                }
-            }
-        }
-    ]
     Container {
         leftPadding: 6
         background: commentBackground.imagePaint
@@ -68,12 +50,12 @@ Container {
                 }
                 text: "__________________________________________________________________________________________"
                 enabled: false
-                minWidth: 760
+                minWidth: 750
                 textStyle.color: Color.LightGray
             }
             TextArea {
                 id: commentBox
-                text: "This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, I know that it's short...."
+                text: "This is a test comment, This is a &gt;test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, I know that it's short...."
                 editable: false
                 backgroundVisible: true
                 inputMode: TextAreaInputMode.Text
@@ -84,6 +66,7 @@ Container {
                 input.submitKeyFocusBehavior: SubmitKeyFocusBehavior.Lose
                 textStyle.fontSize: FontSize.XSmall
                 textStyle.color: Color.Black
+                bottomPadding: 30
             }
 
         }
