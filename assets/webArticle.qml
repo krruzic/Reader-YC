@@ -1,13 +1,37 @@
 import bb.cascades 1.0
 
 Page {
+    id: webPane
     property alias htmlContent: webDisplay.url
     property alias text: titleBar.text
     actions: [
         ActionItem {
-            title: "go back"
+            ActionBar.placement: ActionBarPlacement.OnBar
+            imageSource: "asset:///images/icons/ic_previous.png"
+            
+            title: "Go Back"
             onTriggered: {
                 webDisplay.goBack();
+            }
+        },
+        InvokeActionItem {
+            ActionBar.placement: ActionBarPlacement.OnBar
+            title: "Share URL"
+            query {
+                mimeType: "text/plain"
+                invokeActionId: "bb.action.SHARE"
+            }
+            onTriggered: {
+                data = text + "\n" + htmlContent + "\n" + " Shared using Reader|YC ";
+            }
+        },
+        ActionItem {
+            ActionBar.placement: ActionBarPlacement.OnBar
+            imageSource: "asset:///images/icons/ic_next.png"
+
+            title: "Go Forward"
+            onTriggered: {
+                webDisplay.goForward();
             }
         }
     ]

@@ -18,22 +18,27 @@ Container {
         }
         topPadding: 20.0
         leftPadding: 0.0
-        TextArea  {
-            id: pageTitle
-            
-            text: "Reader|YC - Top Posts"
-            textStyle.fontSize: FontSize.PointValue
-            textStyle.textAlign: TextAlign.Left
-            textStyle.color: Color.White
-            textFormat: TextFormat.Plain
-            enabled: false
-            editable: false
-            focusHighlightEnabled: false
-            translationY: -10
-            maximumLength: 1000
-            input.masking: TextInputMasking.Default
-            input.submitKey: SubmitKey.None
-            textStyle.fontSizeValue: 10.0
+        ScrollView {
+            scrollViewProperties.scrollMode: ScrollMode.Horizontal
+            scrollViewProperties.pinchToZoomEnabled: false
+            scrollViewProperties.overScrollEffectMode: OverScrollEffectMode.OnScroll
+            maxWidth: 900
+            TextArea  {
+                id: pageTitle
+                text: "Reader|YC - Top Posts"
+                textStyle.fontSize: FontSize.PointValue
+                textStyle.textAlign: TextAlign.Left
+                textStyle.color: Color.White
+                textFormat: TextFormat.Plain
+                enabled: false
+                editable: false
+                focusHighlightEnabled: false
+                translationY: -10
+                maximumLength: 1000
+                input.masking: TextInputMasking.Default
+                input.submitKey: SubmitKey.None
+                textStyle.fontSizeValue: 10.0
+            }
         }
         ImageButton {
             id: refreshButton

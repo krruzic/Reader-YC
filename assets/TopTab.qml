@@ -55,6 +55,7 @@ NavigationPane {
             	type: 'error',
                 title: data.text
             });
+        busy = false;
     }
     Page {
         Container {
@@ -169,9 +170,6 @@ NavigationPane {
                     ListScrollStateHandler {
                         onAtEndChanged: {
                             if (atEnd == true && theModel.isEmpty() == false) {
-                                theModel.append({
-                                    
-                                });
                                 console.log('end reached!')
                                 Tart.send('requestPage', {
                                         source: morePage,
@@ -184,6 +182,9 @@ NavigationPane {
                 function pushPage(pageToPush) {
                     console.log(pageToPush)
                     var page = eval(pageToPush).createObject();
+//                    page.title = details[0];
+//                    page.titlePoster = details[1];
+//                    page.titleTime = details[2];
                     topPage.push(page);
                     return page;
                 }

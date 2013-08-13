@@ -1,5 +1,7 @@
 Reader|YC
 =========
+app UUID: 425c7891-ab84-4cb4-a628-6cfeaec6fd1b
+
 
 Reader|YC is a native hackernews client built with Cascades and Python (using Blackberry-tart). Instead of using often unstable APIs, this app directly scrapes Hackernews for posts (and soon comments) to ensure maximum uptime. Currently the app is at V0.8, almost ready for release.
 
@@ -67,7 +69,7 @@ NOTE: The bars will be placed in the bin directory after being built.
 * ~~Comment caching for recent articles  V1.1~~
 	ETA: Never, idea scrapped
 
-* V1.2 
+* V1.2
         A tutorial that shows when first launched, this will add some flair to the app
         Collapsable comments, Searching for posts and comments ETA: End of Summer
 

@@ -11,17 +11,18 @@ TabbedPane {
     Tab {
         id: topPosts
         title: qsTr("Top Posts")
-
+        imageSource: "asset:///images/icons/ic_top.png"
         TopTab {
             id: top
             onCreationCompleted: {
                 top.whichPage = 'topPage'
             }
         }
-
     }
     Tab {
         title: qsTr("Ask HN")
+        imageSource: "asset:///images/icons/ic_ask.png"
+
         AskTab {
             id: ask
             onCreationCompleted: {
@@ -31,6 +32,7 @@ TabbedPane {
     }
     Tab {
         title: qsTr("Newest Posts")
+        imageSource: "asset:///images/icons/ic_new.png"
 
         NewTab {
             id: newest
@@ -41,6 +43,7 @@ TabbedPane {
     }
     Tab {
         title: qsTr("User Pages")
+        imageSource: "asset:///images/icons/ic_users.png"
 
         UserPage {
             id: userPage

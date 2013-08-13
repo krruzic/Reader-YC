@@ -6,14 +6,32 @@ Container {
     property alias time: timeLabel.text
     property alias indent: commmentContainer.leftPadding
     property alias text: commentBox.text
-    
+
     horizontalAlignment: HorizontalAlignment.Right
-    leftPadding: 20 + indent
-    rightPadding: 20.0
+    leftPadding: indent
+    rightPadding: 20
     topPadding: 5.0
     bottomPadding: 5.0
+    contextActions: [
+        ActionSet {
+            ActionItem {
+                title: "Hide children"
+                onTriggered: {
+                    var selectedItem = commentItem.ListItem.indexInSection;
+                    commentItem.ListItem.view.hideChildren(selectedItem);
+                }
+            }
+            ActionItem {
+                title: "Show children"
+                onTriggered: {
+                    var selectedItem = commentItem.ListItem.indexInSection;
+                    commentItem.ListItem.view.hideChildren(selectedItem);
+                }
+            }
+        }
+    ]
     Container {
-        leftPadding: 7
+        leftPadding: 6
         background: commentBackground.imagePaint
         Container {
             rightPadding: 10
@@ -26,6 +44,7 @@ Container {
                 textStyle.fontSize: FontSize.XSmall
                 text: "Madkristoff"
                 horizontalAlignment: horizontalAlignment.Left
+                textStyle.color: Color.Black
             }
             Divider {
                 opacity: 0.0
@@ -36,13 +55,21 @@ Container {
                 textStyle.fontSize: FontSize.XSmall
                 text: "4 minutes ago"
                 horizontalAlignment: horizontalAlignment.Right
+                textStyle.color: Color.Black
             }
         }
         Container {
             layout: AbsoluteLayout {
-            
+
             }
-            Divider {
+            Label {
+                layoutProperties: AbsoluteLayoutProperties {
+                    positionY: -37
+                }
+                text: "__________________________________________________________________________________________"
+                enabled: false
+                minWidth: 760
+                textStyle.color: Color.LightGray
             }
             TextArea {
                 id: commentBox
@@ -58,6 +85,7 @@ Container {
                 textStyle.fontSize: FontSize.XSmall
                 textStyle.color: Color.Black
             }
+
         }
         attachedObjects: [
             ImagePaintDefinition {

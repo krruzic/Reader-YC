@@ -18,10 +18,10 @@ class App(tart.Application):
 
 
     def onRequestPage(self, source, sentBy):
-        t = threading.Thread(target=self.worker_routine, args=(source, sentBy))
+        t = threading.Thread(target=self.story_routine, args=(source, sentBy))
         t.start()
 
-    def worker_routine(self, source, sentBy):
+    def story_routine(self, source, sentBy):
         print("source sent:" + source)
         print("sent by: " + sentBy)
         if source == 'Top Posts':

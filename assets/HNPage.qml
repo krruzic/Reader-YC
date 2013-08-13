@@ -11,20 +11,34 @@ Container {
             title: ListItemData.title
             subtitle: ListItemData.poster + " | " + ListItemData.points
             ActionItem {
+                imageSource: "asset:///images/icons/ic_comments.png"
                 title: "Open Comments"
                 onTriggered: {
                     console.log("Pushing comments page");
                     var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
                     console.log(selectedItem.title);
                     var page = hnItem.ListItem.view.pushPage('commentPage');
-                    console.log(selectedItem.commentsURL);
-                    page.commentLink = selectedItem.commentsURL;
                     page.title = selectedItem.title;
                     page.titlePoster = selectedItem.poster;
                     page.titleTime = selectedItem.timePosted + "| " + selectedItem.points;
+                    page.titleDomain = selectedItem.domain;
+                    page.commentLink = selectedItem.commentsURL;
+                    page.articleLink = selectedItem.articleURL;
                     Tart.send('requestComments', {
                             source: selectedItem.commentsURL
                     });
+                }
+            }
+            ActionItem {
+                title: "View Article"
+                imageSource: "asset:///images/icons/ic_article.png"
+                onTriggered: {
+                    console.log("Pushing Article page");
+                    var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
+                    console.log(selectedItem.title);
+                    var page = hnItem.ListItem.view.pushPage('webPage');
+                    page.text = selectedItem.title;
+                    page.htmlContent = selectedItem.articleURL;
                 }
             }
             InvokeActionItem {

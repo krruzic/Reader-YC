@@ -9,7 +9,7 @@ class HackerNewsCommentAPI:
     """
     numberOfComments = 0
     isTextPost = 0  # 0 means it is a text post. 1 means it isn't
-
+    dead = False # Keeps track of whether a post is dead or not, so we don't waste time getting the comments
     def getSource(self, url):
         """Returns the HTML source code for a URL.
         """
@@ -29,7 +29,7 @@ class HackerNewsCommentAPI:
         soup = BeautifulSoup(source)
         # for a in soup.findAll('a',href=True):
         #     linksFound.append(str(a['href']))
-        textStart = source.find('font') + 21
+        textStart = sourcNoe.find('font') + 21
         textEnd = source.find('</font', textStart)
         text = source[textStart:textEnd]
 
@@ -100,47 +100,50 @@ class HackerNewsCommentAPI:
         textStart = text_content.find('d><td>') + 6
         textEnd = text_content.find('</td', textStart)
         text = text_content[textStart:textEnd]
+        if (text == 'td><img height="1" src="s.gif" width="0"/>'):
+            self.dead = True
+            text = "[dead]"
         #print(text)
         return text
         #tart.send('addText', text=text)
 
 
-    def getArticle(self, source):
-        """Looks at the source,
-           and creates a list of the article details.
-        """
-        article_content = []
-        soup = BeautifulSoup(source)
+    # def getArticle(self, source):
+    #     """Looks at the source,
+    #        and creates a list of the article details.
+    #     """
+    #     article_content = []
+    #     soup = BeautifulSoup(source)
 
-        article_title = str(soup.find("td", {"class": "title"}))
-        article_details = soup.find("td", {"class": "subtext"})
+    #     article_title = str(soup.find("td", {"class": "title"}))
+    #     article_details = soup.find("td", {"class": "subtext"})
 
-        titleStart = re.findall(r"item.*>", article_title)
-        titleStart = titleStart[0].find('">') + 29
-        titleEnd = article_title.find('</a', titleStart)
-        title = article_title[titleStart:titleEnd]
+    #     titleStart = re.findall(r"item.*>", article_title)
+    #     titleStart = titleStart[0].find('">') + 29
+    #     titleEnd = article_title.find('</a', titleStart)
+    #     title = article_title[titleStart:titleEnd]
 
-        timeStart = str(article_details).find('a>') + 2
-        timeEnd = str(article_details).find('<a', timeStart) - 3
-        time = str(article_details)[timeStart:timeEnd]
+    #     timeStart = str(article_details).find('a>') + 2
+    #     timeEnd = str(article_details).find('<a', timeStart) - 3
+    #     time = str(article_details)[timeStart:timeEnd]
 
-        points = str(article_details.find("span", id=True))
-        pointsStart = points.find('>') + 1
-        pointsEnd = points.find('</', pointsStart)
-        points = points[pointsStart:pointsEnd]
+    #     points = str(article_details.find("span", id=True))
+    #     pointsStart = points.find('>') + 1
+    #     pointsEnd = points.find('</', pointsStart)
+    #     points = points[pointsStart:pointsEnd]
 
-        poster = str(article_details.find("a", href=True))
-        posterStart = poster.find('">') + 2
-        posterEnd = poster.find('</', posterStart)
-        poster = poster[posterStart:posterEnd]
+    #     poster = str(article_details.find("a", href=True))
+    #     posterStart = poster.find('">') + 2
+    #     posterEnd = poster.find('</', posterStart)
+    #     poster = poster[posterStart:posterEnd]
 
 
-        article_content.append(title)
-        article_content.append(points)
-        article_content.append(poster)
-        article_content.append(time)
-        #tart.send('articleDetails', details=article_content)
-        print(article_content)
+    #     article_content.append(title)
+    #     article_content.append(points)
+    #     article_content.append(poster)
+    #     article_content.append(time)
+    #     #tart.send('articleDetails', details=article_content)
+    #     print(article_content)
 
 
     def getComments(self, source):
@@ -210,10 +213,13 @@ class HackerNewsCommentAPI:
         """
 
         source = self.getSource(url)
+        text = self.getText(source)
         #articleInfo = self.getArticle(source)
         moreLink = self.getMoreLink(source)
-        comments = self.getComments(source)
-        text = self.getText(source)
+        if (self.dead != True):
+            comments = self.getComments(source)
+        else:
+            comments = []
 
         return text, comments, moreLink
 
