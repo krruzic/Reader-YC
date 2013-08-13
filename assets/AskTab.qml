@@ -7,28 +7,28 @@ NavigationPane {
     id: askPage
     property string whichPage: ""
     property string morePage: ""
+    property string errorText: ""
+    property string lastItemType: ""
     property bool busy: false
-
+    
+    
     onCreationCompleted: {
         Tart.register(askPage)
     }
-
+    
     onPopTransitionEnded: {
         page.destroy()
     }
-
-    //    function itemType(data) {
-    //        console.log('TEST');
-    //        return data.title ? '' : 'errorItem';
-    //    }
-
-    function onAddAskStories(data) {
+    
+    
+    function onAddNewStories(data) {
         var stories = data.stories;
         morePage = data.moreLink;
         //refreshEnabled = true;
         for (var i = 0; i < stories.length; i ++) {
             var story = stories[i];
             theModel.append({
+                    type: 'item',
                     title: story[1],
                     domain: story[2],
                     points: story[3],
@@ -37,35 +37,44 @@ NavigationPane {
                     commentCount: story[6],
                     articleURL: story[7],
                     commentsURL: story[8],
-                    isAsk: story[10]
-                });
+                    hnid: story[9],
+                    askPost: story[10]
+            });
         }
         busy = false;
+        titleBar.refreshEnabled = !busy;
     }
-
-    function onListError(data) {
-        errorLabel.visible = true;
-        errorLabel.text = data.text;
-        //        theModel.append({
-        //                text: data.text
-        //            });
-        busy = false;
+    
+    function onNewListError(data) {
+        var lastItem = theModel.size() - 1
+        console.log(lastItemType);
+        if (lastItemType == 'error') {
+            theModel.removeAt(lastItem)
+        }
+        theModel.append({
+                type: 'error',
+                title: data.text
+        });
+    busy = false;
+    titleBar.refreshEnabled = !busy;
     }
     Page {
         Container {
             HNTitleBar {
+                id: titleBar
                 text: "Reader|YC - Ask HN"
                 onRefreshPage: {
+                    busy = true;
                     Tart.send('requestPage', {
                             source: "Ask HN",
                             sentBy: whichPage
-                        });
-                    console.log("pressed")
-                    theModel.clear();
-                    errorLabel.text = "";
-                    errorLabel.visible = false;
-                    //refreshEnabled = false;
-                    busy = true;
+                    });
+                console.log("pressed")
+                theModel.clear();
+                errorLabel.text = "";
+                errorLabel.visible = false;
+                console.log(errorLabel.visible)
+                refreshEnabled = !busy;
                 }
                 onTouch: {
                     theList.scrollToPosition(0, 0x2)
@@ -77,98 +86,149 @@ NavigationPane {
                 textStyle.fontSize: FontSize.Small
                 textStyle.color: Color.Black
             }
-
-            Container {
-                Label {
-                    id: errorLabel
-                    text: ""
-                    visible: false
-                    multiline: true
-                    autoSize.maxLineCount: 2
-                    textStyle.fontSize: FontSize.Medium
-                    textStyle.fontStyle: FontStyle.Italic
-                    textStyle.color: Color.DarkGray
-                    textStyle.textAlign: TextAlign.Center
+            Label {
+                id: errorLabel
+                text: ""
+                visible: false
+                multiline: true
+                autoSize.maxLineCount: 2
+                textStyle.fontSize: FontSize.Medium
+                textStyle.fontStyle: FontStyle.Italic
+                textStyle.textAlign: TextAlign.Center
+            }
+            ActivityIndicator {
+                minHeight: 300
+                minWidth: 300
+                running: true
+                visible: busy
+            }
+            
+            ListView {
+                id: theList
+                dataModel: ArrayDataModel {
+                    id: theModel
                 }
-
-                ListView {
-                    id: theList
-                    dataModel: ArrayDataModel {
-                        id: theModel
-                    }
-                    listItemComponents: [
-                        ListItemComponent {
-                            type: ''
-                            HNPage {
-                                postTitle: ListItemData.title
-                                postDomain: ListItemData.domain
-                                postUsername: ListItemData.poster
-                                postTime: ListItemData.timePosted + "| " + ListItemData.points
-                                postComments: ListItemData.commentCount
-                                postArticle: ListItemData.articleURL
-                                askPost: ListItemData.isAsk
-                                commentSource: ListItemData.commentsURL
-                                onCommentsClicked: {
-                                    //console.log(ListItemData.commentsURL);
-                                    var page = commentPage.createObject();
-                                    askPage.push(page);
-                                    //page.test = ListItemData.commentsURL;
-                                }
-                            }
+                shortcuts: [
+                    Shortcut {
+                        key: "T"
+                        onTriggered: {
+                            theList.scrollToPosition(0, 0x2)
                         }
-                    ]
-                    onTriggered: {
-                        var selectedItem = dataModel.data(indexPath);
-                        console.log(selectedItem.isAsk);
-                        if (selectedItem.isAsk == "true") {
-                            console.log("Ask post");
-                            var page = commentPage.createObject();
-                            askPage.push(page);
-                            console.log(selectedItem.commentsURL)
-                            page.commentLink = selectedItem.commentsURL;
-                            page.title = selectedItem.title;
-                            page.titlePoster = selectedItem.poster;
-                            page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
-                            Tart.send('requestComments', {
-                                    source: selectedItem.commentsURL
+                    },
+                    Shortcut {
+                        key: "B"
+                        onTriggered: {
+                            theList.scrollToPosition(0, 0x2)
+                        }
+                    },
+                    Shortcut {
+                        key: "R"
+                        onTriggered: {
+                            if (!busy)
+                                refreshPage();
+                        }
+                    }
+                ]
+                function itemType(data, indexPath) {
+                    if (data.type != 'error') {
+                        lastItemType = 'item';
+                        return 'item';
+                    } else {
+                        lastItemType  = 'error';
+                        return 'error';
+                    }
+                }
+                listItemComponents: [
+                    ListItemComponent {
+                        type: 'item'
+                        HNPage {
+                            id: hnItem
+                            property string type: ListItemData.type
+                            postComments: ListItemData.commentCount
+                            postTitle: ListItemData.title
+                            postDomain: ListItemData.domain
+                            postUsername: ListItemData.poster
+                            postTime: ListItemData.timePosted + "| " + ListItemData.points
+                            postArticle: ListItemData.articleURL
+                            askPost: ListItemData.isAsk
+                            commentSource: ListItemData.commentsURL
+                            commentID: ListItemData.hnid
+                        }
+                    },
+                    ListItemComponent {
+                        type: 'error'
+                        Label {
+                            id: errorItem
+                            property string type: ListItemData.type
+                            text: ListItemData.title
+                            visible: true
+                            multiline: true
+                            autoSize.maxLineCount: 2
+                            textStyle.fontSize: FontSize.Medium
+                            textStyle.fontStyle: FontStyle.Italic
+                            textStyle.textAlign: TextAlign.Center
+                        }
+                    }
+                ]
+                onTriggered: {
+                    var selectedItem = dataModel.data(indexPath);
+                    console.log(selectedItem.isAsk);
+                    if (selectedItem.isAsk == "true") {
+                        console.log("Ask post");
+                        var page = commentPage.createObject();
+                        askPage.push(page);
+                        console.log(selectedItem.commentsURL)
+                        page.commentLink = selectedItem.commentsURL;
+                        page.title = selectedItem.title;
+                        page.titlePoster = selectedItem.poster;
+                        page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
+                        Tart.send('requestComments', {
+                                source: selectedItem.hnid,
+                        askPost: selectedItem.isAsk});
+                    } else {
+                        console.log('Item triggered. ' + selectedItem.articleURL);
+                        var page = webPage.createObject();
+                        askPage.push(page);
+                        page.htmlContent = selectedItem.articleURL;
+                        page.text = selectedItem.title;
+                    }
+                }
+                attachedObjects: [
+                    ListScrollStateHandler {
+                        onAtEndChanged: {
+                            if (atEnd == true && theModel.isEmpty() == false) {
+                                console.log('end reached!')
+                                Tart.send('requestPage', {
+                                        source: morePage,
+                                        sentBy: whichPage
                                 });
-                        } else {
-                            console.log('Item triggered. ' + selectedItem.articleURL);
-                            var page = webPage.createObject();
-                            askPage.push(page);
-                            page.htmlContent = selectedItem.articleURL;
-                            page.text = selectedItem.title;
-                        }
-                    }
-                    attachedObjects: [
-                        ListScrollStateHandler {
-                            onAtEndChanged: {
-                                if (atEnd == true && theModel.isEmpty() == false) {
-                                    console.log('end reached!')
-                                    Tart.send('requestPage', {
-                                            source: morePage,
-                                            sentBy: whichPage
-                                        });
-                                    busy = true;
-                                }
                             }
                         }
-                    ]
+                    }
+                ]
+                function pushPage(pageToPush) {
+                    console.log(pageToPush)
+                    var page = eval(pageToPush).createObject();
+                    //                    page.title = details[0];
+                    //                    page.titlePoster = details[1];
+                    //                    page.titleTime = details[2];
+                    askPage.push(page);
+                    return page;
                 }
             }
-            attachedObjects: [
-                ApplicationInfo {
-                    id: appInfo
-                },
-                ComponentDefinition {
-                    id: webPage
-                    source: "webArticle.qml"
-                },
-                ComponentDefinition {
-                    id: commentPage
-                    source: "CommentPage.qml"
-                }
-            ]
         }
+        attachedObjects: [
+            ApplicationInfo {
+                id: appInfo
+            },
+            ComponentDefinition {
+                id: webPage
+                source: "webArticle.qml"
+            },
+            ComponentDefinition {
+                id: commentPage
+                source: "CommentPage.qml"
+            }
+        ]
     }
 }

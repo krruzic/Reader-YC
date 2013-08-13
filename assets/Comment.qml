@@ -6,7 +6,7 @@ Container {
     property alias time: timeLabel.text
     property alias indent: commmentContainer.leftPadding
     property alias text: commentBox.text
-
+    
     horizontalAlignment: HorizontalAlignment.Right
     leftPadding: indent
     rightPadding: 20
@@ -30,7 +30,7 @@ Container {
             }
             Divider {
                 opacity: 0.0
-
+            
             }
             Label {
                 id: timeLabel
@@ -42,7 +42,7 @@ Container {
         }
         Container {
             layout: AbsoluteLayout {
-
+            
             }
             Label {
                 layoutProperties: AbsoluteLayoutProperties {
@@ -50,12 +50,13 @@ Container {
                 }
                 text: "__________________________________________________________________________________________"
                 enabled: false
-                minWidth: 750
+                minWidth: 760
                 textStyle.color: Color.LightGray
             }
             TextArea {
+                translationY: -12
                 id: commentBox
-                text: "This is a test comment, This is a &gt;test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, I know that it's short...."
+                text: "This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, I know that it's short...."
                 editable: false
                 backgroundVisible: true
                 inputMode: TextAreaInputMode.Text
@@ -68,7 +69,7 @@ Container {
                 textStyle.color: Color.Black
                 bottomPadding: 30
             }
-
+        
         }
         attachedObjects: [
             ImagePaintDefinition {

@@ -10,7 +10,6 @@ NavigationPane {
     property string errorText: ""
     property string lastItemType: ""
     property bool busy: false
-    
 
     onCreationCompleted: {
         Tart.register(topPage)
@@ -20,7 +19,6 @@ NavigationPane {
         page.destroy()
     }
 
-
     function onAddTopStories(data) {
         var stories = data.stories;
         morePage = data.moreLink;
@@ -28,7 +26,7 @@ NavigationPane {
         for (var i = 0; i < stories.length; i ++) {
             var story = stories[i];
             theModel.append({
-                	type: 'item',
+                    type: 'item',
                     title: story[1],
                     domain: story[2],
                     points: story[3],
@@ -42,7 +40,7 @@ NavigationPane {
                 });
         }
         busy = false;
-        titleBar.refreshEnabled = !busy;
+        titleBar.refreshEnabled = ! busy;
     }
 
     function onTopListError(data) {
@@ -52,17 +50,17 @@ NavigationPane {
             theModel.removeAt(lastItem)
         }
         theModel.append({
-            	type: 'error',
+                type: 'error',
                 title: data.text
             });
         busy = false;
-        titleBar.refreshEnabled = !busy;
+        titleBar.refreshEnabled = ! busy;
     }
     Page {
         Container {
             HNTitleBar {
                 id: titleBar
-                text: "Reader|YC - Top Posts"
+                text: "Reader|YC - Top"
                 onRefreshPage: {
                     busy = true;
                     Tart.send('requestPage', {
@@ -74,7 +72,7 @@ NavigationPane {
                     errorLabel.text = "";
                     errorLabel.visible = false;
                     console.log(errorLabel.visible)
-                    refreshEnabled = !busy;
+                    refreshEnabled = ! busy;
                 }
                 onTouch: {
                     theList.scrollToPosition(0, 0x2)
@@ -124,8 +122,8 @@ NavigationPane {
                     Shortcut {
                         key: "R"
                         onTriggered: {
-                            if (!busy)
-                            	refreshPage();
+                            if (! busy)
+                                refreshPage();
                         }
                     }
                 ]
@@ -134,7 +132,7 @@ NavigationPane {
                         lastItemType = 'item';
                         return 'item';
                     } else {
-                        lastItemType  = 'error';
+                        lastItemType = 'error';
                         return 'error';
                     }
                 }
@@ -183,8 +181,9 @@ NavigationPane {
                         page.titlePoster = selectedItem.poster;
                         page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
                         Tart.send('requestComments', {
-                                source: selectedItem.commentID
-                        });
+                                source: selectedItem.hnid,
+                                askPost: selectedItem.isAsk
+                            });
                     } else {
                         console.log('Item triggered. ' + selectedItem.articleURL);
                         var page = webPage.createObject();
@@ -209,9 +208,9 @@ NavigationPane {
                 function pushPage(pageToPush) {
                     console.log(pageToPush)
                     var page = eval(pageToPush).createObject();
-//                    page.title = details[0];
-//                    page.titlePoster = details[1];
-//                    page.titleTime = details[2];
+                    //                    page.title = details[0];
+                    //                    page.titlePoster = details[1];
+                    //                    page.titleTime = details[2];
                     topPage.push(page);
                     return page;
                 }

@@ -10,7 +10,7 @@ TabbedPane {
 
     Tab {
         id: topPosts
-        title: qsTr("Top Posts")
+        title: qsTr("Top")
         imageSource: "asset:///images/icons/ic_top.png"
         TopTab {
             id: top
@@ -31,7 +31,7 @@ TabbedPane {
         }
     }
     Tab {
-        title: qsTr("Newest Posts")
+        title: qsTr("New")
         imageSource: "asset:///images/icons/ic_new.png"
 
         NewTab {

@@ -65,10 +65,10 @@ class App(tart.Application):
 
 
 
-    def onRequestComments(self, source):
+    def onRequestComments(self, source, askPost):
         print("source sent:" + source)
         try:
-            HC.getPage(source)
+            HC.getPage(source, askPost)
         except urllib.error.URLError:
             tart.send('commentError', text="Error getting comments. Check your connection \nand try again")
             tart.send('addText', text='')

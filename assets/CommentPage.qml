@@ -22,7 +22,7 @@ Page {
     }
 
     function onAddComments(data) {
-        data.comment.replace('__BR__', '\n')
+        //data.comment.replace('__BR__', '\n')
         commentModel.append({
                 poster: data.comment["username"],
                 timePosted: data.comment["time"],

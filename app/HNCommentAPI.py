@@ -45,6 +45,7 @@ class HackerNewsCommentAPI:
             #add the level key so you can keep track of the original level
             for c in comments:
                     c['level'] = level
+                    c['comment'] = c['comment'].replace('__BR__','\n')
                     #removes the childs from the item (important)
                     childs = c.pop('children', [])
                     #adds the item to the result
@@ -55,22 +56,25 @@ class HackerNewsCommentAPI:
 
             return res
 
-    def getPage(self, source):
+    def getPage(self, source, isAsk):
         """Gets the comments and text of the post
         """
 
-        #textURL = 'http://news.ycombinator.com/item?id=%s' % source
+        textURL = 'http://news.ycombinator.com/item?id=%s' % source
         commentsURL = 'https://hndroidapi.appspot.com/nestedcomments/format/json/id/%s' % source
 
-        #text = self.getText(textURL)
+        if (isAsk == "true"):
+            text = self.getText(textURL)
 
         print("curling page: " + commentsURL)
         with urllib.request.urlopen(commentsURL) as url:
             source = url.read()
         print("page curled")
+
         decoded = source.decode("utf-8")
         toFlatten = json.loads(decoded)
+        print("Flattening comments")
         comments = self.flatten(toFlatten['items'])
-
+        print("Sending comments")
         for comment in comments:
             tart.send('addComments', comment=comment)

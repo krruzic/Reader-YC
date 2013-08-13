@@ -24,9 +24,11 @@ Container {
                     page.titleDomain = selectedItem.domain;
                     page.commentLink = selectedItem.commentsURL;
                     page.articleLink = selectedItem.articleURL;
-                    console.log(selectedItem.hnid);
+                    
+                    console.log(selectedItem.isAsk);
                     Tart.send('requestComments', {
-                            source: selectedItem.hnid
+                            source: selectedItem.hnid,
+                            askPost: selectedItem.isAsk
                     });
                 }
             }
@@ -105,8 +107,8 @@ Container {
         visible: true
         id: mainContainer
         preferredWidth: 730
-        preferredHeight: 135
-        maxHeight: 135
+        preferredHeight: 155
+        maxHeight: 155
         maxWidth: 730
         background: itemBackground.imagePaint
         layout: StackLayout {
@@ -131,44 +133,42 @@ Container {
                 textStyle.color: Color.Black
             }
             Container {
+                translationY: -5
+                topMargin: 0
+                leftMargin: 1
+                rightPadding: 15
+                clipContentToBounds: false 
                 layout: StackLayout {
                     orientation: LayoutOrientation.LeftToRight
                 }
-                
-                clipContentToBounds: false
                 Label {
                     id: labelPostDomain
                     layoutProperties: StackLayoutProperties {
-                        spaceQuota: 3
+                        spaceQuota: 2
                     }
-                    topMargin: 1
-                    bottomMargin: 1
                     translationX: 10
-                    text: "http://www.dailymail.com/"
+                    text: "http://dailymail.co.uk/"
                     multiline: false
-                    textStyle.fontSize: FontSize.XSmall
-                    textStyle.color: Color.create("#ff69696c")
-                    textStyle.fontStyle: FontStyle.Italic
+                    textStyle.fontSize: FontSize.Small
+                    textStyle.color: Color.Gray
+                    horizontalAlignment: HorizontalAlignment.Left
+                    textStyle.textAlign: TextAlign.Left
                 }
+                
                 Label {
                     layoutProperties: StackLayoutProperties {
                         spaceQuota: 1
                     }
-                    topMargin: 1
-                    bottomMargin: 1
-                    translationX: -10
-                    maxWidth: 400.0
                     text: postComments + " comments"
                     multiline: false
-                    textStyle.fontSize: FontSize.XSmall
-                    textStyle.color: Color.create("#ff69696c")
-                    textStyle.fontStyle: FontStyle.Italic
-                
+                    textStyle.fontSize: FontSize.Small
+                    textStyle.color: Color.Gray
+                    horizontalAlignment: HorizontalAlignment.Right
+                    textStyle.textAlign: TextAlign.Right
                 }
             }
             Container {
-                translationY: -5
-                topMargin: 0
+                topMargin: 10
                 leftMargin: 1
                 rightPadding: 15
                 layout: StackLayout {
