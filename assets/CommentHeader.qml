@@ -7,6 +7,7 @@ Container {
     rightPadding: 19
     property alias title: labelPostTitle.text
     property alias poster: labelPostTitle.text
+    property alias domain: labelPostDomain.text
     property alias text: textBox.text
     property alias articleTime: labelTimePosted.text
     
@@ -57,6 +58,18 @@ Container {
                     multiline: true
                     autoSize.maxLineCount: 3
                 
+                }
+                Label {
+                    id: labelPostDomain
+                    topMargin: 1
+                    bottomMargin: 1
+                    translationX: 10
+                    maxWidth: 500.0
+                    text: "http://www.dailymail.com/"
+                    multiline: false
+                    textStyle.fontSize: FontSize.Small
+                    textStyle.color: Color.create("#ff69696c")
+                    textStyle.fontStyle: FontStyle.Italic
                 }
                 Container {
                     leftMargin: 1
