@@ -38,7 +38,7 @@ NavigationPane {
                     articleURL: story[7],
                     commentsURL: story[8],
                     hnid: story[9],
-                    askPost: story[10]
+                    isAsk: story[10]
             });
         }
         busy = false;

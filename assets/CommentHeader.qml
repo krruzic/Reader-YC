@@ -2,21 +2,26 @@ import bb.cascades 1.0
 import "tart.js" as Tart
 Container {
     id: headerPane
+    leftPadding: 19
+    rightPadding: 19
     property alias title: labelPostTitle.text
-    property alias poster: labelUsername.text
+    property alias poster: labelPostTitle.text
     property alias text: textBox.text
-    property alias domain: labelPostDomain.text
     property alias articleTime: labelTimePosted.text
-    onCreationCompleted: {
-        Tart.register(headerPane)
-    }
-    function onAddText(data) {
-        console.log(data.text)
-        text = data.text
-    }
+    
     Container {
         bottomPadding: 35
         background: itemBackground.imagePaint
+        
+        onCreationCompleted: {
+            Tart.register(headerPane)
+        }
+        
+        function onAddText(data) {
+            console.log(data.text)
+            textPost = data.text
+        }
+        
         attachedObjects: [
             ImagePaintDefinition {
                 id: itemBackground
@@ -28,7 +33,7 @@ Container {
                 repeatPattern: RepeatPattern.XY
             }
         ]
-
+        
         Container {
             horizontalAlignment: horizontalAlignment.Center
             id: mainContainer
@@ -50,19 +55,7 @@ Container {
                     textStyle.color: Color.Black
                     multiline: true
                     autoSize.maxLineCount: 3
-
-                }
-                Label {
-                    id: labelPostDomain
-                    topMargin: 1
-                    bottomMargin: 1
-                    translationX: 10
-                    maxWidth: 500.0
-                    text: "http://www.dailymail.com/"
-                    multiline: false
-                    textStyle.fontSize: FontSize.Small
-                    textStyle.color: Color.create("#ff69696c")
-                    textStyle.fontStyle: FontStyle.Italic
+                
                 }
                 Container {
                     leftMargin: 1
@@ -83,7 +76,7 @@ Container {
                         horizontalAlignment: HorizontalAlignment.Left
                         textStyle.textAlign: TextAlign.Left
                     }
-
+                    
                     Label {
                         id: labelTimePosted
                         layoutProperties: StackLayoutProperties {
@@ -99,20 +92,32 @@ Container {
                 }
             }
         }
+        
         Container {
-            background: textBackground.imagePaint
-            TextArea {
-                id: textBox
-                text: ""
-                onTextChanging: {
-                    if (text != "")
-                    	visible = true;
+            leftPadding: 19
+            rightPadding: 19
+            Container {
+                
+                background: textBackground.imagePaint
+                TextArea {
+                    onTouch: {
+                        if (maxHeight != 100)
+                            maxHeight = 100;
+                        else 
+                            maxHeight = Infinity.MAX_VALUE;
+                    }
+                    id: textBox
+                    text: ""
+                    onTextChanging: {
+                        if (text != "")
+                            visible = true;
+                    }
+                    visible: false
+                    editable: false
+                    focusHighlightEnabled: false
+                    textFormat: TextFormat.Html
+                    textStyle.color: Color.Black
                 }
-                visible: false
-                editable: false
-                focusHighlightEnabled: false
-                textFormat: TextFormat.Html
-                textStyle.color: Color.Black
             }
         }
     }
