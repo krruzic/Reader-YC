@@ -6,18 +6,18 @@ Container {
     leftPadding: 19
     rightPadding: 19
     property alias title: labelPostTitle.text
-    property alias poster: labelPostTitle.text
+    property alias poster: labelUsername.text
     property alias domain: labelPostDomain.text
     property alias text: textBox.text
     property alias articleTime: labelTimePosted.text
-    
+    onCreationCompleted: {
+        Tart.register(headerPane)
+    }
     Container {
         bottomPadding: 35
         background: itemBackground.imagePaint
         
-        onCreationCompleted: {
-            Tart.register(headerPane)
-        }
+
         
         function onAddText(data) {
             console.log(data.text)

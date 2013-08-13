@@ -24,7 +24,7 @@ Container {
                     page.titleDomain = selectedItem.domain;
                     page.commentLink = selectedItem.commentsURL;
                     page.articleLink = selectedItem.articleURL;
-                    
+
                     console.log(selectedItem.isAsk);
                     Tart.send('requestComments', {
                             source: selectedItem.hnid,
@@ -54,6 +54,20 @@ Container {
                 onTriggered: {
                     var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
                     data = selectedItem.title + "\n" + selectedItem.articleURL + "\n" + " Shared using Reader|YC "
+                }
+            }
+            InvokeActionItem {
+                title: "Open in Browser"
+                imageSource: "asset:///images/icons/ic_open_link.png"
+                id: browserQuery
+                query {
+                    invokeTargetId: "sys.browser"
+                    invokeActionId: "bb.action.OPEN"
+                    uri: ""
+                }
+                onTriggered: {
+                    var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
+                    browserQuery.query.uri = selectedItem.articleURL;
                 }
             }
         }
@@ -121,7 +135,7 @@ Container {
             rightMargin: 0
             bottomMargin: 0
             bottomPadding: 20
-            
+
             Label {
                 rightMargin: 42
                 id: labelPostTitle
@@ -137,7 +151,7 @@ Container {
                 topMargin: 0
                 leftMargin: 1
                 rightPadding: 15
-                clipContentToBounds: false 
+                clipContentToBounds: false
                 layout: StackLayout {
                     orientation: LayoutOrientation.LeftToRight
                 }
@@ -154,7 +168,7 @@ Container {
                     horizontalAlignment: HorizontalAlignment.Left
                     textStyle.textAlign: TextAlign.Left
                 }
-                
+
                 Label {
                     layoutProperties: StackLayoutProperties {
                         spaceQuota: 1
@@ -186,7 +200,7 @@ Container {
                     horizontalAlignment: HorizontalAlignment.Left
                     textStyle.textAlign: TextAlign.Left
                 }
-                
+
                 Label {
                     id: labelTimePosted
                     layoutProperties: StackLayoutProperties {

@@ -9,7 +9,7 @@ NavigationPane {
     property string morePage: ""
     property string errorText: ""
     property string lastItemType: ""
-    property bool busy: false
+    property bool busy: true 
 
     onCreationCompleted: {
         Tart.register(topPage)
@@ -60,7 +60,7 @@ NavigationPane {
         Container {
             HNTitleBar {
                 id: titleBar
-                text: "Reader|YC - Top"
+                text: "Reader|YC - Top Posts"
                 onRefreshPage: {
                     busy = true;
                     Tart.send('requestPage', {
@@ -195,7 +195,7 @@ NavigationPane {
                 attachedObjects: [
                     ListScrollStateHandler {
                         onAtEndChanged: {
-                            if (atEnd == true && theModel.isEmpty() == false) {
+                            if (atEnd == true && theModel.isEmpty() == false && morePage != "") {
                                 console.log('end reached!')
                                 Tart.send('requestPage', {
                                         source: morePage,

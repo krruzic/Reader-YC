@@ -14,8 +14,7 @@ class App(tart.Application):
     """
 
     def onUiReady(self):
-        pass
-        # self.onRequestPage("Top Posts", "topPage")
+        self.onRequestPage("Top Posts", "topPage")
         # self.onRequestPage("Ask HN", "askPage")
         # self.onRequestPage("Newest Posts", "newestPage")
 

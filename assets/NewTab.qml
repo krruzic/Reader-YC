@@ -64,7 +64,7 @@ NavigationPane {
                 onRefreshPage: {
                     busy = true;
                     Tart.send('requestPage', {
-                            source: "Newest Posts",
+                            source: "Newest",
                             sentBy: whichPage
                         });
                     console.log("pressed")

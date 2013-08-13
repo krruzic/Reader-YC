@@ -22,7 +22,6 @@ Page {
     }
 
     function onAddComments(data) {
-        //data.comment.replace('__BR__', '\n')
         commentModel.append({
                 poster: data.comment["username"],
                 timePosted: data.comment["time"],
@@ -32,7 +31,6 @@ Page {
         busy = false;
     }
     actions: [
-
         InvokeActionItem {
             ActionBar.placement: ActionBarPlacement.OnBar
             title: "Share Comments"
@@ -54,19 +52,22 @@ Page {
                 page.htmlContent = articleLink;
                 page.text = commentPane.title;
             }
+        },
+        InvokeActionItem {
+            title: "Open in Browser"
+            imageSource: "asset:///images/icons/ic_open_link.png"
+            ActionBar.placement: ActionBarPlacement.InOverflow
+            id: browserQuery
+            query {
+                mimeType: "text/plain"
+                invokeTargetId: "sys.browser"
+                invokeActionId: "bb.action.OPEN"
+                uri: ""
+            }
+            onTriggered: {
+                browserQuery.query.uri = commentLink;
+            }
         }
-    //        },
-    //        InvokeActionItem {
-    //            ActionBar.placement: ActionBarPlacement.OnBar
-    //            title: "Open in Browser"
-    //            query {
-    //                mimeType: "sys.browser"
-    //                invokeActionId: "bb.action.OPEN"
-    //            }
-    //            onTriggered: {
-    //
-    //            }
-    //        }
     ]
 
     Container {
