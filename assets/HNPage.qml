@@ -57,13 +57,13 @@ Container {
                 }
             }
 //            InvokeActionItem {
+//                id: browserQuery
 //                title: "Open in Browser"
 //                imageSource: "asset:///images/icons/ic_open_link.png"
-//                id: browserQuery
+//                ActionBar.placement: ActionBarPlacement.OnBar
 //                query {
-//                    mimeType: "text/txt"
-//                    invokeTargetId: "sys.browser"
-//                    invokeActionId: "bb.action.OPEN"
+//                    invokeActionId: 'bb.action.OPEN'
+//                    uri: ""
 //                }
 //                onTriggered: {
 //                    var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);

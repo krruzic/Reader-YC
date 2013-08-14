@@ -54,19 +54,13 @@ Page {
             }
         }
 //        InvokeActionItem {
+//            id: browserQuery
 //            title: "Open in Browser"
 //            imageSource: "asset:///images/icons/ic_open_link.png"
 //            ActionBar.placement: ActionBarPlacement.InOverflow
-//            id: browserQuery
 //            query {
-//                mimeType: "text/plain"
-//                invokeTargetId: "sys.browser"
-//                invokeActionId: "bb.action.OPEN"
-//                uri: ""
-//            }
-//            onTriggered: {
-//                browserQuery.query.uri = commentLink;
-//                browserQuery.query.updateQuery();
+//                invokeActionId: 'bb.action.OPEN'
+//                uri: commentLink
 //            }
 //        }
     ]

@@ -39,8 +39,7 @@ Page {
 //            ActionBar.placement: ActionBarPlacement.InOverflow
 //            id: browserQuery
 //            query {
-//                invokeTargetId: "sys.browser"
-//                invokeActionId: "bb.action.OPEN"
+//                invokeActionId: 'bb.action.OPEN'
 //                uri: ""
 //            }
 //            onTriggered: {

@@ -2,6 +2,8 @@ import urllib.request
 from bs4 import BeautifulSoup
 import re
 
+import tart
+
 class HackerNewsUserAPI:
 
     def getSource(self, url):
@@ -19,8 +21,13 @@ class HackerNewsUserAPI:
            and returns the account details
         """
         source = self.getSource(source)
-        if (str(source) == "b'No such user.'"):
-            raise ValueError
+        if (source.decode('ascii') == "No such user."):
+            tart.send('userError', text="That user doesn't exist, \nusernames are case sensitive")
+            return []
+        if (source.decode('ascii') == "We've limited requests for this url."):
+            print('TEST')
+            tart.send('userError', text="HN has limited userpage requests from your IP.\nWait a bit and try again.")
+            return []
         soup = BeautifulSoup(source)
 
         details = [] # List of details extracted from the source

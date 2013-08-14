@@ -115,7 +115,7 @@ class HackerNewsCommentAPI:
         """Gets the comments and text of the post
         """
         workingDir = os.getcwd() + '/data/cache/'
-        textURL = 'http://news.ycombinator.com/item?id=%s' % source
+        textURL = 'https://news.ycombinator.com/item?id=%s' % source
         commentsURL = 'http://hndroidapi.appspot.com/nestedcomments/format/json/id/%s' % source
 
         cacheList = self.checkCache(source)

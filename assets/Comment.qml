@@ -2,12 +2,12 @@ import bb.cascades 1.0
 import "tart.js" as Tart
 Container {
     id: commmentContainer
-    visible: true 
+    visible: true
     property alias poster: posterLabel.text
     property alias time: timeLabel.text
     property alias indent: commmentContainer.leftPadding
     property alias text: commentBox.text
-    
+
     horizontalAlignment: HorizontalAlignment.Right
     leftPadding: indent
     rightPadding: 20
@@ -51,7 +51,6 @@ Container {
 //                    commentItem.ListItem.view.hideChildren(selectedItem);
 //                }
 //            }
-
         }
     ]
     Container {
@@ -72,7 +71,7 @@ Container {
             }
             Divider {
                 opacity: 0.0
-            
+
             }
             Label {
                 id: timeLabel
@@ -84,7 +83,7 @@ Container {
         }
         Container {
             layout: AbsoluteLayout {
-            
+
             }
             Label {
                 layoutProperties: AbsoluteLayoutProperties {
@@ -112,7 +111,7 @@ Container {
                 bottomPadding: 30
                 maximumLength: 10000000
             }
-        
+
         }
         attachedObjects: [
             ImagePaintDefinition {

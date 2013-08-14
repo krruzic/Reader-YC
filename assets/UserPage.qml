@@ -14,10 +14,9 @@ Page {
     property string submitted: ""
     property string comments: ""
     property int submitCount: 0
-    property int timerStart: 0
     property bool busy: false
 
-	function onUserInfoReceived(data) {
+    function onUserInfoReceived(data) {
         busy = false;
         console.log("User info recieved!")
         var results = data.details;
@@ -31,7 +30,7 @@ Page {
     }
 
     function onUserError(data) {
-        searchIndicator.visible = false;
+        busy = false;
         errorLabel.visible = true;
         errorLabel.text = data.text
     }
@@ -46,7 +45,6 @@ Page {
             onRefreshPage: {
                 searchField.visible = true;
                 slideSearch.play();
-                timerStart = Date.now()
             }
         }
         Container {
@@ -84,7 +82,7 @@ Page {
                                 source: text
                             });
                     } else if (throttleTimer.running == true) {
-                        busy = false 
+                        busy = false
                         errorLabel.visible = true;
                         errorLabel.text = "You're doing that too often, try again in " + (timerStart);
                     }
@@ -118,7 +116,6 @@ Page {
             Label {
                 id: errorLabel
                 multiline: true
-
             }
             Container {
                 id: userDetails

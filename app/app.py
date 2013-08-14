@@ -78,13 +78,14 @@ class App(tart.Application):
         source = source.strip() # strips leading and trailing whitespaces
         source = source.split(' ', 1)[0] # Takes just the first word passed
         try:
-            detailList = HU.getUserPage("http://news.ycombinator.com/user?id=" + source)
-            print(detailList)
-            tart.send('userInfoReceived', details=detailList)
-        except ValueError:
-            tart.send('userError', text="That user doesn't exist, \nusernames are case sensitive")
+            detailList = HU.getUserPage("https://news.ycombinator.com/user?id=" + source)
+            if (len(detailList) > 1):
+                tart.send('userInfoReceived', details=detailList)
         except urllib.error.URLError:
             tart.send('userError', text="Error getting user page, Check your connection \nand try again")
+
+    def onDownloadInvite(self):
+        rc = bbmsp_send_download_invitation()
 
 
 # class utility(object):
