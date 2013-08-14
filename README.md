@@ -69,9 +69,6 @@ NOTE: The bars will be placed in the bin directory after being built.
 * Favouriting posts for later viewing from a 'Favourites' tab, as well as view user pages V1.1
 	ETA: Week after V1.0
 
-* ~~Comment caching for recent articles  V1.1~~
-	ETA: Never, idea scrapped
-
 * V1.2
     A tutorial that shows when first launched, this will add some flair to the app
     Collapsable comments, Searching for posts and comments ETA: End of Summer
