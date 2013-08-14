@@ -52,22 +52,23 @@ Page {
                 page.htmlContent = articleLink;
                 page.text = commentPane.title;
             }
-        },
-        InvokeActionItem {
-            title: "Open in Browser"
-            imageSource: "asset:///images/icons/ic_open_link.png"
-            ActionBar.placement: ActionBarPlacement.InOverflow
-            id: browserQuery
-            query {
-                mimeType: "text/plain"
-                invokeTargetId: "sys.browser"
-                invokeActionId: "bb.action.OPEN"
-                uri: ""
-            }
-            onTriggered: {
-                browserQuery.query.uri = commentLink;
-            }
         }
+//        InvokeActionItem {
+//            title: "Open in Browser"
+//            imageSource: "asset:///images/icons/ic_open_link.png"
+//            ActionBar.placement: ActionBarPlacement.InOverflow
+//            id: browserQuery
+//            query {
+//                mimeType: "text/plain"
+//                invokeTargetId: "sys.browser"
+//                invokeActionId: "bb.action.OPEN"
+//                uri: ""
+//            }
+//            onTriggered: {
+//                browserQuery.query.uri = commentLink;
+//                browserQuery.query.updateQuery();
+//            }
+//        }
     ]
 
     Container {
@@ -78,11 +79,17 @@ Page {
             rightPadding: 19
             id: commentHeader
         }
-        ActivityIndicator {
-            minHeight: 300
-            minWidth: 300
-            running: true
+        Container {
             visible: busy
+            rightPadding: 220
+            leftPadding: 220
+            topPadding: 80
+            ActivityIndicator {
+                minHeight: 300
+                minWidth: 300
+                running: true
+                visible: busy
+            }
         }
         ListView {
             id: commentList
@@ -93,11 +100,10 @@ Page {
             listItemComponents: [
                 ListItemComponent {
                     type: ''
-
                     Comment {
+                        id: commentItem
                         leftPadding: 19
                         rightPadding: 19
-                        id: commentItem
                         poster: ListItemData.poster
                         time: ListItemData.timePosted
                         indent: ListItemData.indent
@@ -108,10 +114,11 @@ Page {
             ]
             function hideChildren(index) {
                 for (var i = index + 1; i < commentModel.size() - 1; i ++) {
+                    var sentItem = commentModel.value(index)
                     var currentItem = commentModel.value(i)
-                    console.log(index.indent)
-                    if (currentItem.indent > index.indent) {
-                        currentItem.visible = false;
+                    console.log(currentItem.indent)
+                    if (currentItem.indent > sentItem.indent) {
+                        currentItem.commentContainer.visible = false;
                     } else {
                         break;
                     }
@@ -119,14 +126,21 @@ Page {
             }
             function showChildren(index) {
                 for (var i = index + 1; i < commentModel.size() - 1; i ++) {
+                    var sentItem = commentModel.value(index)
                     var currentItem = commentModel.value(i)
                     console.log(currentItem.indent)
-                    if (currentItem.indent > index.indent) {
-                        currentItem.visible = true;
+                    if (currentItem.indent > sentItem.indent) {
+                        currentItem.commentContatiner.visible = true;
                     } else {
                         break;
                     }
                 }
+            }
+            function pushPage(pageToPush) {
+                console.log(pageToPush)
+                var page = eval(pageToPush).createObject();
+                topPage.push(page);
+                return page;
             }
             onTriggered: {
                 console.log("Comment triggered!")

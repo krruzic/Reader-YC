@@ -15,9 +15,10 @@ Page {
     property string comments: ""
     property int submitCount: 0
     property int timerStart: 0
+    property bool busy: false
 
-    function onUserInfoReceived(data) {
-        searchIndicator.visible = false;
+	function onUserInfoReceived(data) {
+        busy = false;
         console.log("User info recieved!")
         var results = data.details;
         userDetails.visible = true;
@@ -76,14 +77,14 @@ Page {
                 input.onSubmitted: {
                     submitCount += 1;
                     errorLabel.visible = false;
-                    searchIndicator.visible = true;
+                    busy = true;
                     userDetails.visible = false;
                     if (throttleTimer.running == false) {
                         Tart.send('requestUserPage', {
                                 source: text
                             });
                     } else if (throttleTimer.running == true) {
-                        searchIndicator.visible = false;
+                        busy = false 
                         errorLabel.visible = true;
                         errorLabel.text = "You're doing that too often, try again in " + (timerStart);
                     }
@@ -98,18 +99,21 @@ Page {
                         target: searchField
                         fromX: -600.0
                         toX: 0.0
-
                     }
                 ]
             }
 
-            ActivityIndicator {
-                minHeight: 500
-                minWidth: 500
-                id: searchIndicator
-                running: true
-                visible: false
-                horizontalAlignment: horizontalAlignment.Center
+            Container {
+                visible: busy
+                rightPadding: 220
+                leftPadding: 220
+                topPadding: 80
+                ActivityIndicator {
+                    minHeight: 300
+                    minWidth: 300
+                    running: true
+                    visible: busy
+                }
             }
             Label {
                 id: errorLabel
@@ -119,12 +123,23 @@ Page {
             Container {
                 id: userDetails
                 visible: false
-                Label {
-                    text: username + karma + " points"
-                    textFormat: TextFormat.Plain
-                    textStyle.fontSize: FontSize.XLarge
-                    textStyle.textAlign: TextAlign.Center
-                    bottomMargin: 25
+                Container {
+                    layout: StackLayout {
+                        orientation: LayoutOrientation.LeftToRight
+                    }
+                    Label {
+                        visible: userDetails.visible
+                        text: username
+                    }
+                    Divider {
+                        opacity: 0
+                    }
+                    Label {
+                        visible: userDetails.visible
+                        text: karma + " points"
+                        textFormat: TextFormat.Plain
+                        textStyle.textAlign: TextAlign.Center
+                    }
                 }
                 Container {
                     id: aboutText

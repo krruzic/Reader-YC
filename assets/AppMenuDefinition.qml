@@ -23,21 +23,24 @@ MenuDefinition {
             id: aboutSheet
             Page {
                 Container {
-
                     HNTitleBar {
                         id: aboutTitleBar
                         buttonImage: "asset:///images/close.png"
+                        buttonPressedImage: "asset:///images/close.png"
                         text: "Reader|YC - About"
                         onRefreshPage: {
                             aboutSheet.close();
                         }
                     }
-                    Label {
-                        text: qsTr("<p>Reader|YC is one of the only Hacker News clients currently available for Blackberry 10. \nIt uses the opensource BlackBerryPy project and is hosted on Github, where contributions are welcome.</p><p>To use Reader|YC, just select the tab you want to view, and start reading!</p>")
-                        multiline: true
-                        textFormat: TextFormat.Html
-                        textStyle.color: Color.DarkGray
-                        textStyle.fontSize: FontSize.Small
+                    Container {
+                        leftPadding: 20
+                        Label {
+                            text: qsTr("<p>Reader|YC is one of the only Hacker News clients currently available for Blackberry 10. \nIt uses the opensource BlackBerryPy project and is hosted on Github, where contributions are welcome.</p><p>To use Reader|YC, just select the tab you want to view, and start reading!</p>")
+                            multiline: true
+                            textFormat: TextFormat.Html
+                            textStyle.color: Color.DarkGray
+                            textStyle.fontSize: FontSize.Small
+                        }
                     }
                     Container {
                         layout: StackLayout {
@@ -83,19 +86,23 @@ MenuDefinition {
                         id: helpTitleBar
                         text: "Reader|YC - Help"
                         buttonImage: "asset:///images/close.png"
+                        buttonPressedImage: "asset:///images/close.png"
                         onRefreshPage: {
                             helpSheet.close();
                         }
                     }
-                    Label {
-                        text: qsTr("<p>If you're having trouble using the app, or noticed a bug, feel free to send a bug report to the Developers!</p>")
-                        multiline: true
-                        textFormat: TextFormat.Html
-                        textStyle.color: Color.DarkGray
-                        textStyle.fontSize: FontSize.Small
+                    Container {
+                        leftPadding: 20
+                        Label {
+                            text: qsTr("<p>If you're having trouble using the app, or noticed a bug, feel free to send a bug report to the Developers!</p>")
+                            multiline: true
+                            textFormat: TextFormat.Html
+                            textStyle.color: Color.DarkGray
+                            textStyle.fontSize: FontSize.Small
+                        }
                     }
+
                     Button {
-                        leftPadding: 60
                         text: "Email the Developers!"
                         attachedObjects: [
                             Invocation {

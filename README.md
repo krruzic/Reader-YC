@@ -53,11 +53,12 @@ NOTE: The bars will be placed in the bin directory after being built.
 * Throttling requests on userpages
 * icons, ICONS EVERYWHERE
 * View about/help pages, email the dev (me)
+* Comment Caching, YAY!
 
 ###Current Issues:
 * ~~Sometimes the main page (top posts) doesn't load, and I'm not too sure why.~~
 * If you close the app while it is making a request, the app will go into a greyed-out "zombie" state until the request is completed
-* Commment page looks stupid
+* Commment page looks a little stupid...
 
 
 ###Coming Feature roadmap (dates are really guesses):
@@ -72,8 +73,8 @@ NOTE: The bars will be placed in the bin directory after being built.
 	ETA: Never, idea scrapped
 
 * V1.2
-        A tutorial that shows when first launched, this will add some flair to the app
-        Collapsable comments, Searching for posts and comments ETA: End of Summer
+    A tutorial that shows when first launched, this will add some flair to the app
+    Collapsable comments, Searching for posts and comments ETA: End of Summer
 
 * Logging in and upvoting/commenting V2.0
 	ETA: Probably never, but I do hope to add this

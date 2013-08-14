@@ -32,21 +32,22 @@ Page {
             onTriggered: {
                 webDisplay.goForward();
             }
-        },
-        InvokeActionItem {
-            title: "Open in Browser"
-            imageSource: "asset:///images/icons/ic_open_link.png"
-            ActionBar.placement: ActionBarPlacement.InOverflow
-            id: browserQuery
-            query {
-                invokeTargetId: "sys.browser"
-                invokeActionId: "bb.action.OPEN"
-                uri: ""
-            }
-            onTriggered: {
-                browserQuery.query.uri = webDisplay.url
-            }
         }
+//        InvokeActionItem {
+//            title: "Open in Browser"
+//            imageSource: "asset:///images/icons/ic_open_link.png"
+//            ActionBar.placement: ActionBarPlacement.InOverflow
+//            id: browserQuery
+//            query {
+//                invokeTargetId: "sys.browser"
+//                invokeActionId: "bb.action.OPEN"
+//                uri: ""
+//            }
+//            onTriggered: {
+//                browserQuery.query.uri = webDisplay.url
+//                browserQuery.query.updateQuery();
+//            }
+//        }
 
     ]
     Container {

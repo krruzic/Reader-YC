@@ -96,11 +96,17 @@ NavigationPane {
                 textStyle.fontStyle: FontStyle.Italic
                 textStyle.textAlign: TextAlign.Center
             }
-            ActivityIndicator {
-                minHeight: 300
-                minWidth: 300
-                running: true
+            Container {
                 visible: busy
+                rightPadding: 220
+                leftPadding: 220
+                topPadding: 80
+                ActivityIndicator {
+                    minHeight: 300
+                    minWidth: 300
+                    running: true
+                    visible: busy
+                }
             }
             
             ListView {
@@ -228,6 +234,10 @@ NavigationPane {
             ComponentDefinition {
                 id: commentPage
                 source: "CommentPage.qml"
+            },
+            ComponentDefinition {
+                id: userPage
+                source: "UserPage.qml"
             }
         ]
     }

@@ -29,7 +29,7 @@ Container {
                     Tart.send('requestComments', {
                             source: selectedItem.hnid,
                             askPost: selectedItem.isAsk
-                    });
+                        });
                 }
             }
             ActionItem {
@@ -53,23 +53,24 @@ Container {
                 }
                 onTriggered: {
                     var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
-                    data = selectedItem.title + "\n" + selectedItem.articleURL + "\n" + " Shared using Reader|YC "
+                    data = selectedItem.title + "\n" + selectedItem.articleURL + "\n" + commentPane.title + " Shared using Reader|YC "
                 }
             }
-            InvokeActionItem {
-                title: "Open in Browser"
-                imageSource: "asset:///images/icons/ic_open_link.png"
-                id: browserQuery
-                query {
-                    invokeTargetId: "sys.browser"
-                    invokeActionId: "bb.action.OPEN"
-                    uri: ""
-                }
-                onTriggered: {
-                    var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
-                    browserQuery.query.uri = selectedItem.articleURL;
-                }
-            }
+//            InvokeActionItem {
+//                title: "Open in Browser"
+//                imageSource: "asset:///images/icons/ic_open_link.png"
+//                id: browserQuery
+//                query {
+//                    mimeType: "text/txt"
+//                    invokeTargetId: "sys.browser"
+//                    invokeActionId: "bb.action.OPEN"
+//                }
+//                onTriggered: {
+//                    var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
+//                    browserQuery.query.uri = selectedItem.articleURL;
+//                    browserQuery.query.updateQuery();
+//                }
+//            }
         }
     ]
     layout: DockLayout {

@@ -19,7 +19,6 @@ class HackerNewsUserAPI:
            and returns the account details
         """
         source = self.getSource(source)
-        print(source)
         if (str(source) == "b'No such user.'"):
             raise ValueError
         soup = BeautifulSoup(source)
@@ -46,5 +45,4 @@ class HackerNewsUserAPI:
                 end = str(item).find('><u', start) - 1
                 result = "http://news.ycombinator.com/" +  str(item)[start:end]
                 results.append(result)
-        print(results)
         return results

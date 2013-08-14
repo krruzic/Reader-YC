@@ -13,16 +13,14 @@ Container {
     onCreationCompleted: {
         Tart.register(headerPane)
     }
+    function onAddText(data) {
+        console.log(data.text)
+        text = data.text
+    }
     Container {
         bottomPadding: 35
         background: itemBackground.imagePaint
-        
-
-        
-        function onAddText(data) {
-            console.log(data.text)
-            textPost = data.text
-        }
+    
         
         attachedObjects: [
             ImagePaintDefinition {
@@ -118,7 +116,7 @@ Container {
                         if (maxHeight != 100)
                             maxHeight = 100;
                         else 
-                            maxHeight = Infinity.MAX_VALUE;
+                        	maxHeight = 100000;
                     }
                     id: textBox
                     text: ""
