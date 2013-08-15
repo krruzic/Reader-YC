@@ -1,30 +1,30 @@
-import urllib.request, time, os, stat
-from .HNStoryAPI import *
-from .HNCommentAPI import *
-from .HNGetText import *
+import urllib.request, threading
+from .HNStoryAPI import HackerNewsStoryAPI
+from .HNCommentAPI import HackerNewsCommentAPI
+from .HNUserAPI import HackerNewsUserAPI
 
 import tart
 
 HS = HackerNewsStoryAPI()
 HC = HackerNewsCommentAPI()
-HT = HackerNewsText()
-
+HU = HackerNewsUserAPI()
 
 class App(tart.Application):
-    def onManualExit():
-        print("exiting app, deleting files")
-        folder = os.getcwd() + '/data/stories/'
-        for the_file in os.listdir(folder):
-            if (the_file != ask.xml) or (the_file != new.xml) or (the_file != top.xml):
-                file_path = os.path.join(folder, the_file)
-                if os.path.isfile(file_path):
-                    os.unlink(file_path)
-        tart.send('continueExit')
+    """ The class that directly communicates with Tart and Cascades
+    """
 
     def onUiReady(self):
-        self.onRequestPage('Top Posts', 'False')
+        self.onRequestPage("Top Posts", "topPage")
+        # self.onRequestPage("Ask HN", "askPage")
+        # self.onRequestPage("Newest Posts", "newestPage")
 
-    def onRequestPage(self, source, forceReload):
+    def onRequestPage(self, source, sentBy):
+        t = threading.Thread(target=self.story_routine, args=(source, sentBy))
+        t.start()
+
+    def story_routine(self, source, sentBy):
+        print("source sent:" + source)
+        print("sent by: " + sentBy)
         if source == 'Top Posts':
             source = 'news'
         if source == 'Ask HN':
@@ -32,76 +32,88 @@ class App(tart.Application):
         if source == 'Newest Posts':
             source = 'newest'
 
-        HNpage = source + '.xml'
-        fileToRead = os.getcwd() + '/data/stories/' + HNpage
+        try:
+            postList, moreLink = HS.getPage("https://news.ycombinator.com/" + source)
+        except urllib.error.URLError:
+            if (sentBy == 'topPage'):
+                tart.send('topListError', text="Error getting news feed, check your connection and try again")
+            elif (sentBy == 'askPage'):
+                tart.send('askListError', text="Error getting news feed, check your connection and try again")
+            elif (sentBy == 'newestPage'):
+                tart.send('newListError', text="Error getting news feed, check your connection and try again")
+            print("error from python: " + "URLError")
+            return
+        except IndexError:
+            print("error from python: " + "IndexError")
+            return
 
-        if int(self.file_age_in_seconds(fileToRead)) <= 300 and forceReload == False:
-            tart.send('updateList', file=fileToRead, moreLink=news2)
+        stories = []
+        for item in postList:
+            stories.append(item.getDetails())
+
+        print("The next page is at: " + moreLink)
+        if (sentBy == 'topPage'):
+            print("sending stories to Top")
+            tart.send('addTopStories', stories=stories, moreLink=moreLink, sentTo=sentBy)
+        elif (sentBy == 'askPage'):
+            print("sending stories to Ask")
+            tart.send('addAskStories', stories=stories, moreLink=moreLink, sentTo=sentBy)
         else:
-            print("opening file to write...")
-            articleXML = open(fileToRead, 'w+')
+            print("sending stories to New")
+            tart.send('addNewStories', stories=stories, moreLink=moreLink, sentTo=sentBy)
 
-            postList, moreLink = HS.getPage("http://news.ycombinator.com/" + source)
-            print("Loading more from " + moreLink)
-            print("writing to file....")
-            articleXML.write('<articles>\n')
-            for item in postList:
-                articleXML.write('\t<item>\n')
-                for detail in item.getDetails():
-                    articleXML.write("{}\n".format(detail))
-                articleXML.write('\t</item>\n')
-            articleXML.write('</articles>')
-            tart.send('updateList', file=fileToRead, moreLink=moreLink) # , more=moreLink
-            articleXML.close()
 
-    def onRequestComments(self, source):
-        HNid = source[source.find('='):-1] + '.xml'
-        HNPage = HNid + '.xml'
-        fileToRead = os.getcwd() + '/data/comments/' + HNPage
-        commentsXML = open(fileToRead, 'w+')
 
-        with urllib.request.urlopen(link) as url:
-            data = url.read()
-        data = urllib.request.urlopen(link).read()
-        commentList = HC.getComments(data)
+    def onRequestComments(self, source, askPost, deleteComments):
+        print("source sent:" + source)
+        try:
+            HC.getPage(source, askPost, deleteComments)
+        except urllib.error.URLError:
+            tart.send('commentError', text="Error getting comments. Check your connection \nand try again")
+            tart.send('addText', text='')
 
-        commentsXML.write('<comments>\n')
-        for item in commentList:
-            commentsXML.write('\t<item>\n')
-            for detail in item.getDetails():
-                commentsXML.write("{}\n".format(detail))
-            commentsXML.write('\t</item>\n')
-        commentsXML.write('</comments>')
-        tart.send('fillComments', file=fileToRead)
-        commentsXML.close()
+    def onRequestUserPage(self, source):
+        print("source sent: " + source)
 
-    # def onMoreButton(self):
-    #     moreLink = HS.getMoreLink("http://news.ycombinator.com/" + )
-    #     return moreLink
+        source = source.strip() # strips leading and trailing whitespaces
+        source = source.split(' ', 1)[0] # Takes just the first word passed
+        try:
+            detailList = HU.getUserPage("https://news.ycombinator.com/user?id=" + source)
+            if (detailList != []):
+                tart.send('userInfoReceived', details=detailList)
+        except urllib.error.URLError:
+            tart.send('userError', text="Error getting user page, Check your connection \nand try again")
 
-    def file_age_in_seconds(self, pathname):
-        if os.path.isfile(pathname):
-            return time.time() - os.stat(pathname)[stat.ST_MTIME]
-        else:
-            return 1000
+    def onDownloadInvite(self):
+        rc = bbmsp_send_download_invitation()
 
-    # def onGetComments(self, source):
-    #     HNid = source[source.find('='):-1] + '.xml'
-    #     commentsXML = open(HNid, 'w')
 
-    #     with urllib.request.urlopen(source) as url:
-    #         data = url.read()
-    #     data = urllib.request.urlopen(source).read()
-    #     commentList = HC.getComments(data)
+# class utility(object):
+#     """A class used by App to simplify things :)
+#     """
 
-    #     commentsXML.write('<comments>\n')
-    #     for item in commentList:
-    #         commentsXML.write('\t<item>\n')
-    #         commentsXML.write('%s\n' % item.printComments())
-    #         commentsXML.write('\t<\item>\n')
-    #     commentsXML.write('<\comments>')
+#     def cacheWriter(self, comments, url):
+#         pageIDStart = url.find('=') + 1
+#         pageID = url[pageIDStart:-1] + '.xml'
 
-    # def onGetTextPost(self, source):
-    #     text = HT.getText(source)
-    #     self.onGetComments(source)
-    #     tart.send('textBody',text=text)
+#         fileToWrite = os.getcwd() + '/cache/' + pageID
+#         cacheFile = open(fileToRead, 'w+')
+
+#         cacheFile.write('<articles>\n')
+#         for comment in comments:
+#             cacheFile.write('\t<item>\n')
+#             for detail in comment:
+#                 cacheFile.write('\t\t<commentNum>' detail[0] + '</commentNum>')
+#                 cacheFile.write('\t\t<poster>' + detail[1] + '</poster>')
+#                 cacheFile.write('\t\t<timePosted>' + detail[2] + '</timePosted>')
+#                 cacheFile.write('\t\t<indent>' + detail[3] + '</indent>')
+#                 cacheFile.write('\t\t<text>' + detail[4] + '</text>')
+#         cacheFile.write('</articles>')
+#         cacheFile.close()
+
+#     def addFavourite(self, itemDetails):
+#         fileToWrite = os.getcwd() + '/history' + '.xml'
+#         try:
+#             with open(fileToWrite): pass
+#         except IOError:
+#             print("History file doesn't exist, creating now.")

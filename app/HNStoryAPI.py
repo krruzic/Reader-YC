@@ -2,16 +2,18 @@ import urllib.request
 from bs4 import BeautifulSoup
 import re
 
+import tart
+
 class HackerNewsStoryAPI:
+    """The class for slicing and dicing the HTML and turning it into
+       HackerNewsStory objects.
     """
-The class for slicing and dicing the HTML and turning it into HackerNewsStory objects.
-"""
+
     numberOfStoriesOnFrontPage = 0
 
     def getSource(self, url):
+        """Returns the HTML source code for a URL.
         """
-Returns the HTML source code for a URL.
-"""
         print("curling page: " + url)
         with urllib.request.urlopen(url) as url:
             source = url.read()
@@ -19,26 +21,25 @@ Returns the HTML source code for a URL.
         return source
 
     def getStoryNumber(self, source):
+        """Parses HTML and returns the number of a story.
         """
-Parses HTML and returns the number of a story.
-"""
+
         numberStart = source.find('>') + 1
         numberEnd = source.find('.')
         return int(source[numberStart:numberEnd])
 
     def getStoryURL(self, source):
+        """Gets the URL of a story.
         """
-Gets the URL of a story.
-"""
+
+        ask = "false"
         URLStart = source.find('href="') + 6
         URLEnd = source.find('">', URLStart)
         url = source[URLStart:URLEnd]
         # Check for "Ask HN" links.
         if url[0:4] == "item": # "Ask HN" links start with "item".
             url = "http://news.ycombinator.com/" + url
-
-        # Change "&amp;" to "&"
-        # url = url.replace("&amp;", "&")
+            ask = "true"
 
         # Remove 'rel="nofollow' from the end of links, since they were causing some bugs.
         if url[len(url)-13:] == "rel=\"nofollow":
@@ -47,12 +48,12 @@ Gets the URL of a story.
         # Weird hack for URLs that end in '" '. Consider removing later if it causes any problems.
         if url[len(url)-2:] == "\" ":
             url = url[:len(url)-2]
-        return url
+        return url, ask
 
     def getStoryDomain(self, source):
+        """Gets the domain of a story.
         """
-Gets the domain of a story.
-"""
+
         domainStart = source.find('comhead">') + 10
         domainEnd = source.find('</span>')
         domain = source[domainStart:domainEnd]
@@ -62,9 +63,9 @@ Gets the domain of a story.
         return "http://" + domain[1:len(domain)-2]
 
     def getStoryTitle(self, source):
+        """Gets the title of a story.
         """
-Gets the title of a story.
-"""
+
         titleStart = source.find('>', source.find('>')+1) + 1
         titleEnd = source.find('</a>')
         title = source[titleStart:titleEnd]
@@ -72,9 +73,9 @@ Gets the title of a story.
         return title
 
     def getStoryScore(self, source):
+        """Gets the score of a story.
         """
-Gets the score of a story.
-"""
+
         scoreStart = source.find('>', source.find('>')+1) + 1
         scoreEnd = source.find(' ', scoreStart)
         try:
@@ -87,30 +88,30 @@ Gets the score of a story.
             return ' HN Jobs'
 
     def getStoryDetails(self, source):
+        """Gets the poster username and the time it was posted
         """
-Gets the poster username and the time it was posted
-"""
+
         submitterStart = source.find('user?id=')
         realSubmitterStart = source.find('=', submitterStart) + 1
         submitterEnd = source.find('"', realSubmitterStart)
         submitter = source[realSubmitterStart:submitterEnd]
-        if submitter == '<td class=':
+        if submitter == '<td class=': # If the post is a 'Job post', there is no submitter.
             submitter = 'ycombinator'
 
         timeStart = source.find(submitter + '</a>') + len(submitter) + 5
         timeEnd = source.find('|', timeStart) - 1
         time = source[timeStart:timeEnd]
         if 'ext' in time:
-            time = re.findall(r"(\d+ .* ago)", source)
+            time = re.findall(r"(\d+ .* ago)", source) # regex to find time
             time = str(time[0]) + ' '
             #print(time)
 
         return submitter, time
 
     def getCommentCount(self, source):
+        """Gets the comment count of a story.
         """
-Gets the comment count of a story.
-"""
+
         commentStart = source.find('item?id=')
         commentCountStart = source.find('>', commentStart) + 1
         commentEnd = source.find('</a>', commentStart)
@@ -126,9 +127,9 @@ Gets the comment count of a story.
             return commentCountString
 
     def getHNID(self, source):
+        """Gets the Hacker News ID of a story.
         """
-Gets the Hacker News ID of a story.
-"""
+
         urlStart = source.find('score_') + 6
         urlEnd = source.find('"', urlStart)
         try:
@@ -138,16 +139,16 @@ Gets the Hacker News ID of a story.
 
 
     def getCommentsURL(self, source):
+        """Gets the comment URL of a story.
         """
-Gets the comment URL of a story.
-"""
+
         return "http://news.ycombinator.com/item?id=" + str(self.getHNID(source))
 
 
     def getMoreLink(self, page):
+        """Gets the link for more posts found at the bottom of every page.
         """
-Gets the link for more posts found at the bottom of every page.
-"""
+
         soup = BeautifulSoup(page)
         story_details = soup.findAll("td", {"class" : "title"})
         source = str(story_details[len(story_details) - 1])
@@ -165,13 +166,14 @@ Gets the link for more posts found at the bottom of every page.
 
 
     def getStories(self, source):
+        """Looks at source, makes stories from it, returns the stories.
         """
-Looks at source, makes stories from it, returns the stories.
-"""
-        # Decodes source to utf-8 and encodes to ascii usable in XML
+
+        # Decodes source to utf-8
         source = source.decode('utf-8')
         # print(source)
-        self.numberOfStoriesOnFrontPage = 30
+        self.numberOfStoriesOnFrontPage = source.count('</center></td><td class="title">') # There was a counting method, but it always gave the wrong number of stories.
+        print(self.numberOfStoriesOnFrontPage)
         # Create the empty stories.
         newsStories = []
         for i in range(0, self.numberOfStoriesOnFrontPage):
@@ -192,6 +194,7 @@ Looks at source, makes stories from it, returns the stories.
             storyNumbers.append(storyNumber)
 
         storyURLs = []
+        storyAsk = []
         storyDomains = []
         storyTitles = []
         storyScores = []
@@ -203,7 +206,9 @@ Looks at source, makes stories from it, returns the stories.
 
         for i in range(1, len(story_details), 2): # Every second cell contains a story.
             story = str(story_details[i])
-            storyURLs.append(self.getStoryURL(story))
+            url, isAsk = self.getStoryURL(story)
+            storyURLs.append(url)
+            storyAsk.append(isAsk)
             storyDomains.append(self.getStoryDomain(story))
             storyTitles.append(self.getStoryTitle(story))
 
@@ -221,6 +226,7 @@ Looks at source, makes stories from it, returns the stories.
         # Associate the values with our newsStories.
         for i in range(0, self.numberOfStoriesOnFrontPage):
             newsStories[i].number = storyNumbers[i]
+            newsStories[i].askPost = storyAsk[i]
             newsStories[i].URL = storyURLs[i]
             newsStories[i].domain = storyDomains[i]
             newsStories[i].title = storyTitles[i]
@@ -233,50 +239,34 @@ Looks at source, makes stories from it, returns the stories.
 
         return newsStories
 
-
-
-    ##### End of internal methods. #####
-
-
     def getPage(self, page):
+        """Gets the stories from the specified Hacker News page.
         """
-Gets the stories from the specified Hacker News page.
-"""
+
         source = self.getSource(page)
         moreLink = self.getMoreLink(source)
         stories = self.getStories(source)
         return stories, moreLink
 
 class HackerNewsStory:
+    """A class representing a story on Hacker News.
     """
-A class representing a story on Hacker News.
-"""
+
     id = 0 # The Hacker News ID of a story.
     number = -1 # What rank the story is on HN.
     title = "" # The title of the story.
     domain = "" # The website the story is from.
     URL = "" # The URL of the story.
+    askPost = "false"
     score = -1 # Current score of the story.
     submitter = "" # The person that submitted the story.
     commentCount = -1 # How many comments the story has.
     commentsURL = "" # The HN link for commenting (and upmodding).
     time = "" # The time the HN link was posted
-    number = '%02d' % number # prepends zeroes to the article number
 
     def getDetails(self):
+        """Creates a tuple of the story's details
+        """
         self.number = '%03d' % self.number # prepends zeroes to the article number
-        detailList = [1,2,3,4,5,6,7,8,9,10]
-        detailList[0] = '\t\t<postNumber>' + str(self.number) + '</postNumber>'
-        detailList[1] = '\t\t<title>' + self.title + '</title>'
-        detailList[2] = '\t\t<domain>' + self.domain + '</domain>'
-        detailList[3] = '\t\t<points>' + str(self.score) + '</points>'
-        detailList[4] = '\t\t<poster>' + self.submitter + '</poster>'
-        detailList[5] = '\t\t<timePosted>' + self.time + '</timePosted>'
-        detailList[6] = '\t\t<commentCount>' + str(self.commentCount) + '</commentCount>'
-        detailList[7] = '\t\t<articleURL>' + self.URL + '</articleURL>'
-        detailList[8] = '\t\t<commentsURL>' + self.commentsURL + '</commentsURL>'
-        detailList[9] = '\t\t<HNID>' + str(self.id) + '</HNID>'
-
-        for i in range(0,len(detailList)):
-            detailList[i] = detailList[i].encode('ascii', 'xmlcharrefreplace').decode('ascii')
+        detailList = (str(self.number), self.title, self.domain, str(self.score), self.submitter, self.time, str(self.commentCount), self.URL, self.commentsURL, str(self.id), str(self.askPost))
         return detailList

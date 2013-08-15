@@ -1,129 +1,222 @@
 import bb.cascades 1.0
+import "tart.js" as Tart
+
 Container {
-    property variant postArticle: ''
+    id: hnPage
+    property string postArticle: ''
+    property string askPost: ''
+    property string commentSource: ''
+    property string postComments: ''
+    property string commentID: ''
     property alias postTitle: labelPostTitle.text
-    property alias postURL: labelPostURL.text
+    property alias postDomain: labelPostDomain.text
     property alias postUsername: labelUsername.text
     property alias postTime: labelTimePosted.text
-    property alias postComments: labelNumComments.text
-    property alias highlightOpacity: highlightContainer.opacity
+
+    onCreationCompleted: {
+        Tart.register(hnPage)
+    }
+    contextActions: [
+        ActionSet {
+            title: ListItemData.title
+            subtitle: ListItemData.poster + " | " + ListItemData.points
+            ActionItem {
+                imageSource: "asset:///images/icons/ic_comments.png"
+                title: "Open Comments"
+                onTriggered: {
+                    console.log("Pushing comments page");
+                    var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
+                    console.log(selectedItem.title);
+                    var page = hnItem.ListItem.view.pushPage('commentPage');
+                    page.title = selectedItem.title;
+                    page.titlePoster = selectedItem.poster;
+                    page.titleTime = selectedItem.timePosted + "| " + selectedItem.points;
+                    page.titleDomain = selectedItem.domain;
+                    page.commentLink = selectedItem.commentsURL;
+                    page.articleLink = selectedItem.articleURL;
+
+                    console.log(selectedItem.isAsk);
+                    Tart.send('requestComments', {
+                            source: selectedItem.hnid,
+                            askPost: selectedItem.isAsk,
+                            deleteComments: "False"
+                        });
+                }
+            }
+            ActionItem {
+                title: "View Article"
+                imageSource: "asset:///images/icons/ic_article.png"
+                onTriggered: {
+                    console.log("Pushing Article page");
+                    var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
+                    console.log(selectedItem.title);
+                    var page = hnItem.ListItem.view.pushPage('webPage');
+                    page.text = selectedItem.title;
+                    page.htmlContent = selectedItem.articleURL;
+                }
+            }
+            InvokeActionItem {
+                ActionBar.placement: ActionBarPlacement.OnBar
+                title: "Share"
+                query {
+                    mimeType: "text/plain"
+                    invokeActionId: "bb.action.SHARE"
+                }
+                onTriggered: {
+                    var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
+                    data = selectedItem.title + "\n" + selectedItem.articleURL + "\n" + commentPane.title + " Shared using Reader|YC "
+                }
+            }
+        }
+    ]
+    layout: DockLayout {
+
+    }
+
     property int padding: 19
-    
-    signal goTocomments()
-    
-    topPadding: 10
-    bottomPadding: 9
+    topPadding: 2
+    bottomPadding: 3
     leftPadding: padding
     rightPadding: padding
+
+    signal commentsClicked()
+    function setHighlight(highlighted) {
+        if (highlighted) {
+            highlightContainer.opacity = 0.9;
+        } else {
+            highlightContainer.opacity = 0.0;
+        }
+    }
+    // Highlight function for the highlight Container
+
+    // Connect the onActivedChanged signal to the highlight function
+
+    ListItem.onActivationChanged: {
+        setHighlight(ListItem.active);
+    }
+
+    // Connect the onSelectedChanged signal to the highlight function
+    ListItem.onSelectionChanged: {
+        setHighlight(ListItem.selected);
+    }
+    attachedObjects: [
+        ImagePaintDefinition {
+            id: itemBackground
+            imageSource: "asset:///images/full.png.amd"
+        }
+    ]
     Container {
-    	Label {
-    	 id: hidden
-         text: ""
-         visible: false 
-     }
-        maxWidth: 730.0
-        maxHeight: 130.0
-        
-        layout: DockLayout {}
-        
-        ImageView {
-            imageSource: "asset:///images/Paper.png"
+        visible: true
+        id: mainContainer
+        preferredWidth: 730
+        preferredHeight: 155
+        maxHeight: 155
+        maxWidth: 730
+        background: itemBackground.imagePaint
+        layout: StackLayout {
+            orientation: LayoutOrientation.LeftToRight
         }
         Container {
-            minHeight: 150
-            minWidth: 665
-            id: highlightContainer
-            opacity: 0.0
-            background: Color.create("#b6b6b6")
-            visible: false 
-        }
-        Container {
-            id: mainContainer
-            
-            layout: StackLayout {
-                orientation: LayoutOrientation.LeftToRight
+            topPadding: 5
+            leftPadding: 10
+            rightPadding: 0
+            rightMargin: 0
+            bottomMargin: 0
+            bottomPadding: 20
+
+            Label {
+                rightMargin: 42
+                id: labelPostTitle
+                preferredWidth: 680
+                maxWidth: 680
+                text: "Billing Incident Update, from the makers of cheese"
+                textStyle.fontSize: FontSize.PointValue
+                textStyle.fontSizeValue: 7
+                bottomMargin: 1
+                textStyle.color: Color.Black
             }
-            preferredWidth: 730.0
-            preferredHeight: 140.0
-            horizontalAlignment: HorizontalAlignment.Center
-            
             Container {
-                //    property int padding: 25
-                //    
-                //    topPadding: padding
-                //    bottomPadding: padding
-                //    leftPadding: padding
-                Container {
-                    layout: AbsoluteLayout {}
-                    Label {
-                        id: labelPostTitle
-                        maxWidth: 600
-                        minWidth: 600
-                        text: "Billing Incident Update"
-                        textStyle.fontSize: FontSize.Small
-                        textStyle.color: Color.Black
-                        translationX: 6.0
-                    }
-                    
-                    Label {
-                        id: labelPostURL
-                        maxWidth: 500.0
-                        text: "http://www.dailymail.com/"
-                        multiline: false
-                        textStyle.fontSize: FontSize.Small
-                        textStyle.color: Color.create("#ff69696c")
-                        textStyle.fontStyle: FontStyle.Italic
-                        layoutProperties: AbsoluteLayoutProperties {
-                            positionX: 14.0
-                            positionY: 45.0
-                        }
-                    }
+                translationY: -5
+                topMargin: 0
+                leftMargin: 1
+                rightPadding: 15
+                clipContentToBounds: false
+                layout: StackLayout {
+                    orientation: LayoutOrientation.LeftToRight
                 }
-                
-                Container {
-                    minWidth: 530.0
-                    preferredWidth: 630.0
-                    layout: DockLayout {}
-                    Label {
-                        id: labelUsername
-                        preferredHeight: 30.0
-                        maxWidth: 280.0
-                        text: "username234"
-                        multiline: false
-                        textStyle.fontSize: FontSize.Small
-                        textStyle.color: Color.create("#fe8515")
-                        textFormat: TextFormat.Html
-                        horizontalAlignment: HorizontalAlignment.Left
-                        translationX: 6.0
+                Label {
+                    id: labelPostDomain
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 2
                     }
-                    Label {
-                        id: labelTimePosted
-                        preferredHeight: 30.0
-                        maxWidth: 400.0
-                        text: "90 Hours ago | 4973 points"
-                        multiline: false
-                        textStyle.fontSize: FontSize.Small
-                        textStyle.color: Color.Gray
-                        horizontalAlignment: HorizontalAlignment.Right
+                    translationX: 10
+                    text: "http://dailymail.co.uk/"
+                    multiline: false
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 7
+                    textStyle.color: Color.Gray
+                    horizontalAlignment: HorizontalAlignment.Left
+                    textStyle.textAlign: TextAlign.Left
+                }
+
+                Label {
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 1
                     }
+                    text: postComments + " comments"
+                    multiline: false
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 7
+                    textStyle.color: Color.Gray
+                    horizontalAlignment: HorizontalAlignment.Right
+                    textStyle.textAlign: TextAlign.Right
                 }
             }
-            
             Container {
-                topPadding: 35.0
-                leftPadding: 20.0
-                CustomActionButton {
-                    id: labelNumComments
-                    normal: "asset:///images/Comment.png"
-                    pressed: "asset:///images/Comment.png"
-                    text: ""
-                    onButtonClicked: {
-                    	console.log('Comment button pressed! ' + labelNumComments.text + ' comments');
-                    	goTocomments();
-                    }                   
+                topMargin: 10
+                leftMargin: 1
+                rightPadding: 15
+                translationY: -10
+                layout: StackLayout {
+                    orientation: LayoutOrientation.LeftToRight
                 }
-                
+                Label {
+                    id: labelUsername
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 1
+                    }
+                    text: "username"
+                    multiline: false
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 6
+                    textStyle.color: Color.create("#fe8515")
+                    horizontalAlignment: HorizontalAlignment.Left
+                    textStyle.textAlign: TextAlign.Left
+                }
+
+                Label {
+                    id: labelTimePosted
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 2
+                    }
+                    text: "some comments | some points"
+                    multiline: false
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 6
+                    textStyle.color: Color.Gray
+                    horizontalAlignment: HorizontalAlignment.Right
+                    textStyle.textAlign: TextAlign.Right
+                }
             }
         }
+    }
+    ImageView {
+        id: highlightContainer
+        imageSource: "asset:///images/listHighlight.amd"
+        preferredWidth: 730
+        preferredHeight: 155
+        maxHeight: 155
+        maxWidth: 730
+        opacity: 0
     }
 }

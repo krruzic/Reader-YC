@@ -1,143 +1,180 @@
+import urllib.request
 from bs4 import BeautifulSoup
-import re
+import re, json, os, glob
 
-#import tart
+import tart
+
 
 class HackerNewsCommentAPI:
+    """The class used for searching the HTML for
+       all our comments and their data
     """
-The class used for searching the HTML for all our comments and their data
-"""
-    numberOfComments = 0
-    isTextPost = 0  # 0 means it is a text post. 1 means it isn't
 
-    def getCommentText(self,source):
+    def getText(self, url):
+        """Finds the text portion of text posts,
+           and returns it to tart.
         """
-Gets the comment text for a comment
-"""
-        linksFound = []
-        soup = BeautifulSoup(source)
-        for a in soup.findAll('a',href=True):
-            linksFound.append(str(a['href']))
-        textStart = source.find('font') + 21
-        textEnd = source.find('</font', textStart)
-        text = source[textStart:textEnd]
 
-        for i in range(len(linksFound)):
-            text = re.sub('<[^<]+?>.*<[^<]+?>', linksFound[i], text) # replaces href tags with the full links
-        if text == '">[deleted]</span': # deleted comment signature
-            text = '[deleted]'
+        print("curling page: " + url)
+        with urllib.request.urlopen(url) as url:
+            source = url.read()
+        print("page curled")
+
+        soup = BeautifulSoup(source)
+
+        text_content = soup.findAll("tr")
+        text_content =str(text_content[7])
+
+        textStart = text_content.find('d><td>') + 6
+        textEnd = text_content.find('</td', textStart)
+        text = text_content[textStart:textEnd]
+        if (text == 'td><img height="1" src="s.gif" width="0"/>'): # Checks for dead
+            self.dead = True
+            text = "[dead]"
+        if '<form action="/r"' in text: # Sometimes my method of checking for text posts fails...
+            text = ""
+        tart.send('addText', text=text)
         return text
 
-    def getCommentIndent(self,source):
+
+    def flatten(self, comments, level = 0):
+            #comments is a list
+
+            if not comments:
+                    return []#exit case
+
+            res = []
+            #add the level key so you can keep track of the original level
+            for c in comments:
+                    c['level'] = level
+                    c['comment'] = c['comment'].replace('__BR__',' \n')
+                    #removes the childs from the item (important)
+                    childs = c.pop('children', [])
+                    #adds the item to the result
+                    res.append(c)
+                    #and the flattened childs later
+                    res += self.flatten(childs, level+1)
+                    #in the next loop the next sibling will be added
+
+            return res
+
+
+    def checkCache(self, source):
+        """ Checks to see if a comment page has been cached
         """
-Gets the comment's indent
-"""
-        indentStart = source.find('width=') + 7
-        indentEnd = source.find('>', indentStart) - 2
-        indent = source[indentStart:indentEnd]
-        return indent
+        ## USEFUL CODE FOR LATER???
+        files = []
+        workingDir = os.getcwd() + '/data/cache/'
+        pagesCached = glob.glob(workingDir + '*.json')
+        for page in pagesCached:
+            filename = os.path.splitext(page)[0]
+            files.append(filename)
+        print(files)
+        return files
 
-    def getCommentDetails(self, source):
+
+    def cacheComments(self, source, comments, text):
+        """ Given the comment page source, this writes the two
+            cache files.
         """
-Gets the time & poster of a comment
-"""
-        posterStart = source.find('user?id=')
-        realPosterStart = source.find('=', posterStart) + 1
-        posterEnd = source.find('"', realPosterStart)
-        poster = source[realPosterStart:posterEnd]
-        if poster == '<span class=': # deleted comment signature
-            poster = ''
+        ## USEFUL CODE FOR LATER???
+        workingDir = os.getcwd() + '/data/cache/'
 
-        time = re.findall(r"</a> (\d+ .* ago)", source) # regex to find post time format: X mins/hours ago
-        if not time: # deleted comments won't have a match for this regex
-            time = ['']
+        if not os.path.exists(workingDir):
+            os.makedirs(workingDir)
+        pagesCached = glob.glob(workingDir + '*.json')
+        oldestFile = ""
+        modded = 10000000000000000 # A large starting number...
+        for item in pagesCached:
+            modTime = os.stat(item).st_mtime
+            if modTime <= modded: # a high modTime means a newer file. Or something.
+                modded = modTime
+                oldestFile = item
 
-        return poster, str(time[0])
+        oldestFile = os.path.splitext(oldestFile)[0] # Gets just the file name
+        if (len(pagesCached) > 5): # In case there are too many files
+            print("TOO MANY FILES")
+            for the_file in os.listdir(workingDir):
+                file_path = os.path.join(workingDir, the_file)
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
 
-    def getComments(self,source):
+        if (len(pagesCached) > 4): # Checks to see if we need to delete a file before caching
+            print(pagesCached)
+            print("Deleting oldest file... " + oldestFile)
+            os.remove(oldestFile + '.json')
+            os.remove(oldestFile + '.txt')
+
+        print("Opening file to write...")
+        cache = open(workingDir + '%s.json' % source, 'w')
+        json.dump(comments, cache)
+        print("Comments cached!")
+        cache.close()
+        textCache = open(workingDir + '%s.txt' % source, 'w')
+        textCache.write(text)
+        print("Text cached!")
+        textCache.close()
+
+
+    def getPage(self, source, isAsk, deleteComments):
+        """Gets the comments and text of the post
         """
-Looks at the source, makes comments from it, and returns these comments
-"""
-        # Replaces <p> and <i> tags in the comments
-        source = source.decode("utf-8")
-        source = source.replace('<p>', '\n').replace('<i>', '').replace('</i>','')
-        soup = BeautifulSoup(source)
 
-        # gets the comment text
-        comment_content = soup.findAll("span", {"class": "comment"})
-        # gets the indent of the comment
-        comment_indent = soup.findAll("img", {"src": "s.gif", "height": "1"})
-        # gets the other info, ie) time and poster name
-        comment_details = soup.findAll("span", {"class": "comhead"})
-        # counts the number of comments
-        self.numberOfComments = source.count('span class="comment"')
+        workingDir = os.getcwd() + '/data/cache/'
+        textURL = 'https://news.ycombinator.com/item?id=%s' % source
+        commentsURL = 'http://hndroidapi.appspot.com/nestedcomments/format/json/id/%s' % source
+        cacheList = []
 
-        if str(comment_details[0]).find('(') == 23: # link posts first result will actually be the domain name
-            self.isTextPost = 1
+        cacheList = self.checkCache(source)
+        text = ""
+        fileToCheck = workingDir + source
+        cached = fileToCheck in cacheList
+        print(cached)
+        if (cached == True): # Checks if comments are cached
+            cache = open(workingDir + '%s.json' % source, 'r')
+            comments = json.load(cache)
+            cache.close()
+
+            if (comments == []): # If the article has no comments, delete the cache
+                print("Deleting empty comments..")
+                os.remove(workingDir + source + '.json')
+                deleteComments = "True"
+
+        if (deleteComments != "True" and cached == True):
+            print("Comments in cache!")
+            cache = open(workingDir + '%s.json' % source, 'r')
+            comments = json.load(cache)
+            cache.close()
+
+            if (isAsk == "true"):
+                textCache = open(workingDir + '%s.txt' % source, 'r')
+                text = textCache.read()
+                tart.send('addText', text=text)
+                textCache.close()
+
+            for comment in comments:
+                tart.send('addComments', comment=comment)
+            return
         else:
-            self.isTextPost = 0
+            print("Comments not cached...")
 
-        # Create an empty list of comments
-        comments = []
-        for i in range(0, self.numberOfComments):
-            comment = HackerNewsComment()
-            comments.append(comment)
+        if (isAsk == "true"):
+            text = self.getText(textURL)
 
-        commentsText = []
-        commentsIndent = []
-        commentsIndentFinal = []
-        commentsPoster = []
-        commentsTime = []
+        print("curling page: " + commentsURL)
+        with urllib.request.urlopen(commentsURL) as url:
+            urlSource = url.read()
+        print("page curled")
 
-        for c in range(0, len(comment_content)):
-            comment = str(comment_content[c]) # turns the element into a string (changes it from a BeautifulSoup object)
-            commentText = self.getCommentText(comment)
-            commentsText.append(commentText)
+        decoded = urlSource.decode("utf-8")
+        toFlatten = json.loads(decoded)
+        print("Flattening comments")
+        comments = self.flatten(toFlatten['items'])
 
-        for h in range(1, len(comment_indent)): # The first comment is actually the second element of this list.
-            comment = str(comment_indent[h])
-            commentIndent = self.getCommentIndent(comment)
-            if int(commentIndent) % 10 == 0: # if statement to remove the extra img tag deleted comments have
-                commentsIndent.append(commentIndent)
 
-        for s in range(self.isTextPost, len(comment_details)):
-            comment = str(comment_details[s])
-            poster, time = self.getCommentDetails(comment)
-            commentsPoster.append(poster)
-            commentsTime.append(time)
-
-        # Merge these values to each represent one comment
-        for i in range(0, self.numberOfComments):
-            comments[i].commentNum = i + 1
-            comments[i].text = commentsText[i]
-            comments[i].indent = commentsIndent[i]
-            comments[i].poster = commentsPoster[i]
-            comments[i].timePosted = commentsTime[i]
-
-        return comments
-
-class HackerNewsComment:
-    """
-A class representing a comment on Hacker News
-"""
-    commentNum = 0
-    text = ""
-    indent = 0
-    poster = ""
-    timePosted = ""
-
-    def getDetails(self):
-        """
-Prints the details of the comment in xml format
-"""
-        self.commentNum = '%03d' % self.number # prepends zeroes to the comment number
-        detailList = [1,2,3,4,5]
-        detailList[0] = '\t\t<commentNum>' + str(self.commentNum) + '</commentNum>'
-        detailList[1] = '\t\t<poster>' + self.poster + '</poster>'
-        detailList[2] = '\t\t<timePosted>' + self.timePosted + '</timePosted>'
-        detailList[3] = '\t\t<indent>' + self.indent + '</indent>'
-        detailList[4] = '\t\t<text>' + self.text + '</text>'
-
-        for i in range(0,len(detailList)):
-            detailList[i] = detailList[i].encode('ascii', 'xmlcharrefreplace').decode('ascii')
-        return detailList
+        print("Sending comments")
+        if (comments == []):
+            tart.send('commentError', text="No comments! Check back later!")
+        for comment in comments:
+            tart.send('addComments', comment=comment)
+        self.cacheComments(source, comments, text)
