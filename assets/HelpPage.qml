@@ -23,20 +23,41 @@ Page {
                 textStyle.fontSize: FontSize.Small
             }
         }
-        
-        Button {
-            text: "Email the Developers!"
-            attachedObjects: [
-                Invocation {
-                    id: emailInvocation
-                    query.mimeType: "text/plain"
-                    query.invokeTargetId: "sys.pim.uib.email.hybridcomposer"
-                    query.invokeActionId: "bb.action.SENDEMAIL"
-                    query.uri: "mailto:krruzic@gmail.com?subject=Reader|YC Help"
+        Container {
+            layout: StackLayout {
+                orientation: LayoutOrientation.LeftToRight
+            }
+            Button {
+                text: "Email the Developers!"
+                attachedObjects: [
+                    Invocation {
+                        id: emailInvocation
+                        query.mimeType: "text/plain"
+                        query.invokeTargetId: "sys.pim.uib.email.hybridcomposer"
+                        query.invokeActionId: "bb.action.SENDEMAIL"
+                        query.uri: "mailto:krruzic@gmail.com?subject=Reader|YC Help"
+                    }
+                ]
+                onClicked: {
+                    emailInvocation.trigger(emailInvocation.query.invokeActionId);
                 }
-            ]
-            onClicked: {
-                emailInvocation.trigger(emailInvocation.query.invokeActionId);
+            }
+            Button {
+                text: "Request a bug fix!"
+                horizontalAlignment: horizontalAlignment.Left
+                text: "Contribute on Github!"
+                attachedObjects: [
+                    Invocation {
+                        id: browserInvocation
+                        query.mimeType: "text/plain"
+                        query.invokeTargetId: "sys.browser"
+                        query.invokeActionId: "bb.action.OPEN"
+                        query.uri: "https://github.com/krruzic/Reader-YC/issues/new
+                    }
+                ]
+                onClicked: {
+                    browserInvocation.trigger(browserInvocation.query.invokeActionId);
+                }
             }
         }
     }
