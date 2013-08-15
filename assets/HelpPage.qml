@@ -52,7 +52,7 @@ Page {
                         query.mimeType: "text/plain"
                         query.invokeTargetId: "sys.browser"
                         query.invokeActionId: "bb.action.OPEN"
-                        query.uri: "https://github.com/krruzic/Reader-YC/issues/new
+                        query.uri: "https://github.com/krruzic/Reader-YC/issues/new"
                     }
                 ]
                 onClicked: {
