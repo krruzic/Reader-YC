@@ -2,9 +2,10 @@ import bb.cascades 1.0
 import "tart.js" as Tart
 
 Page {
-    id: userPage
+    id: userPane
+    
     onCreationCompleted: {
-        Tart.register(userPage);
+        Tart.register(userPane);
     }
     property alias searchVisible: searchField.visible
     property string username: ""

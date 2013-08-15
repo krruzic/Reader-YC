@@ -22,7 +22,6 @@ NavigationPane {
     function onAddNewStories(data) {
         var stories = data.stories;
         morePage = data.moreLink;
-        //refreshEnabled = true;
         for (var i = 0; i < stories.length; i ++) {
             var story = stories[i];
             theModel.append({
@@ -64,8 +63,8 @@ NavigationPane {
                 onRefreshPage: {
                     busy = true;
                     Tart.send('requestPage', {
-                            source: "Newest",
-                            sentBy: whichPage
+                            source: "Newest Posts",
+                            sentBy: 'newestPage'
                         });
                     console.log("pressed")
                     theModel.clear();

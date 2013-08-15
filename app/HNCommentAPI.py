@@ -69,6 +69,7 @@ class HackerNewsCommentAPI:
         for page in pagesCached:
             filename = os.path.splitext(page)[0]
             files.append(filename)
+        print(files)
         return files
 
 
@@ -78,6 +79,9 @@ class HackerNewsCommentAPI:
         """
         ## USEFUL CODE FOR LATER???
         workingDir = os.getcwd() + '/data/cache/'
+
+        if not os.path.exists(workingDir):
+            os.makedirs(workingDir)
         pagesCached = glob.glob(workingDir + '*.json')
         oldestFile = ""
         modded = 10000000000000000 # A large starting number...
@@ -101,6 +105,7 @@ class HackerNewsCommentAPI:
             os.remove(oldestFile + '.json')
             os.remove(oldestFile + '.txt')
 
+        print("Opening file to write...")
         cache = open(workingDir + '%s.json' % source, 'w')
         json.dump(comments, cache)
         print("Comments cached!")
@@ -114,23 +119,38 @@ class HackerNewsCommentAPI:
     def getPage(self, source, isAsk):
         """Gets the comments and text of the post
         """
+        deleteComments = False
         workingDir = os.getcwd() + '/data/cache/'
         textURL = 'https://news.ycombinator.com/item?id=%s' % source
         commentsURL = 'http://hndroidapi.appspot.com/nestedcomments/format/json/id/%s' % source
+        cacheList = []
 
         cacheList = self.checkCache(source)
         text = ""
+        fileToCheck = workingDir + source
+        cached = fileToCheck in cacheList
+        print(cached)
+        if (cached == True): # Checks if comments are cached
+            cache = open(workingDir + '%s.json' % source, 'r')
+            comments = json.load(cache)
+            cache.close()
 
-        print(cacheList)
-        if (workingDir + source in cacheList):
+            if (comments == []): # If the article has no comments, delete the cache
+                print("Deleting empty comments..")
+                os.remove(workingDir + source + '.json')
+                deleteComments = True
+
+        if (deleteComments != True and cached == True):
             print("Comments in cache!")
             cache = open(workingDir + '%s.json' % source, 'r')
             comments = json.load(cache)
+            cache.close()
 
             if (isAsk == "true"):
                 textCache = open(workingDir + '%s.txt' % source, 'r')
                 text = textCache.read()
                 tart.send('addText', text=text)
+                textCache.close()
 
             for comment in comments:
                 tart.send('addComments', comment=comment)
@@ -153,6 +173,8 @@ class HackerNewsCommentAPI:
 
 
         print("Sending comments")
+        if (comments == []):
+            tart.send('commentError', text="No comments! Check back later!")
         for comment in comments:
             tart.send('addComments', comment=comment)
         self.cacheComments(source, comments, text)

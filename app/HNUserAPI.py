@@ -25,7 +25,6 @@ class HackerNewsUserAPI:
             tart.send('userError', text="That user doesn't exist, \nusernames are case sensitive")
             return []
         if (source.decode('ascii') == "We've limited requests for this url."):
-            print('TEST')
             tart.send('userError', text="HN has limited userpage requests from your IP.\nWait a bit and try again.")
             return []
         soup = BeautifulSoup(source)

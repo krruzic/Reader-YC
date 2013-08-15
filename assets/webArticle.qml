@@ -27,26 +27,24 @@ Page {
         ActionItem {
             ActionBar.placement: ActionBarPlacement.OnBar
             imageSource: "asset:///images/icons/ic_next.png"
-
             title: "Go Forward"
             onTriggered: {
                 webDisplay.goForward();
             }
+        },
+        InvokeActionItem {
+            title: "Open in Browser"
+            imageSource: "asset:///images/icons/ic_open_link.png"
+            ActionBar.placement: ActionBarPlacement.InOverflow
+            id: browserQuery
+            query.mimeType: "text/plain"
+            query.invokeActionId: "bb.action.OPEN"
+            query.uri: webDisplay.url
+
+            query.onQueryChanged: {
+                browserQuery.query.updateQuery();
+            }
         }
-//        InvokeActionItem {
-//            title: "Open in Browser"
-//            imageSource: "asset:///images/icons/ic_open_link.png"
-//            ActionBar.placement: ActionBarPlacement.InOverflow
-//            id: browserQuery
-//            query {
-//                invokeActionId: 'bb.action.OPEN'
-//                uri: ""
-//            }
-//            onTriggered: {
-//                browserQuery.query.uri = webDisplay.url
-//                browserQuery.query.updateQuery();
-//            }
-//        }
 
     ]
     Container {

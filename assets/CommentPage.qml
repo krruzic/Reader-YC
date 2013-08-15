@@ -6,6 +6,8 @@ Page {
     property string moreComments: ""
     property string commentLink: ""
     property string articleLink: ""
+    property string errorText: ""
+    property string lastItemType: ""
     property bool busy: false
     property alias title: commentHeader.title
     property alias titlePoster: commentHeader.poster
@@ -18,11 +20,22 @@ Page {
     }
 
     function onCommentError(data) {
+        var lastItem = commentModel.size() - 1
+        console.log(lastItemType);
+        if (lastItemType == 'error') {
+            commentModel.removeAt(lastItem)
+        }
+        commentModel.append({
+                type: 'error',
+                title: data.text
+            });
+        busy = false;
         console.log(data.text)
     }
 
     function onAddComments(data) {
         commentModel.append({
+                type: 'item',
                 poster: data.comment["username"],
                 timePosted: data.comment["time"],
                 indent: data.comment["level"] * 40,
@@ -52,17 +65,20 @@ Page {
                 page.htmlContent = articleLink;
                 page.text = commentPane.title;
             }
+        },
+        InvokeActionItem {
+            title: "Open in Browser"
+            imageSource: "asset:///images/icons/ic_open_link.png"
+            ActionBar.placement: ActionBarPlacement.InOverflow
+            id: browserQuery
+            query.mimeType: "text/plain"
+            query.invokeActionId: "bb.action.OPEN"
+            query.uri: commentPane.commentLink
+
+            query.onQueryChanged: {
+                browserQuery.query.updateQuery();
+            }
         }
-//        InvokeActionItem {
-//            id: browserQuery
-//            title: "Open in Browser"
-//            imageSource: "asset:///images/icons/ic_open_link.png"
-//            ActionBar.placement: ActionBarPlacement.InOverflow
-//            query {
-//                invokeActionId: 'bb.action.OPEN'
-//                uri: commentLink
-//            }
-//        }
     ]
 
     Container {
@@ -91,19 +107,44 @@ Page {
             dataModel: ArrayDataModel {
                 id: commentModel
             }
+
+            function itemType(data, indexPath) {
+                if (data.type != 'error') {
+                    lastItemType = 'item';
+                    return 'item';
+                } else {
+                    lastItemType = 'error';
+                    return 'error';
+                }
+            }
+
             listItemComponents: [
                 ListItemComponent {
-                    type: ''
+                    type: 'item'
                     Comment {
                         id: commentItem
                         leftPadding: 19
                         rightPadding: 19
+                        property string type: ListItemData.type
                         poster: ListItemData.poster
                         time: ListItemData.timePosted
                         indent: ListItemData.indent
                         text: ListItemData.text
                     }
-
+                },
+                ListItemComponent {
+                    type: 'error'
+                    Label {
+                        id: errorItem
+                        property string type: ListItemData.type
+                        text: ListItemData.title
+                        visible: true
+                        multiline: true
+                        autoSize.maxLineCount: 2
+                        textStyle.fontSize: FontSize.Medium
+                        textStyle.fontStyle: FontStyle.Italic
+                        textStyle.textAlign: TextAlign.Center
+                    }
                 }
             ]
             function hideChildren(index) {

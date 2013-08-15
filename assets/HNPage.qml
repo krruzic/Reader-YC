@@ -3,6 +3,16 @@ import "tart.js" as Tart
 
 Container {
     id: hnPage
+    property string postArticle: ''
+    property string askPost: ''
+    property string commentSource: ''
+    property string postComments: ''
+    property string commentID: ''
+    property alias postTitle: labelPostTitle.text
+    property alias postDomain: labelPostDomain.text
+    property alias postUsername: labelUsername.text
+    property alias postTime: labelTimePosted.text
+
     onCreationCompleted: {
         Tart.register(hnPage)
     }
@@ -56,35 +66,11 @@ Container {
                     data = selectedItem.title + "\n" + selectedItem.articleURL + "\n" + commentPane.title + " Shared using Reader|YC "
                 }
             }
-//            InvokeActionItem {
-//                id: browserQuery
-//                title: "Open in Browser"
-//                imageSource: "asset:///images/icons/ic_open_link.png"
-//                ActionBar.placement: ActionBarPlacement.OnBar
-//                query {
-//                    invokeActionId: 'bb.action.OPEN'
-//                    uri: ""
-//                }
-//                onTriggered: {
-//                    var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
-//                    browserQuery.query.uri = selectedItem.articleURL;
-//                    browserQuery.query.updateQuery();
-//                }
-//            }
         }
     ]
     layout: DockLayout {
 
     }
-    property string postArticle: ''
-    property string askPost: ''
-    property string commentSource: ''
-    property string postComments: ''
-    property string commentID: ''
-    property alias postTitle: labelPostTitle.text
-    property alias postDomain: labelPostDomain.text
-    property alias postUsername: labelUsername.text
-    property alias postTime: labelTimePosted.text
 
     property int padding: 19
     topPadding: 2
@@ -143,7 +129,8 @@ Container {
                 preferredWidth: 680
                 maxWidth: 680
                 text: "Billing Incident Update, from the makers of cheese"
-                textStyle.fontSize: FontSize.Small
+                textStyle.fontSize: FontSize.PointValue
+                textStyle.fontSizeValue: 7
                 bottomMargin: 1
                 textStyle.color: Color.Black
             }
@@ -164,7 +151,8 @@ Container {
                     translationX: 10
                     text: "http://dailymail.co.uk/"
                     multiline: false
-                    textStyle.fontSize: FontSize.Small
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 7
                     textStyle.color: Color.Gray
                     horizontalAlignment: HorizontalAlignment.Left
                     textStyle.textAlign: TextAlign.Left
@@ -176,7 +164,8 @@ Container {
                     }
                     text: postComments + " comments"
                     multiline: false
-                    textStyle.fontSize: FontSize.Small
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 7
                     textStyle.color: Color.Gray
                     horizontalAlignment: HorizontalAlignment.Right
                     textStyle.textAlign: TextAlign.Right
@@ -186,6 +175,7 @@ Container {
                 topMargin: 10
                 leftMargin: 1
                 rightPadding: 15
+                translationY: -10
                 layout: StackLayout {
                     orientation: LayoutOrientation.LeftToRight
                 }
@@ -196,7 +186,8 @@ Container {
                     }
                     text: "username"
                     multiline: false
-                    textStyle.fontSize: FontSize.Small
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 6
                     textStyle.color: Color.create("#fe8515")
                     horizontalAlignment: HorizontalAlignment.Left
                     textStyle.textAlign: TextAlign.Left
@@ -209,18 +200,14 @@ Container {
                     }
                     text: "some comments | some points"
                     multiline: false
-                    textStyle.fontSize: FontSize.Small
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 6
                     textStyle.color: Color.Gray
                     horizontalAlignment: HorizontalAlignment.Right
                     textStyle.textAlign: TextAlign.Right
                 }
             }
         }
-        //        Label {
-        //            translationX: -30
-        //            text: "130"
-        //            textStyle.fontSize: FontSize.XSmall
-        //        }
     }
     ImageView {
         id: highlightContainer

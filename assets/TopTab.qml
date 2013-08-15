@@ -214,9 +214,6 @@ NavigationPane {
                 function pushPage(pageToPush) {
                     console.log(pageToPush)
                     var page = eval(pageToPush).createObject();
-                    //                    page.title = details[0];
-                    //                    page.titlePoster = details[1];
-                    //                    page.titleTime = details[2];
                     topPage.push(page);
                     return page;
                 }

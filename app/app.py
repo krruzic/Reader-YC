@@ -79,7 +79,7 @@ class App(tart.Application):
         source = source.split(' ', 1)[0] # Takes just the first word passed
         try:
             detailList = HU.getUserPage("https://news.ycombinator.com/user?id=" + source)
-            if (len(detailList) > 1):
+            if (detailList != []):
                 tart.send('userInfoReceived', details=detailList)
         except urllib.error.URLError:
             tart.send('userError', text="Error getting user page, Check your connection \nand try again")

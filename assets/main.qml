@@ -60,7 +60,7 @@ TabbedPane {
         NewTab {
             id: newest
             onCreationCompleted: {
-                newest.whichPage = 'newPage'
+                newest.whichPage = 'newestPage'
             }
         }
         signal push(variant p)
