@@ -10,20 +10,18 @@ NavigationPane {
     property string errorText: ""
     property string lastItemType: ""
     property bool busy: false
-    
-    
+
     onCreationCompleted: {
         Tart.register(askPage)
     }
-    
+
     onPopTransitionEnded: {
         page.destroy();
-        tabbedPane.veiwingHelp = false; 
+        tabbedPane.veiwingHelp = false;
         tabbedPane.veiwingAbout = false;
         page.destroy()
     }
-    
-    
+
     function onAddAskStories(data) {
         var stories = data.stories;
         morePage = data.moreLink;
@@ -42,12 +40,12 @@ NavigationPane {
                     commentsURL: story[8],
                     hnid: story[9],
                     isAsk: story[10]
-            });
+                });
         }
         busy = false;
-        titleBar.refreshEnabled = !busy;
+        titleBar.refreshEnabled = ! busy;
     }
-    
+
     function onAskListError(data) {
         var lastItem = theModel.size() - 1
         console.log(lastItemType);
@@ -57,9 +55,9 @@ NavigationPane {
         theModel.append({
                 type: 'error',
                 title: data.text
-        });
-    busy = false;
-    titleBar.refreshEnabled = !busy;
+            });
+        busy = false;
+        titleBar.refreshEnabled = ! busy;
     }
     Page {
         Container {
@@ -71,13 +69,13 @@ NavigationPane {
                     Tart.send('requestPage', {
                             source: "Ask HN",
                             sentBy: whichPage
-                    });
-                console.log("pressed")
-                theModel.clear();
-                errorLabel.text = "";
-                errorLabel.visible = false;
-                console.log(errorLabel.visible)
-                refreshEnabled = !busy;
+                        });
+                    console.log("pressed")
+                    theModel.clear();
+                    errorLabel.text = "";
+                    errorLabel.visible = false;
+                    console.log(errorLabel.visible)
+                    refreshEnabled = ! busy;
                 }
                 onTouch: {
                     theList.scrollToPosition(0, 0x2)
@@ -111,7 +109,7 @@ NavigationPane {
                     visible: busy
                 }
             }
-            
+
             ListView {
                 id: theList
                 dataModel: ArrayDataModel {
@@ -133,7 +131,7 @@ NavigationPane {
                     Shortcut {
                         key: "R"
                         onTriggered: {
-                            if (!busy)
+                            if (! busy)
                                 refreshPage();
                         }
                     }
@@ -143,7 +141,7 @@ NavigationPane {
                         lastItemType = 'item';
                         return 'item';
                     } else {
-                        lastItemType  = 'error';
+                        lastItemType = 'error';
                         return 'error';
                     }
                 }
@@ -193,7 +191,9 @@ NavigationPane {
                         page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
                         Tart.send('requestComments', {
                                 source: selectedItem.hnid,
-                        askPost: selectedItem.isAsk});
+                                askPost: selectedItem.isAsk,
+                                deleteComments: "false"
+                            });
                     } else {
                         console.log('Item triggered. ' + selectedItem.articleURL);
                         var page = webPage.createObject();
@@ -210,7 +210,7 @@ NavigationPane {
                                 Tart.send('requestPage', {
                                         source: morePage,
                                         sentBy: whichPage
-                                });
+                                    });
                             }
                         }
                     }

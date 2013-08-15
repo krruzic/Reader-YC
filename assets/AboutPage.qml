@@ -21,11 +21,10 @@ Page {
             }
         }
         Container {
-            layout: StackLayout {
-                orientation: LayoutOrientation.LeftToRight
-            }
             Button {
-                horizontalAlignment: horizontalAlignment.Left
+                layoutProperties: StackLayoutProperties {
+                }
+                horizontalAlignment: HorizontalAlignment.Center
                 text: "Contribute on Github!"
                 attachedObjects: [
                     Invocation {
@@ -39,13 +38,7 @@ Page {
                 onClicked: {
                     browserInvocation.trigger(browserInvocation.query.invokeActionId);
                 }
-            }
-            Button {
-                horizontalAlignment: horizontalAlignment.Right
-                text: "Rate the app!"
-                onClicked: {
-                    console.log("HELLO");
-                }
+
             }
         }
     }

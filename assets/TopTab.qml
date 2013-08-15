@@ -192,7 +192,8 @@ NavigationPane {
                         page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
                         Tart.send('requestComments', {
                                 source: selectedItem.hnid,
-                                askPost: selectedItem.isAsk
+                                askPost: selectedItem.isAsk,
+                                deleteComments: "false"
                             });
                     } else {
                         console.log('Item triggered. ' + selectedItem.articleURL);
