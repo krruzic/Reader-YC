@@ -45,7 +45,6 @@ Page {
             Button {
                 text: "Request a bug fix!"
                 horizontalAlignment: horizontalAlignment.Left
-                text: "Contribute on Github!"
                 attachedObjects: [
                     Invocation {
                         id: browserInvocation
