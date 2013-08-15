@@ -36,7 +36,7 @@ Container {
                     page.articleLink = selectedItem.articleURL;
 
                     console.log(selectedItem.isAsk);
-                    Tart.send('requestComments', {
+                    Tart.send('requestComments',{
                             source: selectedItem.hnid,
                             askPost: selectedItem.isAsk,
                             deleteComments: "False"

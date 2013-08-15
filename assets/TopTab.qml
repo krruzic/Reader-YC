@@ -16,9 +16,12 @@ NavigationPane {
     }
 
     onPopTransitionEnded: {
+
         page.destroy();
         tabbedPane.veiwingHelp = false; 
         tabbedPane.veiwingAbout = false;
+
+        page.destroy()
     }
 
     function onAddTopStories(data) {
@@ -82,6 +85,18 @@ NavigationPane {
                 text: appInfo.version
                 textStyle.fontSize: FontSize.Small
                 textStyle.color: Color.Black
+            }
+
+
+            Label {
+                id: errorLabel
+                text: ""
+                visible: false
+                multiline: true
+                autoSize.maxLineCount: 2
+                textStyle.fontSize: FontSize.Medium
+                textStyle.fontStyle: FontStyle.Italic
+                textStyle.textAlign: TextAlign.Center
             }
             Container {
                 visible: busy

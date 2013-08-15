@@ -3,6 +3,7 @@ import "tart.js" as Tart
 
 TabbedPane {
     id: tabbedPane
+
     property bool veiwingHelp: false
     property bool veiwingAbout: false
 
@@ -16,6 +17,7 @@ TabbedPane {
                         var np = aboutPage.createObject(activeTab.content);
                         activeTab.push(np)
                     }
+
                 }
             },
             ActionItem {
@@ -35,16 +37,19 @@ TabbedPane {
         id: topTab
         title: qsTr("Top Posts")
         imageSource: "asset:///images/icons/ic_top.png"
+
         TopTab { // All tab content is a navpPane
             id: top
             onCreationCompleted: {
                 top.whichPage = 'topPage'
             }
+
         }
         signal push(variant p)
         onPush: {
             top.push(p);
         }
+
     }
     Tab {
         title: qsTr("Ask HN")
@@ -90,6 +95,7 @@ TabbedPane {
     }
     onActiveTabChanged: {
         userPage.searchVisible = false;
+
     }
     onCreationCompleted: {
         Tart.init(_tart, Application);

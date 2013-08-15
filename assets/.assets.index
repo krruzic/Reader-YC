@@ -1,6 +1,7 @@
 1
-26
+25
 CustomActionButton.qml
+customDropDown.qml
 MainPage.qml
 images/Comment.png
 images/CommentBackground.amd
@@ -13,16 +14,14 @@ images/New.png
 images/gridIcon.png
 images/Paper.png
 images/CommentBackground.png
+CommentPage.qml
 grid.qml
 HNPage.qml
-commentPage.qml
 ArticleHeader.qml
 main.qml
 SettingsPage.qml
 loadButton.qml
 webArticle.qml
 Comment.qml
-top.xml
 AppMenuDefinition.qml
-ADNLIST.qml
 HelpPage.qml

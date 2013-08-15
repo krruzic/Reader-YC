@@ -1,1 +1,0 @@
-include (../TartStart.pro)

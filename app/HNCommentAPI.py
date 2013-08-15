@@ -116,10 +116,17 @@ class HackerNewsCommentAPI:
         textCache.close()
 
 
+
     def getPage(self, source, isAsk, deleteComments):
         """Gets the comments and text of the post
         """
 
+
+    def getPage(self, source, isAsk):
+        """Gets the comments and text of the post
+        """
+        deleteComments = False
+>>>>>>> 0053c3889e9668e1d2b38168364523a462b27c74
         workingDir = os.getcwd() + '/data/cache/'
         textURL = 'https://news.ycombinator.com/item?id=%s' % source
         commentsURL = 'http://hndroidapi.appspot.com/nestedcomments/format/json/id/%s' % source
@@ -138,9 +145,15 @@ class HackerNewsCommentAPI:
             if (comments == []): # If the article has no comments, delete the cache
                 print("Deleting empty comments..")
                 os.remove(workingDir + source + '.json')
+
                 deleteComments = "True"
 
         if (deleteComments != "True" and cached == True):
+
+                deleteComments = True
+
+        if (deleteComments != True and cached == True):
+>>>>>>> 0053c3889e9668e1d2b38168364523a462b27c74
             print("Comments in cache!")
             cache = open(workingDir + '%s.json' % source, 'r')
             comments = json.load(cache)

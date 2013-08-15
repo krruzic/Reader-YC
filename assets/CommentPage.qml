@@ -17,7 +17,9 @@ Page {
     onCreationCompleted: {
         busy = true;
         Tart.register(commentPane);
-        commentList.scrollToPosition(-1,ScrollAnimation.Smooth)
+
+        commentList.scrollToPosition(-1, ScrollAnimation.Smooth)
+
     }
 
     function onCommentError(data) {
@@ -81,6 +83,7 @@ Page {
             }
         }
     ]
+
     Container {
         HNTitleBar {
             id: titleBar

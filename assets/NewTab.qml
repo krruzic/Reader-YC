@@ -19,6 +19,7 @@ NavigationPane {
         page.destroy();
         tabbedPane.veiwingHelp = false; 
         tabbedPane.veiwingAbout = false;
+        page.destroy()
     }
 
     function onAddNewStories(data) {
