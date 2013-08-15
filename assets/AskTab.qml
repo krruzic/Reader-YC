@@ -81,12 +81,12 @@ NavigationPane {
                     theList.scrollToPosition(0, 0x2)
                 }
             }
-            Label {
-                maxHeight: 20.0
-                text: appInfo.version
-                textStyle.fontSize: FontSize.Small
-                textStyle.color: Color.Black
-            }
+//            Label {
+//                maxHeight: 20.0
+//                text: appInfo.version
+//                textStyle.fontSize: FontSize.Small
+//                textStyle.color: Color.Black
+//            }
             Label {
                 id: errorLabel
                 text: ""
