@@ -59,7 +59,7 @@ NavigationPane {
         Container {
             HNTitleBar {
                 id: titleBar
-                text: "Reader|YC - New"
+                text: "Reader|YC - Newest"
                 onRefreshPage: {
                     busy = true;
                     Tart.send('requestPage', {
