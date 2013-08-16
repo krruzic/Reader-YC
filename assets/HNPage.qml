@@ -32,8 +32,9 @@ Container {
                     page.titlePoster = selectedItem.poster;
                     page.titleTime = selectedItem.timePosted + "| " + selectedItem.points;
                     page.titleDomain = selectedItem.domain;
-                    page.commentLink = selectedItem.commentsURL;
+                    page.commentLink = selectedItem.hnid;
                     page.articleLink = selectedItem.articleURL;
+                    page.isAsk = selectedItem.isAsk;
 
                     console.log(selectedItem.isAsk);
                     Tart.send('requestComments',{
@@ -74,8 +75,8 @@ Container {
     }
 
     property int padding: 19
-    topPadding: 2
-    bottomPadding: 3
+    topPadding: 5
+    bottomPadding: 0
     leftPadding: padding
     rightPadding: padding
 

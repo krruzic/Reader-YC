@@ -1,27 +1,37 @@
 import bb.cascades 1.0
 
 Container {
+    layout: DockLayout {
+        //            orientation: LayoutOrientation.LeftToRight
+
+    }
     property alias text: pageTitle.text
     property alias refreshEnabled: refreshButton.enabled
     property alias showButton: refreshButton.visible
     property alias buttonImage: refreshButton.defaultImageSource
     property alias buttonPressedImage: refreshButton.pressedImageSource
-    minHeight: 120
-    maxHeight: 120
+    minHeight: 114
+    maxHeight: 100
     background: background.imagePaint
     signal refreshPage()
     Container {
+        topPadding: 20
+        leftPadding: 10
+        rightPadding: 20
         layout: StackLayout {
             orientation: LayoutOrientation.LeftToRight
-        
         }
-        topPadding: 20.0
-        leftPadding: 0.0
         ScrollView {
+            layoutProperties: StackLayoutProperties {
+                spaceQuota: 5
+            }
+            minWidth: 560
+            maxWidth: 560
+            horizontalAlignment: horizontalAlignment.Left
             scrollViewProperties.scrollMode: ScrollMode.Horizontal
             scrollViewProperties.pinchToZoomEnabled: false
             scrollViewProperties.overScrollEffectMode: OverScrollEffectMode.OnScroll
-            TextArea  {
+            Label {
                 id: pageTitle
                 text: "Reader|YC - Top Posts"
                 textStyle.fontSize: FontSize.PointValue
@@ -29,29 +39,36 @@ Container {
                 textStyle.color: Color.White
                 textFormat: TextFormat.Plain
                 enabled: false
-                editable: false
-                focusHighlightEnabled: false
-                translationY: -10
-                maximumLength: 1000
-                input.masking: TextInputMasking.Default
-                input.submitKey: SubmitKey.None
-                textStyle.fontSizeValue: 10.0
+                textStyle.fontSizeValue: 9.0
+                translationY: 6
             }
         }
+        Divider {
+            opacity: 0
+        }
         ImageButton {
+            translationY: -6
+            layoutProperties: StackLayoutProperties {
+                spaceQuota: 1
+            }
+            horizontalAlignment: horizontalAlignment.Right
             id: refreshButton
-            translationX: -30
             defaultImageSource: "asset:///images/refresh.png"
             pressedImageSource: "asset:///images/refresh.png"
             onClicked: {
                 refreshPage();
             }
+            minWidth: 86
+            minHeight: 79
+            maxWidth: 86
+            maxHeight: 79
+
         }
+        attachedObjects: [
+            ImagePaintDefinition {
+                id: background
+                imageSource: "asset:///images/titlebar.png"
+            }
+        ]
     }
-    attachedObjects: [
-        ImagePaintDefinition {
-            id: background
-            imageSource: "asset:///images/titlebar.png"
-        }
-    ]
 }

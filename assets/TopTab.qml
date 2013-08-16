@@ -187,10 +187,11 @@ NavigationPane {
                         var page = commentPage.createObject();
                         topPage.push(page);
                         console.log(selectedItem.commentsURL)
-                        page.commentLink = selectedItem.commentsURL;
+                        page.commentLink = selectedItem.hnid;
                         page.title = selectedItem.title;
                         page.titlePoster = selectedItem.poster;
                         page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
+                        page.isAsk = selectedItem.isAsk;
                         Tart.send('requestComments', {
                                 source: selectedItem.hnid,
                                 askPost: selectedItem.isAsk,

@@ -3,7 +3,7 @@ import "tart.js" as Tart
 
 Page {
     id: commentPane
-    property string moreComments: ""
+    property string isAsk: ""
     property string commentLink: ""
     property string articleLink: ""
     property string errorText: ""
@@ -45,6 +45,7 @@ Page {
                 text: data.comment["comment"]
             });
         busy = false;
+        refreshEnabled = ! busy;
     }
     actions: [
         InvokeActionItem {
@@ -89,17 +90,18 @@ Page {
             id: titleBar
             text: title
             onRefreshPage: {
+                busy = true;
                 Tart.send('requestComments', {
-                        source: selectedItem.hnid,
-                        askPost: selectedItem.isAsk,
+                        source: commentLink,
+                        askPost: isAsk,
                         deleteComments: "True"
                     });
-                console.log("pressed")
+                console.log("pressed");
                 commentModel.clear();
                 refreshEnabled = ! busy;
             }
             onTouch: {
-                commentList.scrollToPosition(0, 0x2)
+                commentList.scrollToPosition(0, 0x2);
             }
         }
         Container {

@@ -15,20 +15,21 @@ TabbedPane {
                 onTriggered: {
                     if (veiwingAbout == false) {
                         veiwingAbout = true;
-                        var np = aboutPage.createObject(activeTab.content);
-                        activeTab.push(np)
+                        var np = aboutPage.createObject();
+                        top.push(np)
                     }
 
                 }
             },
             ActionItem {
+                imageSource: "asset:///images/icons/ic_help.png"
                 title: "Help"
                 enabled: ! veiwingHelp
                 onTriggered: {
                     if (veiwingHelp == false) {
                         veiwingHelp = true;
-                        var np = helpPage.createObject(activeTab.content);
-                        activeTab.push(np)
+                        var np = helpPage.createObject();
+                        top.push(np)
                     }
                 }
             }

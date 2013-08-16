@@ -202,15 +202,16 @@ Page {
             Divider {
 
             }
-            Label {
-                text: "Reader|YC - Copyright © 2013 Surge Co."
-                textStyle.fontSize: FontSize.PointValue
-                textStyle.fontSizeValue: 5
-                layoutProperties: StackLayoutProperties {
-                }
-                horizontalAlignment: horizontalAlignment.Center
-                textStyle.textAlign: TextAlign.Center
+        }
+        Label {
+            text: "Reader|YC - Copyright © 2013 Surge Co."
+            textStyle.fontSize: FontSize.PointValue
+            textStyle.fontSizeValue: 5
+            preferredWidth: 768
+            layoutProperties: StackLayoutProperties {
             }
+            horizontalAlignment: horizontalAlignment.Center
+            textStyle.textAlign: TextAlign.Center
         }
     }
     attachedObjects: [
