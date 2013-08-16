@@ -46,11 +46,11 @@ class App(tart.Application):
         except IndexError:
             print("error from python: " + "IndexError")
             if (sentBy == 'topPage'):
-                tart.send('topListError', text="Expired Link! Refresh to try again!")
+                tart.send('topListError', text="Expired Link! Unable to load more content...")
             elif (sentBy == 'askPage'):
-                tart.send('askListError', text="Expired Link! Refresh to try again!")
+                tart.send('askListError', text="Expired Link! Unable to load more content...")
             elif (sentBy == 'newestPage'):
-                tart.send('newListError', text="Expired Link! Refresh to try again!")
+                tart.send('newListError', text="Expired Link! Unable to load more content...")
             return
 
         stories = []

@@ -27,11 +27,13 @@ Page {
                     Label {
                         text: "<b>Reader|YC is Open Source</b>"
                         textFormat: TextFormat.Html
+                        textStyle.color: Color.create("#434344")
                     }
                     Label {
                         text: "Contribute on GitHub!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
+                        textStyle.color: Color.create("#fe8a3e")
                     }
                 }
                 Button {
@@ -59,11 +61,13 @@ Page {
                     Label {
                         text: "<b>Bug?</b>"
                         textFormat: TextFormat.Html
+                        textStyle.color: Color.create("#434344")
                     }
                     Label {
                         text: "Email the devs!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
+                        textStyle.color: Color.create("#fe8a3e")
                     }
                 }
                 Button {
@@ -91,21 +95,31 @@ Page {
                     Label {
                         text: "<b>Feature Request?</b>"
                         textFormat: TextFormat.Html
+                        textStyle.color: Color.create("#434344")
                     }
                     Label {
                         text: "Submit an issue!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
+                        textStyle.color: Color.create("#fe8a3e")
                     }
                 }
                 Button {
                     layoutProperties: StackLayoutProperties {
                         spaceQuota: 1
                     }
-                    imageSource: "asset:///images/github.png"
+                    imageSource: "asset:///images/feature.png"
+                    attachedObjects: [
+                        Invocation {
+                            id: featureInvocation
+                            query.mimeType: "text/plain"
+                            query.invokeTargetId: "sys.browser"
+                            query.invokeActionId: "bb.action.OPEN"
+                            query.uri: "https://github.com/krruzic/Reader-YC/issues/"
+                        }
+                    ]
                     onClicked: {
-                        browserInvocation.query.uri = "https://github.com/krruzic/Reader-YC/issues"
-                        browserInvocation.trigger(browserInvocation.query.invokeActionId);
+                        featureInvocation.trigger(featureInvocation.query.invokeActionId);
                     }
                 }
             }
@@ -123,11 +137,13 @@ Page {
                     Label {
                         text: "<b>Support Reader|YC Development</b>"
                         textFormat: TextFormat.Html
+                        textStyle.color: Color.create("#434344")
                     }
                     Label {
                         text: "Leave a Review on BlackBerry World!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
+                        textStyle.color: Color.create("#fe8a3e")
                     }
                 }
                 Button {
@@ -136,8 +152,16 @@ Page {
                     }
                     imageSource: "asset:///images/bbWorld.png"
 
+                    attachedObjects: [
+                        Invocation {
+                            id: invoke
+                            query.mimeType: "application/x-bb-appworld"
+                            query.uri: "appworld://content/Reader00YC"
+                        }
+                    ]
+
                     onClicked: {
-                        console.log("Invoke BB WORLD HERE")
+                        invoke.trigger("bb.action.OPEN")
                     }
                 }
             }
@@ -155,11 +179,13 @@ Page {
                     Label {
                         text: "<b>Share the App</b>"
                         textFormat: TextFormat.Html
+                        textStyle.color: Color.create("#434344")
                     }
                     Label {
                         text: "Invite BBM Friends to download!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
+                        textStyle.color: Color.create("#fe8a3e")
                     }
                 }
                 Button {
