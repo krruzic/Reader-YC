@@ -45,6 +45,12 @@ class App(tart.Application):
             return
         except IndexError:
             print("error from python: " + "IndexError")
+            if (sentBy == 'topPage'):
+                tart.send('topListError', text="Expired Link! Refresh to try again!")
+            elif (sentBy == 'askPage'):
+                tart.send('askListError', text="Expired Link! Refresh to try again!")
+            elif (sentBy == 'newestPage'):
+                tart.send('newListError', text="Expired Link! Refresh to try again!")
             return
 
         stories = []
@@ -78,7 +84,7 @@ class App(tart.Application):
         source = source.strip() # strips leading and trailing whitespaces
         source = source.split(' ', 1)[0] # Takes just the first word passed
         try:
-            detailList = HU.getUserPage("https://news.ycombinator.com/user?id=" + source)
+            detailList = HU.getUserPage("http://news.ycombinator.com/user?id=" + source)
             if (detailList != []):
                 tart.send('userInfoReceived', details=detailList)
         except urllib.error.URLError:

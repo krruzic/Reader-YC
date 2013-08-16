@@ -48,6 +48,7 @@ class HackerNewsCommentAPI:
             for c in comments:
                     c['level'] = level
                     c['comment'] = c['comment'].replace('__BR__',' \n')
+                    c['comment'] = c['comment'].replace('&gt;', '>')
                     #removes the childs from the item (important)
                     childs = c.pop('children', [])
                     #adds the item to the result

@@ -9,7 +9,9 @@ TabbedPane {
     Menu.definition: MenuDefinition {
         actions: [
             ActionItem {
+                imageSource: "asset:///images/icons/ic_info.png"
                 title: "About"
+                enabled: ! veiwingAbout
                 onTriggered: {
                     if (veiwingAbout == false) {
                         veiwingAbout = true;
@@ -21,6 +23,7 @@ TabbedPane {
             },
             ActionItem {
                 title: "Help"
+                enabled: ! veiwingHelp
                 onTriggered: {
                     if (veiwingHelp == false) {
                         veiwingHelp = true;

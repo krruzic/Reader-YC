@@ -8,7 +8,7 @@ Container {
     property alias buttonPressedImage: refreshButton.pressedImageSource
     minHeight: 120
     maxHeight: 120
-    background: Color.create("#fffe8515")
+    background: background.imagePaint
     signal refreshPage()
     Container {
         layout: StackLayout {
@@ -48,4 +48,10 @@ Container {
             }
         }
     }
+    attachedObjects: [
+        ImagePaintDefinition {
+            id: background
+            imageSource: "asset:///images/titlebar.png"
+        }
+    ]
 }

@@ -200,14 +200,17 @@ Page {
                 onTriggered: {
                     console.log("Comment triggered!")
                 }
-                //            attachedObjects: [
-                //                ListScrollStateHandler {
-                //                    onAtBeginningChanged: {
-                //                        if (atBeginning == false && !commentModel.isEmpty())
-                //                        	commentHeader.visible = false;
-                //                    }
-                //                }
-                //            ]
+                attachedObjects: [
+                    ListScrollStateHandler {
+                        onScrollingChanged: {
+                            if (scrolling == true) {
+                                console.log("Hiding action Bar")
+                                commentPane.actionBarVisibility.Hidden;
+                            } else
+                                commentPane.actionBarVisibility.Visible;
+                        }
+                    }
+                ]
             }
         }
     }
