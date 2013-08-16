@@ -6,7 +6,6 @@ TabbedPane {
 
     property bool veiwingHelp: false
     property bool veiwingAbout: false
-
     Menu.definition: MenuDefinition {
         actions: [
             ActionItem {
@@ -43,7 +42,15 @@ TabbedPane {
             onCreationCompleted: {
                 top.whichPage = 'topPage'
             }
-
+        }
+        onTriggered: {
+            if (top.theModel.isEmpty() && top.busy == false) {
+                top.busy = true;
+                Tart.send('requestPage', {
+                        source: top.whichPage,
+                        sentBy: top.whichPage
+                });
+            }
         }
         signal push(variant p)
         onPush: {
@@ -61,6 +68,16 @@ TabbedPane {
                 ask.whichPage = 'askPage'
             }
         }
+        onTriggered: {
+            if (ask.theModel.isEmpty() && ask.busy == false) {
+                ask.busy = true;
+                Tart.send('requestPage', {
+                        source: ask.whichPage,
+                        sentBy: ask.whichPage
+                    });
+            }
+        }
+
         signal push(variant p)
         onPush: {
             ask.push(p);
@@ -74,6 +91,15 @@ TabbedPane {
             id: newest
             onCreationCompleted: {
                 newest.whichPage = 'newestPage'
+            }
+        }
+        onTriggered: {
+            if (newest.theModel.isEmpty() && newest.busy == false) {
+                newest.busy = true;
+                Tart.send('requestPage', {
+                        source: newest.whichPage,
+                        sentBy: newest.whichPage
+                    });
             }
         }
         signal push(variant p)
@@ -98,6 +124,7 @@ TabbedPane {
 
     }
     onCreationCompleted: {
+        top.busy = true;
         Tart.init(_tart, Application);
 
         Tart.register(tabbedPane);

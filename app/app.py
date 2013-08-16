@@ -14,7 +14,7 @@ class App(tart.Application):
     """
 
     def onUiReady(self):
-        self.onRequestPage("Top Posts", "topPage")
+        self.onRequestPage("topPage", "topPage")
         # self.onRequestPage("Ask HN", "askPage")
         # self.onRequestPage("Newest Posts", "newestPage")
 
@@ -25,11 +25,11 @@ class App(tart.Application):
     def story_routine(self, source, sentBy):
         print("source sent:" + source)
         print("sent by: " + sentBy)
-        if source == 'Top Posts':
+        if source == 'topPage':
             source = 'news'
-        if source == 'Ask HN':
+        if source == 'askPage':
             source = 'ask'
-        if source == 'Newest Posts':
+        if source == 'newestPage':
             source = 'newest'
 
         try:

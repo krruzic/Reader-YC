@@ -5,6 +5,7 @@ import "tart.js" as Tart
 
 NavigationPane {
     id: askPage
+    property variant theModel: theModel
     property string whichPage: ""
     property string morePage: ""
     property string errorText: ""
@@ -67,7 +68,7 @@ NavigationPane {
                 onRefreshPage: {
                     busy = true;
                     Tart.send('requestPage', {
-                            source: "Ask HN",
+                            source: whichPage,
                             sentBy: whichPage
                         });
                     console.log("pressed")

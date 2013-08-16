@@ -5,6 +5,7 @@ import "tart.js" as Tart
 
 NavigationPane {
     id: topPage
+    property variant theModel: theModel
     property string whichPage: ""
     property string morePage: ""
     property string errorText: ""
@@ -69,7 +70,7 @@ NavigationPane {
                 onRefreshPage: {
                     busy = true;
                     Tart.send('requestPage', {
-                            source: "Top Posts",
+                            source: whichPage,
                             sentBy: whichPage
                         });
                     console.log("pressed")
