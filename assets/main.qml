@@ -4,8 +4,6 @@ import "tart.js" as Tart
 TabbedPane {
     id: tabbedPane
 
-    property bool veiwingHelp: false
-    property bool veiwingAbout: false
     Menu.definition: MenuDefinition {
         actions: [
             ActionItem {
@@ -13,12 +11,8 @@ TabbedPane {
                 title: "About"
                 enabled: ! veiwingAbout
                 onTriggered: {
-                    if (veiwingAbout == false) {
-                        veiwingAbout = true;
-                        var np = aboutPage.createObject();
-                        top.push(np)
-                    }
-
+                    var np = aboutPage.createObject(activeTab.content);
+                    activeTab.push(np)
                 }
             },
             ActionItem {
@@ -26,11 +20,8 @@ TabbedPane {
                 title: "Help"
                 enabled: ! veiwingHelp
                 onTriggered: {
-                    if (veiwingHelp == false) {
-                        veiwingHelp = true;
-                        var np = helpPage.createObject();
-                        top.push(np)
-                    }
+                    var np = helpPage.createObject(activeTab.content);
+                    activeTab.push(np)
                 }
             }
         ]
@@ -53,7 +44,7 @@ TabbedPane {
                 Tart.send('requestPage', {
                         source: top.whichPage,
                         sentBy: top.whichPage
-                });
+                    });
             }
         }
         signal push(variant p)

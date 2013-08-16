@@ -21,6 +21,7 @@ Page {
         commentList.scrollToPosition(-1, ScrollAnimation.Smooth)
 
     }
+    
 
     function onCommentError(data) {
         var lastItem = commentModel.size() - 1
@@ -65,7 +66,7 @@ Page {
             imageSource: "asset:///images/icons/ic_article.png"
             onTriggered: {
                 var page = webPage.createObject();
-                topPage.push(page);
+                tabbedpane.activeTab.push(page);
                 page.htmlContent = articleLink;
                 page.text = commentPane.title;
             }
@@ -196,7 +197,7 @@ Page {
                 function pushPage(pageToPush) {
                     console.log(pageToPush)
                     var page = eval(pageToPush).createObject();
-                    topPage.push(page);
+                    tabbedpane.activeTab.push(page);
                     return page;
                 }
                 onTriggered: {

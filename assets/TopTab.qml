@@ -17,12 +17,7 @@ NavigationPane {
     }
 
     onPopTransitionEnded: {
-
         page.destroy();
-        tabbedPane.veiwingHelp = false; 
-        tabbedPane.veiwingAbout = false;
-
-        page.destroy()
     }
 
     function onAddTopStories(data) {

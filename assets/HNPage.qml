@@ -35,8 +35,6 @@ Container {
                     page.commentLink = selectedItem.hnid;
                     page.articleLink = selectedItem.articleURL;
                     page.isAsk = selectedItem.isAsk;
-
-                    console.log(selectedItem.isAsk);
                     Tart.send('requestComments',{
                             source: selectedItem.hnid,
                             askPost: selectedItem.isAsk,
@@ -65,7 +63,7 @@ Container {
                 }
                 onTriggered: {
                     var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
-                    data = selectedItem.title + "\n" + selectedItem.articleURL + "\n" + commentPane.title + " Shared using Reader|YC "
+                    data = selectedItem.title + "\n" + selectedItem.articleURL + "\n"  + " Shared using Reader|YC "
                 }
             }
         }

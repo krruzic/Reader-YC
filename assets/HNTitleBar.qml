@@ -2,8 +2,6 @@ import bb.cascades 1.0
 
 Container {
     layout: DockLayout {
-        //            orientation: LayoutOrientation.LeftToRight
-
     }
     property alias text: pageTitle.text
     property alias refreshEnabled: refreshButton.enabled
@@ -40,7 +38,6 @@ Container {
                 textFormat: TextFormat.Plain
                 enabled: false
                 textStyle.fontSizeValue: 9.0
-                translationY: 6
             }
         }
         Divider {

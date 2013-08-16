@@ -1,6 +1,6 @@
 import urllib.request
 from bs4 import BeautifulSoup
-import re, json, os, glob
+import re, json, os, glob, html.parser
 
 import tart
 
@@ -38,26 +38,27 @@ class HackerNewsCommentAPI:
 
 
     def flatten(self, comments, level = 0):
-            #comments is a list
+        #comments is a list
+        h = html.parser.HTMLParser() # To decode the HTML entities
 
-            if not comments:
-                    return []#exit case
+        if not comments:
+            return []#exit case
 
-            res = []
-            #add the level key so you can keep track of the original level
-            for c in comments:
-                    c['level'] = level
-                    c['comment'] = c['comment'].replace('__BR__',' \n')
-                    c['comment'] = c['comment'].replace('&gt;', '>')
-                    #removes the childs from the item (important)
-                    childs = c.pop('children', [])
-                    #adds the item to the result
-                    res.append(c)
-                    #and the flattened childs later
-                    res += self.flatten(childs, level+1)
-                    #in the next loop the next sibling will be added
+        res = []
+        #add the level key so you can keep track of the original level
+        for c in comments:
+            c['level'] = level
+            c['comment'] = c['comment'].replace('__BR__', '\n')
+            c['comment'] = h.unescape(c['comment'])
+            #removes the childs from the item (important)
+            childs = c.pop('children', [])
+            #adds the item to the result
+            res.append(c)
+            #and the flattened childs later
+            res += self.flatten(childs, level+1)
+            #in the next loop the next sibling will be added
 
-            return res
+        return res
 
 
     def checkCache(self, source):

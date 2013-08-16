@@ -77,7 +77,7 @@ Page {
                     imageSource: "asset:///images/mail.png"
 
                     onClicked: {
-                        emailInvocation.trigger(browserInvocation.query.invokeActionId);
+                        emailInvocation.trigger(emailInvocation.query.invokeActionId);
                     }
                 }
             }
