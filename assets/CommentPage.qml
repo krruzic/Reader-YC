@@ -57,7 +57,7 @@ Page {
                 invokeActionId: "bb.action.SHARE"
             }
             onTriggered: {
-                data = commentPane.title + "\n" + commentLink + "\n" + " Shared using Reader|YC "
+                data = commentPane.title + "\n" + "https://news.ycombinator.com/item?id=" + commentLink + "\n" + " Shared using Reader|YC "
             }
         },
         ActionItem {
@@ -106,7 +106,6 @@ Page {
             }
         }
         Container {
-            topPadding: 10
             Container {
                 visible: busy
                 rightPadding: 220
@@ -121,6 +120,7 @@ Page {
             }
             ListView {
                 leadingVisual: CommentHeader {
+                    topPadding: 10
                     leftPadding: 19
                     rightPadding: 19
                     id: commentHeader

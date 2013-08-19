@@ -236,6 +236,11 @@ NavigationPane {
             ComponentDefinition {
                 id: userPage
                 source: "UserPage.qml"
+            },
+            AppCover {
+                id: appCover
+                
+                extraText: '[' + "TEST" + ']';
             }
         ]
     }

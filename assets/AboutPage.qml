@@ -4,7 +4,7 @@ Page {
     Container {
         HNTitleBar {
             id: aboutTitleBar
-            text: "Reader|YC - Help"
+            text: "Reader|YC - About"
             showButton: false
             onRefreshPage: {
                 aboutSheet.close();

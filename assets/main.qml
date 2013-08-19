@@ -140,4 +140,9 @@ TabbedPane {
             }
         }
     ]
+
+    function onManualExit() {
+        Application.setCover(none)
+        Tart.send('ManualExit')
+    }
 }

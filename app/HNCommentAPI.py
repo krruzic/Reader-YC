@@ -50,6 +50,8 @@ class HackerNewsCommentAPI:
             c['level'] = level
             c['comment'] = c['comment'].replace('__BR__', '\n')
             c['comment'] = h.unescape(c['comment'])
+            c['comment'] = h.unescape(c['comment'])
+
             #removes the childs from the item (important)
             childs = c.pop('children', [])
             #adds the item to the result

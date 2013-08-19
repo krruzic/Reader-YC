@@ -2,12 +2,14 @@ import urllib.request, threading
 from .HNStoryAPI import HackerNewsStoryAPI
 from .HNCommentAPI import HackerNewsCommentAPI
 from .HNUserAPI import HackerNewsUserAPI
+from .HNSearchAPI import HackerNewsSearchAPI
 
 import tart
 
 HS = HackerNewsStoryAPI()
 HC = HackerNewsCommentAPI()
 HU = HackerNewsUserAPI()
+HQ = HackerNewsSearchAPI()
 
 class App(tart.Application):
     """ The class that directly communicates with Tart and Cascades
@@ -34,7 +36,7 @@ class App(tart.Application):
 
         try:
             postList, moreLink = HS.getPage("https://news.ycombinator.com/" + source)
-        except urllib.error.URLError:
+        except (urllib.error.URLError, socket.error):
             if (sentBy == 'topPage'):
                 tart.send('topListError', text="Error getting news feed, check your connection and try again")
             elif (sentBy == 'askPage'):
@@ -74,7 +76,7 @@ class App(tart.Application):
         print("source sent:" + source)
         try:
             HC.getPage(source, askPost, deleteComments)
-        except urllib.error.URLError:
+        except (urllib.error.URLError, socket.error):
             tart.send('commentError', text="Error getting comments. Check your connection \nand try again")
             tart.send('addText', text='')
 
@@ -89,6 +91,13 @@ class App(tart.Application):
                 tart.send('userInfoReceived', details=detailList)
         except urllib.error.URLError:
             tart.send('userError', text="Error getting user page, Check your connection \nand try again")
+
+    def onRequestSearch(self, startIndex, source):
+        print("Searching for: " + source)
+        try:
+            HQ.getResults(startIndex, source)
+        except urllib.error.URLError:
+            tart.send('seachError', text="Error getting search results, Check your connection \nand try again")
 
     def onDownloadInvite(self):
         rc = bbmsp_send_download_invitation()

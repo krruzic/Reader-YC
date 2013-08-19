@@ -9,7 +9,7 @@ Container {
     property alias buttonImage: refreshButton.defaultImageSource
     property alias buttonPressedImage: refreshButton.pressedImageSource
     minHeight: 114
-    maxHeight: 100
+    maxHeight: 114
     background: background.imagePaint
     signal refreshPage()
     Container {
@@ -19,25 +19,28 @@ Container {
         layout: StackLayout {
             orientation: LayoutOrientation.LeftToRight
         }
-        ScrollView {
-            layoutProperties: StackLayoutProperties {
-                spaceQuota: 5
-            }
-            minWidth: 560
-            maxWidth: 560
-            horizontalAlignment: horizontalAlignment.Left
-            scrollViewProperties.scrollMode: ScrollMode.Horizontal
-            scrollViewProperties.pinchToZoomEnabled: false
-            scrollViewProperties.overScrollEffectMode: OverScrollEffectMode.OnScroll
-            Label {
-                id: pageTitle
-                text: "Reader|YC - Top Posts"
-                textStyle.fontSize: FontSize.PointValue
-                textStyle.textAlign: TextAlign.Left
-                textStyle.color: Color.White
-                textFormat: TextFormat.Plain
-                enabled: false
-                textStyle.fontSizeValue: 9.0
+        Container {
+            topPadding: 6
+            ScrollView {
+                layoutProperties: StackLayoutProperties {
+                    spaceQuota: 5
+                }
+                minWidth: 620
+                maxWidth: 620
+                horizontalAlignment: horizontalAlignment.Left
+                scrollViewProperties.scrollMode: ScrollMode.Horizontal
+                scrollViewProperties.pinchToZoomEnabled: false
+                scrollViewProperties.overScrollEffectMode: OverScrollEffectMode.OnScroll
+                Label {
+                    id: pageTitle
+                    text: "Reader|YC - Top Posts"
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.textAlign: TextAlign.Left
+                    textStyle.color: Color.White
+                    textFormat: TextFormat.Plain
+                    enabled: false
+                    textStyle.fontSizeValue: 9.0
+                }
             }
         }
         Divider {
