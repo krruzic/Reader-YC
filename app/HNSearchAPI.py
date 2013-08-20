@@ -59,7 +59,7 @@ class HackerNewsSearchAPI:
         Queries the HNSearch API and returns
         tuples of the results
         """
-        print("STARTING: " + startIndex)
+        print("STARTING: " + str(startIndex))
         url = 'http://api.thriftdb.com/api.hnsearch.com/items/_search?filter[fields][title]={0}&start={1}&limit=30&sortby=create_ts+desc'.format(quote(source), startIndex)  # requests the search from the api
         response = urllib.request.urlopen(url).read() # reads the returned data
         items = json.loads(response.decode('ascii'))
