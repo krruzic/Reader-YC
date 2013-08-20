@@ -4,30 +4,24 @@ import "tart.js" as Tart
 TabbedPane {
     id: tabbedPane
 
-    property bool veiwingHelp: false
-    property bool veiwingAbout: false
-
     Menu.definition: MenuDefinition {
         actions: [
             ActionItem {
+                imageSource: "asset:///images/icons/ic_info.png"
                 title: "About"
+                enabled: true
                 onTriggered: {
-                    if (veiwingAbout == false) {
-                        veiwingAbout = true;
-                        var np = aboutPage.createObject(activeTab.content);
-                        activeTab.push(np)
-                    }
-
+                    var np = aboutPage.createObject(activeTab.content);
+                    activeTab.push(np)
                 }
             },
             ActionItem {
+                imageSource: "asset:///images/icons/ic_help.png"
                 title: "Help"
+                enabled: true
                 onTriggered: {
-                    if (veiwingHelp == false) {
-                        veiwingHelp = true;
-                        var np = helpPage.createObject(activeTab.content);
-                        activeTab.push(np)
-                    }
+                    var np = helpPage.createObject(activeTab.content);
+                    activeTab.push(np)
                 }
             }
         ]
@@ -43,7 +37,15 @@ TabbedPane {
             onCreationCompleted: {
                 top.whichPage = 'topPage'
             }
-
+        }
+        onTriggered: {
+            if (top.theModel.isEmpty() && top.busy == false) {
+                top.busy = true;
+                Tart.send('requestPage', {
+                        source: top.whichPage,
+                        sentBy: top.whichPage
+                    });
+            }
         }
         signal push(variant p)
         onPush: {
@@ -61,6 +63,16 @@ TabbedPane {
                 ask.whichPage = 'askPage'
             }
         }
+        onTriggered: {
+            if (ask.theModel.isEmpty() && ask.busy == false) {
+                ask.busy = true;
+                Tart.send('requestPage', {
+                        source: ask.whichPage,
+                        sentBy: ask.whichPage
+                    });
+            }
+        }
+
         signal push(variant p)
         onPush: {
             ask.push(p);
@@ -74,6 +86,15 @@ TabbedPane {
             id: newest
             onCreationCompleted: {
                 newest.whichPage = 'newestPage'
+            }
+        }
+        onTriggered: {
+            if (newest.theModel.isEmpty() && newest.busy == false) {
+                newest.busy = true;
+                Tart.send('requestPage', {
+                        source: newest.whichPage,
+                        sentBy: newest.whichPage
+                    });
             }
         }
         signal push(variant p)
@@ -93,11 +114,25 @@ TabbedPane {
             top.push(p);
         }
     }
+
+    Tab {
+        title: qsTr("Search HN")
+        imageSource: "asset:///images/icons/ic_search.png"
+        id: searchTab
+        SearchPage {
+            id: search
+        }
+        signal push(variant p)
+        onPush: {
+            search.push(p)
+        }
+    }
     onActiveTabChanged: {
         userPage.searchVisible = false;
 
     }
     onCreationCompleted: {
+        top.busy = true;
         Tart.init(_tart, Application);
 
         Tart.register(tabbedPane);

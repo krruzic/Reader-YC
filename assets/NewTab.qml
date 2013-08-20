@@ -5,6 +5,7 @@ import "tart.js" as Tart
 
 NavigationPane {
     id: newPage
+    property variant theModel: theModel
     property string whichPage: ""
     property string morePage: ""
     property string errorText: ""
@@ -17,9 +18,6 @@ NavigationPane {
 
     onPopTransitionEnded: {
         page.destroy();
-        tabbedPane.veiwingHelp = false; 
-        tabbedPane.veiwingAbout = false;
-        page.destroy()
     }
 
     function onAddNewStories(data) {
@@ -66,7 +64,7 @@ NavigationPane {
                 onRefreshPage: {
                     busy = true;
                     Tart.send('requestPage', {
-                            source: "Newest Posts",
+                            source: 'newestPage',
                             sentBy: 'newestPage'
                         });
                     console.log("pressed")
@@ -184,10 +182,11 @@ NavigationPane {
                         var page = commentPage.createObject();
                         newPage.push(page);
                         console.log(selectedItem.commentsURL)
-                        page.commentLink = selectedItem.commentsURL;
+                        page.commentLink = selectedItem.hnid;
                         page.title = selectedItem.title;
                         page.titlePoster = selectedItem.poster;
                         page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
+                        page.isAsk = selectedItem.isAsk;
                         Tart.send('requestComments', {
                                 source: selectedItem.hnid,
                                 askPost: selectedItem.isAsk,

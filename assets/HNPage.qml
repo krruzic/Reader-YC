@@ -32,10 +32,9 @@ Container {
                     page.titlePoster = selectedItem.poster;
                     page.titleTime = selectedItem.timePosted + "| " + selectedItem.points;
                     page.titleDomain = selectedItem.domain;
-                    page.commentLink = selectedItem.commentsURL;
+                    page.commentLink = selectedItem.hnid;
                     page.articleLink = selectedItem.articleURL;
-
-                    console.log(selectedItem.isAsk);
+                    page.isAsk = selectedItem.isAsk;
                     Tart.send('requestComments',{
                             source: selectedItem.hnid,
                             askPost: selectedItem.isAsk,
@@ -64,7 +63,7 @@ Container {
                 }
                 onTriggered: {
                     var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
-                    data = selectedItem.title + "\n" + selectedItem.articleURL + "\n" + commentPane.title + " Shared using Reader|YC "
+                    data = selectedItem.title + "\n" + selectedItem.articleURL + "\n"  + " Shared using Reader|YC "
                 }
             }
         }
@@ -74,8 +73,8 @@ Container {
     }
 
     property int padding: 19
-    topPadding: 2
-    bottomPadding: 3
+    topPadding: 5
+    bottomPadding: 0
     leftPadding: padding
     rightPadding: padding
 

@@ -3,7 +3,7 @@ import "tart.js" as Tart
 
 Page {
     id: commentPane
-    property string moreComments: ""
+    property string isAsk: ""
     property string commentLink: ""
     property string articleLink: ""
     property string errorText: ""
@@ -21,6 +21,7 @@ Page {
         commentList.scrollToPosition(-1, ScrollAnimation.Smooth)
 
     }
+    
 
     function onCommentError(data) {
         var lastItem = commentModel.size() - 1
@@ -39,12 +40,13 @@ Page {
     function onAddComments(data) {
         commentModel.append({
                 type: 'item',
-                poster: data.comment["username"],
+                poster: data.comment["author"],
                 timePosted: data.comment["time"],
-                indent: data.comment["level"] * 40,
-                text: data.comment["comment"]
+                indent: data.comment["indent"],
+                text: data.comment["text"]
             });
         busy = false;
+        refreshEnabled = ! busy;
     }
     actions: [
         InvokeActionItem {
@@ -55,7 +57,7 @@ Page {
                 invokeActionId: "bb.action.SHARE"
             }
             onTriggered: {
-                data = commentPane.title + "\n" + commentLink + "\n" + " Shared using Reader|YC "
+                data = commentPane.title + "\n" + "https://news.ycombinator.com/item?id=" + commentLink + "\n" + " Shared using Reader|YC "
             }
         },
         ActionItem {
@@ -64,7 +66,7 @@ Page {
             imageSource: "asset:///images/icons/ic_article.png"
             onTriggered: {
                 var page = webPage.createObject();
-                topPage.push(page);
+                tabbedpane.activeTab.push(page);
                 page.htmlContent = articleLink;
                 page.text = commentPane.title;
             }
@@ -89,21 +91,21 @@ Page {
             id: titleBar
             text: title
             onRefreshPage: {
+                busy = true;
                 Tart.send('requestComments', {
-                        source: selectedItem.hnid,
-                        askPost: selectedItem.isAsk,
+                        source: commentLink,
+                        askPost: isAsk,
                         deleteComments: "True"
                     });
-                console.log("pressed")
+                console.log("pressed");
                 commentModel.clear();
                 refreshEnabled = ! busy;
             }
             onTouch: {
-                commentList.scrollToPosition(0, 0x2)
+                commentList.scrollToPosition(0, 0x2);
             }
         }
         Container {
-            topPadding: 10
             Container {
                 visible: busy
                 rightPadding: 220
@@ -118,6 +120,7 @@ Page {
             }
             ListView {
                 leadingVisual: CommentHeader {
+                    topPadding: 10
                     leftPadding: 19
                     rightPadding: 19
                     id: commentHeader
@@ -194,20 +197,12 @@ Page {
                 function pushPage(pageToPush) {
                     console.log(pageToPush)
                     var page = eval(pageToPush).createObject();
-                    topPage.push(page);
+                    tabbedpane.activeTab.push(page);
                     return page;
                 }
                 onTriggered: {
                     console.log("Comment triggered!")
                 }
-                //            attachedObjects: [
-                //                ListScrollStateHandler {
-                //                    onAtBeginningChanged: {
-                //                        if (atBeginning == false && !commentModel.isEmpty())
-                //                        	commentHeader.visible = false;
-                //                    }
-                //                }
-                //            ]
             }
         }
     }

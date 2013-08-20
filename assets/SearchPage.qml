@@ -1,116 +1,113 @@
 import bb.cascades 1.0
-import bb.data 1.0
-import bb 1.0
 import "tart.js" as Tart
 
 NavigationPane {
-    id: topPage
-    property variant theModel: theModel
-    property string whichPage: ""
-    property string morePage: ""
+    id: searchPage
+    property string search: ""
     property string errorText: ""
     property string lastItemType: ""
-    property bool busy: true 
+    property bool busy: false
+    property int start: 0
 
-    onCreationCompleted: {
-        Tart.register(topPage)
-    }
-
-    onPopTransitionEnded: {
-        page.destroy();
-    }
-
-    function onAddTopStories(data) {
-        var stories = data.stories;
-        morePage = data.moreLink;
-        //refreshEnabled = true;
-        for (var i = 0; i < stories.length; i ++) {
-            var story = stories[i];
-            theModel.append({
-                    type: 'item',
-                    title: story[1],
-                    domain: story[2],
-                    points: story[3],
-                    poster: story[4],
-                    timePosted: story[5],
-                    commentCount: story[6],
-                    articleURL: story[7],
-                    commentsURL: story[8],
-                    hnid: story[9],
-                    isAsk: story[10]
-                });
-        }
+    function onAddSearchStories(data) {
+        var story = data.story;
+        searchModel.append({
+                type: 'item',
+                title: story[0],
+                poster: story[1],
+                points: story[2],
+                commentCount: story[3],
+                timePosted: story[4],
+                hnid: story[5],
+                domain: story[6],
+                articleURL: story[7],
+                commentsURL: story[8],
+                isAsk: story[9]
+            });
+        console.log(story[9])
         busy = false;
-        titleBar.refreshEnabled = ! busy;
+        searchField.visible = true;
     }
 
-    function onTopListError(data) {
-        var lastItem = theModel.size() - 1
+    function onSearchError(data) {
+        var lastItem = searchModel.size() - 1
         console.log(lastItemType);
         if (lastItemType == 'error') {
-            theModel.removeAt(lastItem)
+            searchModel.removeAt(lastItem)
         }
-        theModel.append({
+        searchModel.append({
                 type: 'error',
                 title: data.text
             });
         busy = false;
-        titleBar.refreshEnabled = ! busy;
+        searchField.visible = true;
     }
     Page {
         Container {
             HNTitleBar {
+                showButton: false
                 id: titleBar
-                text: "Reader|YC - Top Posts"
-                onRefreshPage: {
-                    busy = true;
-                    Tart.send('requestPage', {
-                            source: whichPage,
-                            sentBy: whichPage
-                        });
-                    console.log("pressed")
-                    theModel.clear();
-                    refreshEnabled = ! busy;
-                }
+                text: "Reader|YC - Search HN"
                 onTouch: {
-                    theList.scrollToPosition(0, 0x2)
+                    searchList.scrollToPosition(0, 0x2)
                 }
             }
-//            Label {
-//                maxHeight: 20.0
-//                text: appInfo.version
-//                textStyle.fontSize: FontSize.Small
-//                textStyle.color: Color.Black
-//            }
+            Container {
+                topPadding: 10
+                leftPadding: 19
+                rightPadding: 19
+                TextField {
+                    visible: true
+                    objectName: "searchField"
+                    textStyle.color: Color.create("#262626")
+                    textStyle.fontSize: FontSize.Medium
+                    horizontalAlignment: HorizontalAlignment.Fill
+                    verticalAlignment: VerticalAlignment.Center
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 1
+                    }
+                    input {
+                        flags: TextInputFlag.AutoCapitalizationOff | TextInputFlag.SpellCheckOff
+                    }
+                    validator: Validator {
+                        state: ValidationState.Unknown
+                        errorMessage: "Entry cannot have spaces"
+                        validationRequested: true
 
-
-            Label {
-                id: errorLabel
-                text: ""
-                visible: false
-                multiline: true
-                autoSize.maxLineCount: 2
-                textStyle.fontSize: FontSize.Medium
-                textStyle.fontStyle: FontStyle.Italic
-                textStyle.textAlign: TextAlign.Center
+                    }
+                    hintText: qsTr("Search Posts on HN")
+                    id: searchField
+                    input.onSubmitted: {
+                        search = searchField.text
+                        searchModel.clear();
+                        Tart.send('requestSearch', {
+                                startIndex: start,
+                                source: searchField.text
+                            });
+                        start = start + 30;
+                        busy = true;
+                        searchField.visible = false;
+                    }
+                }
             }
+
             Container {
                 visible: busy
                 rightPadding: 220
                 leftPadding: 220
                 topPadding: 80
                 ActivityIndicator {
+                    id: loading
                     minHeight: 300
                     minWidth: 300
                     running: true
                     visible: busy
                 }
             }
-
             ListView {
-                id: theList
+                id: searchList
                 dataModel: ArrayDataModel {
-                    id: theModel
+                    id: searchModel
                 }
                 shortcuts: [
                     Shortcut {
@@ -124,27 +121,20 @@ NavigationPane {
                         onTriggered: {
                             theList.scrollToPosition(0, 0x2)
                         }
-                    },
-                    Shortcut {
-                        key: "R"
-                        onTriggered: {
-                            if (! busy)
-                                refreshPage();
-                        }
                     }
                 ]
-                function itemType(data, indexPath) {
-                    if (data.type != 'error') {
-                        lastItemType = 'item';
-                        return 'item';
-                    } else {
-                        lastItemType = 'error';
-                        return 'error';
-                    }
-                }
+                //                function itemType(data, indexPath) {
+                //                    if (data.type != 'error') {
+                //                        lastItemType = 'item';
+                //                        return 'item';
+                //                    } else {
+                //                        lastItemType = 'error';
+                //                        return 'error';
+                //                    }
+                //                }
                 listItemComponents: [
                     ListItemComponent {
-                        type: 'item'
+                        type: ''
                         HNPage {
                             id: hnItem
                             property string type: ListItemData.type
@@ -180,7 +170,7 @@ NavigationPane {
                     if (selectedItem.isAsk == "true") {
                         console.log("Ask post");
                         var page = commentPage.createObject();
-                        topPage.push(page);
+                        searchPage.push(page);
                         console.log(selectedItem.commentsURL)
                         page.commentLink = selectedItem.hnid;
                         page.title = selectedItem.title;
@@ -195,49 +185,51 @@ NavigationPane {
                     } else {
                         console.log('Item triggered. ' + selectedItem.articleURL);
                         var page = webPage.createObject();
-                        topPage.push(page);
+                        searchPage.push(page);
                         page.htmlContent = selectedItem.articleURL;
                         page.text = selectedItem.title;
                     }
                 }
+                function pushPage(pageToPush) {
+                    console.log(pageToPush)
+                    var page = eval(pageToPush).createObject();
+                    searchPage.push(page);
+                    return page;
+                }
                 attachedObjects: [
                     ListScrollStateHandler {
                         onAtEndChanged: {
-                            if (atEnd == true && theModel.isEmpty() == false && morePage != "" && busy == false) {
+                            if (atEnd == true && searchModel.isEmpty() == false && busy == false) {
                                 console.log('end reached!')
-                                Tart.send('requestPage', {
-                                        source: morePage,
-                                        sentBy: whichPage
-                                    });
-                                busy = true;
+                                Tart.send('requestSearch', {
+                                        startIndex: start,
+                                        source: search
+                                });
+                            busy = true;
+                            loading.visible = false;
+                            start = start + 30;
                             }
                         }
                     }
                 ]
-                function pushPage(pageToPush) {
-                    console.log(pageToPush)
-                    var page = eval(pageToPush).createObject();
-                    topPage.push(page);
-                    return page;
-                }
             }
         }
-        attachedObjects: [
-            ApplicationInfo {
-                id: appInfo
-            },
-            ComponentDefinition {
-                id: webPage
-                source: "webArticle.qml"
-            },
-            ComponentDefinition {
-                id: commentPage
-                source: "CommentPage.qml"
-            },
-            ComponentDefinition {
-                id: userPage
-                source: "UserPage.qml"
-            }
-        ]
     }
+    onCreationCompleted: {
+        Tart.register(searchPage)
+    }
+    attachedObjects: [
+        ComponentDefinition {
+            id: webPage
+            source: "webArticle.qml"
+        },
+        ComponentDefinition {
+            id: commentPage
+            source: "CommentPage.qml"
+        },
+        ComponentDefinition {
+            id: userPage
+            source: "UserPage.qml"
+        }
+    ]
 }
