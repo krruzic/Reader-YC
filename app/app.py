@@ -76,7 +76,7 @@ class App(tart.Application):
         print("source sent:" + source)
         try:
             HC.getPage(source, askPost, deleteComments)
-        except (urllib.error.URLError, socket.error):
+        except (urllib.error.URLError):
             tart.send('commentError', text="Error getting comments. Check your connection \nand try again")
             tart.send('addText', text='')
 

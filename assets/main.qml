@@ -9,7 +9,7 @@ TabbedPane {
             ActionItem {
                 imageSource: "asset:///images/icons/ic_info.png"
                 title: "About"
-                enabled: ! veiwingAbout
+                enabled: true
                 onTriggered: {
                     var np = aboutPage.createObject(activeTab.content);
                     activeTab.push(np)
@@ -18,7 +18,7 @@ TabbedPane {
             ActionItem {
                 imageSource: "asset:///images/icons/ic_help.png"
                 title: "Help"
-                enabled: ! veiwingHelp
+                enabled: true
                 onTriggered: {
                     var np = helpPage.createObject(activeTab.content);
                     activeTab.push(np)
@@ -114,6 +114,19 @@ TabbedPane {
             top.push(p);
         }
     }
+
+    Tab {
+        title: qsTr("Search HN")
+        imageSource: "asset:///images/icons/ic_search.png"
+        id: searchTab
+        SearchPage {
+            id: search
+        }
+        signal push(variant p)
+        onPush: {
+            search.push(p)
+        }
+    }
     onActiveTabChanged: {
         userPage.searchVisible = false;
 
@@ -140,9 +153,4 @@ TabbedPane {
             }
         }
     ]
-
-    function onManualExit() {
-        Application.setCover(none)
-        Tart.send('ManualExit')
-    }
 }

@@ -40,10 +40,10 @@ Page {
     function onAddComments(data) {
         commentModel.append({
                 type: 'item',
-                poster: data.comment["username"],
+                poster: data.comment["author"],
                 timePosted: data.comment["time"],
-                indent: data.comment["level"] * 40,
-                text: data.comment["comment"]
+                indent: data.comment["indent"],
+                text: data.comment["text"]
             });
         busy = false;
         refreshEnabled = ! busy;

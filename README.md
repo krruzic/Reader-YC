@@ -3,9 +3,15 @@ Reader|YC
 app UUID: 425c7891-ab84-4cb4-a628-6cfeaec6fd1b
 
 
-Reader|YC is a native hackernews client built with Cascades and Python (using Blackberry-tart). Instead of using often unstable APIs, this app directly scrapes Hackernews for posts (and soon comments) to ensure maximum uptime. Currently the app is at V0.8, almost ready for release.
+Reader|YC is a native hackernews client built with Cascades and Python (using Blackberry-tart). Instead of using often unstable APIs, this app directly scrapes Hackernews for posts (and soon comments) to ensure maximum uptime. Currently the app is at V1.0, and is available on BB World
+
+You're currently reading the Dev branch, where the latest, unstable code can be found.
 
 The post scraping is based heavily off of Dimillian's Sublime plugin found [here](https://github.com/Dimillian/Sublime-Hacker-News-Reader)
+
+The comment scraping was originally using a similar structure to the post scraping, but that was too slow. So I switched to an API, but that was unreliable.
+
+I'm now using a new scraping method, that should be much faster, and allows for comment caching.
 
 Here is a current screenshot of the main page:
 ![image](https://raw.github.com/krruzic/Reader-YC/master/screenshot.png)
@@ -45,7 +51,7 @@ NOTE: The bars will be placed in the bin directory after being built.
 ## Features:
 ###Current Features:
 * Get the main hackernews pages in a nice tabbed format
-* Infinite scrolling, load more comments
+* Infinite scrolling
 * View articles, comments, and text posts
 * Different sections of the apps accessible by tabs
 * View user pages
@@ -63,10 +69,6 @@ NOTE: The bars will be placed in the bin directory after being built.
 
 
 ###Coming Feature roadmap (dates are really guesses):
-* View text posts, comments and articles all from within the app V1.0 (Will be available on BB-World at this point)
-  ~~ETA: July 1~~ MOVED TO August 15th
-  NOTE: This is almost done, I just need to pretty things up a bit.
-
 * Favouriting posts for later viewing from a 'Favourites' tab, as well as view user pages V1.1
 	ETA: Week after V1.0
 
