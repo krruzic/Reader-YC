@@ -77,8 +77,8 @@ Page {
                 }
                 WebView {
                     id: webDisplay
-                    // The url that is loaded points to the QML of this recipe on GitHub.
-                    url: "http://www.github.com"
+
+                    url: ""
                     // WebView settings, initial scaling and width used by the WebView when displaying its content.
                     settings.viewport: {
                         "width": "device-width",
