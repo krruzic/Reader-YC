@@ -109,15 +109,8 @@ Container {
             leftPadding: 19
             rightPadding: 19
             Container {
-                
                 background: textBackground.imagePaint
                 TextArea {
-                    onTouch: {
-                        if (maxHeight != 100)
-                            maxHeight = 100;
-                        else 
-                        	maxHeight = 100000;
-                    }
                     id: textBox
                     text: ""
                     onTextChanging: {
