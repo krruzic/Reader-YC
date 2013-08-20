@@ -23,6 +23,7 @@ class HackerNewsCommentAPI:
         soup = BeautifulSoup(page)
         resp = self._parse_comments(soup)
         if (isAsk == "true"):
+            print("Getting text...")
             text = self.parse_text(soup)
         else:
             text = ''
@@ -182,6 +183,7 @@ class HackerNewsCommentAPI:
         jsonComments = json.dumps(comments)
         comments = json.loads(jsonComments)
         if (comments == None):
+            tart.send('addText', text=text)
             tart.send('commentError', text="No comments! Check back later!")
             return
 

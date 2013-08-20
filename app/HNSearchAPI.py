@@ -27,7 +27,7 @@ class HackerNewsSearchAPI:
         day_diff = diff.days
 
         if day_diff < 0:
-            return ''
+            return "Just now "
 
         if day_diff == 0:
             if second_diff < 10:
@@ -74,13 +74,20 @@ class HackerNewsSearchAPI:
             _id = e['item']['id']
             title = e['item']['title']
             points = e['item']['points']
+            if (points == 1):
+                points = str(points) + " point"
+            else:
+                points = str(points) + " points"
             num_comments = e['item']['num_comments']
             domain = e['item']['domain']
             poster = e['item']['username']
             articleURL = e['item']['url']
             commentURL = 'https://news.ycombinator.com/item?id=' + str(_id)
+            if (isAsk == 'true'): # Ask posts don't have a domain or articleURL
+                domain = "http://news.ycombinator.com/"
+                articleURL = commentURL
             timestamp = self.pretty_date(datetime.strptime(e['item']['create_ts'], incomplete_iso_8601_format))
             print(isAsk)
-            result = (title, poster, str(points) + " points", str(num_comments), timestamp, str(_id), domain, articleURL, commentURL, isAsk)
+            result = (title, poster, points, str(num_comments), timestamp, str(_id), domain, articleURL, commentURL, isAsk)
             print('sending story!')
             tart.send('addSearchStories', story=result)

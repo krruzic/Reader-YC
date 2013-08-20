@@ -176,6 +176,7 @@ NavigationPane {
                         page.title = selectedItem.title;
                         page.titlePoster = selectedItem.poster;
                         page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
+                        page.titleDomain = selectedItem.domain
                         page.isAsk = selectedItem.isAsk;
                         Tart.send('requestComments', {
                                 source: selectedItem.hnid,
