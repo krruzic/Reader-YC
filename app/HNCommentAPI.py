@@ -45,7 +45,10 @@ class HackerNewsCommentAPI:
         comment_tables = list(map(str, comment_tables))
 
         del comment_tables[0:4]
+        if (len(comment_tables) == 0):
+            return None
         del comment_tables[-1]
+
 
         comments = []
         for table in comment_tables:
