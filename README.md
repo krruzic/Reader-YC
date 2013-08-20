@@ -3,9 +3,10 @@ Reader|YC
 app UUID: 425c7891-ab84-4cb4-a628-6cfeaec6fd1b
 
 
+
 Reader|YC is a native hackernews client built with Cascades and Python (using Blackberry-tart). Instead of using often unstable APIs, this app directly scrapes Hackernews for posts (and soon comments) to ensure maximum uptime. Currently the app is at V1.0, and is available on BB World
 
-You're currently reading the Dev branch, where the latest, unstable code can be found.
+
 
 The post scraping is based heavily off of Dimillian's Sublime plugin found [here](https://github.com/Dimillian/Sublime-Hacker-News-Reader)
 
@@ -69,8 +70,11 @@ NOTE: The bars will be placed in the bin directory after being built.
 
 
 ###Coming Feature roadmap (dates are really guesses):
-* Favouriting posts for later viewing from a 'Favourites' tab, as well as view user pages V1.1
-	ETA: Week after V1.0
+
+
+* Favouriting posts for later viewing from a 'Favourites' tab V1.1
+	ETA: August 22nd
+
 
 * V1.2
     A tutorial that shows when first launched, this will add some flair to the app
