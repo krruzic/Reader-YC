@@ -20,7 +20,7 @@ NavigationPane {
         page.destroy();
     }
 
-    function onAddNewStories(data) {
+    function onAddnewStories(data) {
         var stories = data.stories;
         morePage = data.moreLink;
         for (var i = 0; i < stories.length; i ++) {
@@ -43,7 +43,7 @@ NavigationPane {
         titleBar.refreshEnabled = ! busy;
     }
 
-    function onNewListError(data) {
+    function onnewListError(data) {
         var lastItem = theModel.size() - 1
         console.log(lastItemType);
         if (lastItemType == 'error') {
@@ -78,12 +78,12 @@ NavigationPane {
                     theList.scrollToPosition(0, 0x2)
                 }
             }
-//            Label {
-//                maxHeight: 20.0
-//                text: appInfo.version
-//                textStyle.fontSize: FontSize.Small
-//                textStyle.color: Color.Black
-//            }
+            //            Label {
+            //                maxHeight: 20.0
+            //                text: appInfo.version
+            //                textStyle.fontSize: FontSize.Small
+            //                textStyle.color: Color.Black
+            //            }
             Label {
                 id: errorLabel
                 text: ""
@@ -187,8 +187,9 @@ NavigationPane {
                         page.titlePoster = selectedItem.poster;
                         page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
                         page.isAsk = selectedItem.isAsk;
-                        Tart.send('requestComments', {
+                        Tart.send('requestPage', {
                                 source: selectedItem.hnid,
+                                sentBy: 'commentPage',
                                 askPost: selectedItem.isAsk,
                                 deleteComments: "false"
                             });

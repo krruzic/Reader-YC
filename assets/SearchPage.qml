@@ -78,11 +78,13 @@ NavigationPane {
                     hintText: qsTr("Search Posts on HN")
                     id: searchField
                     input.onSubmitted: {
-                        search = searchField.text
+                        start = 0;
+                        search = searchField.text;
                         searchModel.clear();
-                        Tart.send('requestSearch', {
-                                startIndex: start,
-                                source: searchField.text
+                        Tart.send('requestPage', {
+                                source: searchField.text,
+                                sentBy: 'searchPage',
+                                startIndex: start
                             });
                         start = start + 30;
                         busy = true;
@@ -178,8 +180,9 @@ NavigationPane {
                         page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
                         page.titleDomain = selectedItem.domain
                         page.isAsk = selectedItem.isAsk;
-                        Tart.send('requestComments', {
+                        Tart.send('requestPage', {
                                 source: selectedItem.hnid,
+                                sentBy: 'commentPage',
                                 askPost: selectedItem.isAsk,
                                 deleteComments: "false"
                             });
@@ -202,13 +205,14 @@ NavigationPane {
                         onAtEndChanged: {
                             if (atEnd == true && searchModel.isEmpty() == false && busy == false) {
                                 console.log('end reached!')
-                                Tart.send('requestSearch', {
-                                        startIndex: start,
-                                        source: search
-                                });
-                            busy = true;
-                            loading.visible = false;
-                            start = start + 30;
+                                Tart.send('requestPage', {
+                                        source: search,
+                                        sentBy: 'searchPage',
+                                        startIndex: start
+                                    });
+                                busy = true;
+                                loading.visible = false;
+                                start = start + 30;
                             }
                         }
                     }

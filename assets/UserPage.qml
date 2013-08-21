@@ -79,8 +79,9 @@ Page {
                     busy = true;
                     userDetails.visible = false;
                     if (throttleTimer.running == false) {
-                        Tart.send('requestUserPage', {
-                                source: text
+                        Tart.send('requestPage', {
+                                source: text,
+                                sentBy: 'userPage'
                             });
                     } else if (throttleTimer.running == true) {
                         busy = false

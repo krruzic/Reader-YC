@@ -39,8 +39,9 @@ Container {
                     var page = commentItem.ListItem.view.pushPage('userPage');
                     page.username = selectedItem.poster;
                     page.busy = true;
-                    Tart.send('requestUserPage', {
-                            source: selectedItem.poster
+                    Tart.send('requestPage', {
+                            source: selectedItem.poster,
+                            sentBy: 'userPage'
                     });
                 }
             }

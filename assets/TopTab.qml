@@ -20,7 +20,7 @@ NavigationPane {
         page.destroy();
     }
 
-    function onAddTopStories(data) {
+    function onAddtopStories(data) {
         var stories = data.stories;
         morePage = data.moreLink;
         //refreshEnabled = true;
@@ -44,7 +44,7 @@ NavigationPane {
         titleBar.refreshEnabled = ! busy;
     }
 
-    function onTopListError(data) {
+    function ontopListError(data) {
         var lastItem = theModel.size() - 1
         console.log(lastItemType);
         if (lastItemType == 'error') {
@@ -100,6 +100,7 @@ NavigationPane {
                 leftPadding: 220
                 topPadding: 80
                 ActivityIndicator {
+                    id: loading
                     minHeight: 300
                     minWidth: 300
                     running: true
@@ -187,8 +188,9 @@ NavigationPane {
                         page.titlePoster = selectedItem.poster;
                         page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
                         page.isAsk = selectedItem.isAsk;
-                        Tart.send('requestComments', {
+                        Tart.send('requestPage', {
                                 source: selectedItem.hnid,
+                                sentBy: 'commentPage',
                                 askPost: selectedItem.isAsk,
                                 deleteComments: "false"
                             });
@@ -209,6 +211,7 @@ NavigationPane {
                                         source: morePage,
                                         sentBy: whichPage
                                     });
+                                loading.visible = false;
                                 busy = true;
                             }
                         }

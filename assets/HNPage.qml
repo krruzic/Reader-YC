@@ -35,8 +35,9 @@ Container {
                     page.commentLink = selectedItem.hnid;
                     page.articleLink = selectedItem.articleURL;
                     page.isAsk = selectedItem.isAsk;
-                    Tart.send('requestComments',{
+                    Tart.send('requestPage',{
                             source: selectedItem.hnid,
+                            sentBy: 'commentPage',
                             askPost: selectedItem.isAsk,
                             deleteComments: "False"
                         });

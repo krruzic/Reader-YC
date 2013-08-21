@@ -20,9 +20,24 @@ class App(tart.Application):
         # self.onRequestPage("Ask HN", "askPage")
         # self.onRequestPage("Newest Posts", "newestPage")
 
-    def onRequestPage(self, source, sentBy):
-        t = threading.Thread(target=self.story_routine, args=(source, sentBy))
+    def onRequestPage(self, source, sentBy, askPost="false", deleteComments="false", startIndex=0):
+        t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost, deleteComments))
+        t.daemon = True
         t.start()
+
+    def parseRequest(self, source, sentBy, startIndex, askPost, deleteComments):
+        print("Parsing request for: " + sentBy)
+        if (sentBy == 'topPage'or sentBy == 'askPage'or sentBy == 'newestPage'):
+            self.story_routine(source, sentBy)
+        elif (sentBy == 'commentPage'):
+            self.comments_routine(source, askPost, deleteComments)
+        elif (sentBy == 'userPage'):
+            self.user_routine(source)
+        elif (sentBy == 'searchPage'):
+            self.search_routine(startIndex, source)
+        else:
+            print("Error getting page...")
+            return
 
     def story_routine(self, source, sentBy):
         print("source sent:" + source)
@@ -34,45 +49,27 @@ class App(tart.Application):
         if source == 'newestPage':
             source = 'newest'
 
+        sentByShort = sentBy[0:3]
+
         try:
             postList, moreLink = HS.getPage("https://news.ycombinator.com/" + source)
         except (urllib.error.URLError, socket.error):
-            if (sentBy == 'topPage'):
-                tart.send('topListError', text="Error getting news feed, check your connection and try again")
-            elif (sentBy == 'askPage'):
-                tart.send('askListError', text="Error getting news feed, check your connection and try again")
-            elif (sentBy == 'newestPage'):
-                tart.send('newListError', text="Error getting news feed, check your connection and try again")
             print("error from python: " + "URLError")
+            tart.send('{0}ListError'.format(sentByShort), text="Error getting news feed, check your connection and try again")
             return
         except IndexError:
             print("error from python: " + "IndexError")
-            if (sentBy == 'topPage'):
-                tart.send('topListError', text="Expired Link! Unable to load more content...")
-            elif (sentBy == 'askPage'):
-                tart.send('askListError', text="Expired Link! Unable to load more content...")
-            elif (sentBy == 'newestPage'):
-                tart.send('newListError', text="Expired Link! Unable to load more content...")
+            tart.send('{0}ListError'.format(sentByShort), text="Expired Link! Unable to load more content...")
             return
 
         stories = []
         for item in postList:
             stories.append(item.getDetails())
 
-        print("The next page is at: " + moreLink)
-        if (sentBy == 'topPage'):
-            print("sending stories to Top")
-            tart.send('addTopStories', stories=stories, moreLink=moreLink, sentTo=sentBy)
-        elif (sentBy == 'askPage'):
-            print("sending stories to Ask")
-            tart.send('addAskStories', stories=stories, moreLink=moreLink, sentTo=sentBy)
-        else:
-            print("sending stories to New")
-            tart.send('addNewStories', stories=stories, moreLink=moreLink, sentTo=sentBy)
+        tart.send('add{0}Stories'.format(sentByShort), stories=stories, moreLink=moreLink, sentTo=sentBy)
 
 
-
-    def onRequestComments(self, source, askPost, deleteComments):
+    def comments_routine(self, source, askPost, deleteComments):
         print("source sent:" + source)
         try:
             HC.getPage(source, askPost, deleteComments)
@@ -80,7 +77,7 @@ class App(tart.Application):
             tart.send('commentError', text="Error getting comments. Check your connection \nand try again")
             tart.send('addText', text='')
 
-    def onRequestUserPage(self, source):
+    def user_routine(self, source):
         print("source sent: " + source)
 
         source = source.strip() # strips leading and trailing whitespaces
@@ -92,7 +89,7 @@ class App(tart.Application):
         except urllib.error.URLError:
             tart.send('userError', text="Error getting user page, Check your connection \nand try again")
 
-    def onRequestSearch(self, startIndex, source):
+    def search_routine(self, startIndex, source):
         print("Searching for: " + source)
         try:
             HQ.getResults(startIndex, source)

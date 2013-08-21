@@ -92,8 +92,9 @@ Page {
             text: title
             onRefreshPage: {
                 busy = true;
-                Tart.send('requestComments', {
+                Tart.send('requstPage', {
                         source: commentLink,
+                        sentBy: 'commentPage',
                         askPost: isAsk,
                         deleteComments: "True"
                     });
