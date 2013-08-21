@@ -54,15 +54,14 @@ NOTE: The bars will be placed in the bin directory after being built.
 * View articles, comments, and text posts
 * Different sections of the apps accessible by tabs
 * View user pages
-* Request multiple pages at a time :D
+* Threading of all requests
 * Throttling requests on userpages
 * icons, ICONS EVERYWHERE
 * View about/help pages, email the dev (me)
 * Comment Caching, YAY!
 
+
 ###Current Issues:
-* ~~Sometimes the main page (top posts) doesn't load, and I'm not too sure why.~~
-* If you close the app while it is making a request, the app will go into a greyed-out "zombie" state until the request is completed
 * Commment page looks a little stupid...
 * You can push the swipedown pages infinitely
 
