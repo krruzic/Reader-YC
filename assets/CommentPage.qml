@@ -43,7 +43,8 @@ Page {
                 poster: data.comment["author"],
                 timePosted: data.comment["time"],
                 indent: data.comment["indent"],
-                text: data.comment["text"]
+                text: data.comment["text"],
+                link: "https://news.ycombinator.com/item?id=" + data.comment["link"]
             });
         busy = false;
         titleBar.refreshEnabled = true;
@@ -196,7 +197,7 @@ Page {
                 function pushPage(pageToPush) {
                     console.log(pageToPush)
                     var page = eval(pageToPush).createObject();
-                    topPage.push(page);
+                    root.activePane.push(page);
                     return page;
                 }
                 onTriggered: {

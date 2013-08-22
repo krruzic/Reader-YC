@@ -48,6 +48,8 @@ class HackerNewsCommentAPI:
             comment['author'] = None
             comment['time'] = None
             comment['text'] = None
+            comment['link'] = None
+
             soup = BeautifulSoup(table)
             head = soup.find_all('span', 'comhead')
             body = soup.find_all('span', 'comment')
@@ -62,7 +64,7 @@ class HackerNewsCommentAPI:
                 comment['author'] = ''
                 comment['time'] = ''
                 comment['text'] = '[deleted]'
-                # comment['link'] = ''
+                comment['link'] = ''
 
             authorStart = str(head).find('user?id=') + 8
             authorEnd = str(head).find('">', authorStart)
@@ -75,7 +77,9 @@ class HackerNewsCommentAPI:
             if (comment['time'] == None):
                 comment['time'] = str(head)[timeStart:timeEnd]
 
-            #comment['link'] = head.find_all('a')[1]['href'].split('item?id=')[1]
+            if (comment['link'] == None):
+                comment['link'] = head[0].find_all('a')[1]['href'].split('item?id=')[1]
+
             textStart = 44
             textEnd = body[0].find('</font>')
             if (comment['text'] == None):

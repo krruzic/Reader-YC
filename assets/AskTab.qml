@@ -95,17 +95,11 @@ NavigationPane {
                 textStyle.textAlign: TextAlign.Center
             }
             Container {
-                layoutProperties: StackLayoutProperties {
-                    
-                }
-                horizontalAlignment: horizontalAlignment.Center
-                verticalAlignment: VerticalAlignment.Center
-                layout: DockLayout {
-                }
+                rightPadding: 220
+                leftPadding: 220
+                topPadding: 80
                 visible: loading.visible
                 ActivityIndicator {
-                    horizontalAlignment: horizontalAlignment.Center
-                    verticalAlignment: verticalAlignment.Center
                     id: loading
                     minHeight: 300
                     minWidth: 300

@@ -26,7 +26,7 @@ Container {
                 }
                 onTriggered: {
                     var selectedItem = commentItem.ListItem.view.dataModel.data(commentItem.ListItem.indexPath);
-                    data = '"' + selectedItem.text + '\n--' + selectedItem.poster + '"' + "\n" + " Shared using Reader|YC "
+                    data = 'Comment by:  ' + selectedItem.poster + '\n' + selectedItem.link + "\nShared using Reader|YC "
                 }
             }
             ActionItem {
