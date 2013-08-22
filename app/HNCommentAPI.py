@@ -10,37 +10,25 @@ class HackerNewsCommentAPI:
     """
 
     def parse_comments(self, page, isAsk):
-        """ Parse comments from an HN comments page
-            Returns a dict of metadata about the story and a list of comments. E.g.
+        """ Extract all the comments from a comments page.
+            Returns None if this page has no comments.
+            Otherwise returns dicts of comments EG)
             {
                 text: 'example'
                 time: '100 days ago '
                 indent: '80'
                 author: 'pg'
             }
-
         """
+        soupStart = time.time()
         soup = BeautifulSoup(page)
-        resp = self._parse_comments(soup)
+        soupEnd = time.time()
+        print("Souping: ", soupEnd - soupStart)
         if (isAsk == "true"):
             print("Getting text...")
             text = self.parse_text(soup)
         else:
             text = ''
-        return resp, text
-
-    def parse_text(self, soup):
-        """ Returns the text of an 'Ask HN' post
-        """
-
-        text_content = soup.findAll("tr")
-        text = text_content[7].text
-        return text
-
-    def _parse_comments(self, soup):
-        """ Extract all the comments from a comments page.
-            Returns None if this page has no comments.
-        """
 
         comment_tables = soup.find_all('table', 0)
         comment_tables = list(map(str, comment_tables))
@@ -52,7 +40,9 @@ class HackerNewsCommentAPI:
 
 
         comments = []
+        totalTime = 0
         for table in comment_tables:
+            startTime = time.time()
             comment = {}
             comment['indent'] = None
             comment['author'] = None
@@ -91,7 +81,24 @@ class HackerNewsCommentAPI:
             if (comment['text'] == None):
                 comment['text'] = body[0][textStart:textEnd]
             comments.append(comment)
-        return comments
+            endTime = time.time()
+            print("Time to parse 1 comment: ", endTime - startTime)
+            totalTime = totalTime + (endTime - startTime)
+        print("Time to parse ", len(comment_tables), " comments: ", totalTime)
+        return comments, text
+
+    def parse_text(self, soup):
+        """ Returns the text of an 'Ask HN' post
+        """
+
+        text_content = str(soup.findAll("tr")[7])
+        textStart = text_content.find('d><td>') + 6
+        textEnd = text_content.find('</td', textStart)
+        text = text_content[textStart:textEnd]
+        text = text.replace('<p>', '\n') # Replace unclosed <p>'s with new lines
+        text = text.replace('</p>', '') # Remove the crap BS4 adds
+        print(text)
+        return text
 
     def cacheComments(self, source, comments, text):
         """ Given the comment page source, this writes the two
@@ -120,18 +127,17 @@ class HackerNewsCommentAPI:
                 os.unlink(file_path)
 
         if (len(pagesCached) > 4): # Checks to see if we need to delete a file before caching
-            print(pagesCached)
             print("Deleting oldest file... " + oldestFile)
             os.remove(oldestFile + '.json')
             os.remove(oldestFile + '.txt')
 
         print("Opening file to write...")
-        cache = open(workingDir + '%s.json' % source, 'w')
+        cache = open(workingDir + '%s.json' % source, 'w', encoding='utf-8')
         comments = json.dumps(comments)
         cache.write(comments)
         print("Comments cached!")
         cache.close()
-        textCache = open(workingDir + '%s.txt' % source, 'w')
+        textCache = open(workingDir + '%s.txt' % source, 'w', encoding='utf-8')
         textCache.write(text)
         print("Text cached!")
         textCache.close()
@@ -150,6 +156,14 @@ class HackerNewsCommentAPI:
         return files
 
     def getPage(self, source, isAsk, deleteComments):
+        if (source == '-1'):
+            tart.send('addText', text='')
+            tart.send('commentError', text="Jobs posting, no comments.")
+            return
+
+
+
+
         workingDir = os.getcwd() + '/data/cache/'
         url = 'https://news.ycombinator.com/item?id=%s' % source
         cacheList = []
@@ -157,19 +171,18 @@ class HackerNewsCommentAPI:
         cacheList = self.checkCache()
         fileToCheck = workingDir + source
         cached = fileToCheck in cacheList
-        if (deleteComments != "True" and cached == True): # Checks if comments are cached
+        if (deleteComments != "True" and cached == True): # Checks if comments are cached, and whether we should keep them.
             print("Comments in cache!")
-            cache = open(workingDir + '%s.json' % source, 'r')
+            cache = open(workingDir + '%s.json' % source, 'r', encoding='utf-8')
             comments = json.load(cache)
             cache.close()
 
-            textCache = open(workingDir + '%s.txt' % source, 'r')
+            textCache = open(workingDir + '%s.txt' % source, 'r', encoding='utf-8')
             text = textCache.read()
             tart.send('addText', text=text)
             textCache.close()
 
             for comment in comments:
-                print(comment)
                 tart.send('addComments', comment=comment)
             return
 
@@ -180,15 +193,15 @@ class HackerNewsCommentAPI:
             urlSource = url.read()
         print("page curled")
         comments, text = self.parse_comments(urlSource, isAsk)
-        jsonComments = json.dumps(comments)
-        comments = json.loads(jsonComments)
         if (comments == None):
             tart.send('addText', text=text)
             tart.send('commentError', text="No comments! Check back later!")
             return
+        jsonComments = json.dumps(comments)
+        comments = json.loads(jsonComments)
+
 
         tart.send('addText', text=text)
         for comment in comments:
-            print(comment)
             tart.send('addComments', comment=comment)
         self.cacheComments(source, comments, text)

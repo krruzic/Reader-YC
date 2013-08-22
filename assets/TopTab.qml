@@ -10,7 +10,7 @@ NavigationPane {
     property string morePage: ""
     property string errorText: ""
     property string lastItemType: ""
-    property bool busy: true 
+    property bool busy: true
 
     onCreationCompleted: {
         Tart.register(topPage)
@@ -41,6 +41,7 @@ NavigationPane {
                 });
         }
         busy = false;
+        loading.visible = false;
         titleBar.refreshEnabled = ! busy;
     }
 
@@ -55,6 +56,7 @@ NavigationPane {
                 title: data.text
             });
         busy = false;
+        loading.visible = false;
         titleBar.refreshEnabled = ! busy;
     }
     Page {
@@ -63,26 +65,24 @@ NavigationPane {
                 id: titleBar
                 text: "Reader|YC - Top Posts"
                 onRefreshPage: {
-                    busy = true;
-                    Tart.send('requestPage', {
-                            source: whichPage,
-                            sentBy: whichPage
-                        });
-                    console.log("pressed")
-                    theModel.clear();
-                    refreshEnabled = ! busy;
-                }
-                onTouch: {
-                    theList.scrollToPosition(0, 0x2)
+                    if (busy != true) {
+                        busy = true;
+                        Tart.send('requestPage', {
+                                source: whichPage,
+                                sentBy: whichPage
+                            });
+                        console.log("pressed")
+                        theModel.clear();
+                        refreshEnabled = ! busy;
+                    }
                 }
             }
-//            Label {
-//                maxHeight: 20.0
-//                text: appInfo.version
-//                textStyle.fontSize: FontSize.Small
-//                textStyle.color: Color.Black
-//            }
-
+            //            Label {
+            //                maxHeight: 20.0
+            //                text: appInfo.version
+            //                textStyle.fontSize: FontSize.Small
+            //                textStyle.color: Color.Black
+            //            }
 
             Label {
                 id: errorLabel
@@ -95,7 +95,7 @@ NavigationPane {
                 textStyle.textAlign: TextAlign.Center
             }
             Container {
-                visible: busy
+                visible: loading.visible
                 rightPadding: 220
                 leftPadding: 220
                 topPadding: 80
@@ -104,7 +104,7 @@ NavigationPane {
                     minHeight: 300
                     minWidth: 300
                     running: true
-                    visible: busy
+                    visible: true
                 }
             }
 
@@ -178,7 +178,7 @@ NavigationPane {
                 onTriggered: {
                     var selectedItem = dataModel.data(indexPath);
                     console.log(selectedItem.isAsk);
-                    if (selectedItem.isAsk == "true") {
+                    if (selectedItem.isAsk == "true" && selectedItem.hnid != '-1') {
                         console.log("Ask post");
                         var page = commentPage.createObject();
                         topPage.push(page);
@@ -211,7 +211,6 @@ NavigationPane {
                                         source: morePage,
                                         sentBy: whichPage
                                     });
-                                loading.visible = false;
                                 busy = true;
                             }
                         }

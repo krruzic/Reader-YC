@@ -2,7 +2,7 @@ import bb.cascades 1.0
 import "tart.js" as Tart
 
 TabbedPane {
-    id: tabbedPane
+    id: root
 
     Menu.definition: MenuDefinition {
         actions: [
@@ -135,7 +135,7 @@ TabbedPane {
         top.busy = true;
         Tart.init(_tart, Application);
 
-        Tart.register(tabbedPane);
+        Tart.register(root);
         Tart.send('uiReady');
     }
     showTabsOnActionBar: true

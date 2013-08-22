@@ -41,6 +41,7 @@ NavigationPane {
                 });
         }
         busy = false;
+        loading.visible = false;
         titleBar.refreshEnabled = ! busy;
     }
 
@@ -55,6 +56,7 @@ NavigationPane {
                 title: data.text
             });
         busy = false;
+        loading.visible = false;
         titleBar.refreshEnabled = ! busy;
     }
     Page {
@@ -63,20 +65,17 @@ NavigationPane {
                 id: titleBar
                 text: "Reader|YC - Ask HN"
                 onRefreshPage: {
-                    busy = true;
-                    Tart.send('requestPage', {
-                            source: whichPage,
-                            sentBy: whichPage
+                    console.log("We are busy: " + busy)
+                    if (busy != true) {
+                        busy = true;
+                        Tart.send('requestPage', {
+                                source: 'askPage',
+                                sentBy: 'askPage'
                         });
                     console.log("pressed")
                     theModel.clear();
-                    errorLabel.text = "";
-                    errorLabel.visible = false;
-                    console.log(errorLabel.visible)
                     refreshEnabled = ! busy;
-                }
-                onTouch: {
-                    theList.scrollToPosition(0, 0x2)
+                    }
                 }
             }
             //            Label {
@@ -96,11 +95,18 @@ NavigationPane {
                 textStyle.textAlign: TextAlign.Center
             }
             Container {
-                visible: busy
-                rightPadding: 220
-                leftPadding: 220
-                topPadding: 80
+                layoutProperties: StackLayoutProperties {
+                    
+                }
+                horizontalAlignment: horizontalAlignment.Center
+                verticalAlignment: VerticalAlignment.Center
+                layout: DockLayout {
+                }
+                visible: loading.visible
                 ActivityIndicator {
+                    horizontalAlignment: horizontalAlignment.Center
+                    verticalAlignment: verticalAlignment.Center
+                    id: loading
                     minHeight: 300
                     minWidth: 300
                     running: true
@@ -205,12 +211,13 @@ NavigationPane {
                 attachedObjects: [
                     ListScrollStateHandler {
                         onAtEndChanged: {
-                            if (atEnd == true && theModel.isEmpty() == false) {
+                            if (atEnd == true && theModel.isEmpty() == false && morePage != "" && busy == false) {
                                 console.log('end reached!')
                                 Tart.send('requestPage', {
                                         source: morePage,
                                         sentBy: whichPage
-                                    });
+                                });
+                            busy = true;
                             }
                         }
                     }

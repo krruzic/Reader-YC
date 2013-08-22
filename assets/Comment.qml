@@ -42,16 +42,16 @@ Container {
                     Tart.send('requestPage', {
                             source: selectedItem.poster,
                             sentBy: 'userPage'
-                    });
+                        });
                 }
             }
-//            ActionItem {
-//                title: "Hide Children"
-//                onTriggered: {
-//                    var selectedItem = commentItem.ListItem.indexInSection;
-//                    commentItem.ListItem.view.hideChildren(selectedItem);
-//                }
-//            }
+            //            ActionItem {
+            //                title: "Hide Children"
+            //                onTriggered: {
+            //                    var selectedItem = commentItem.ListItem.indexInSection;
+            //                    commentItem.ListItem.view.hideChildren(selectedItem);
+            //                }
+            //            }
         }
     ]
     Container {
@@ -86,14 +86,8 @@ Container {
             layout: AbsoluteLayout {
 
             }
-            Label {
-                layoutProperties: AbsoluteLayoutProperties {
-                    positionY: -37
-                }
-                text: "__________________________________________________________________________________________"
-                enabled: false
-                minWidth: 760
-                textStyle.color: Color.LightGray
+            Divider {
+                translationX: -5
             }
             TextArea {
                 translationY: -12

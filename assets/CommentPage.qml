@@ -46,7 +46,7 @@ Page {
                 text: data.comment["text"]
             });
         busy = false;
-        refreshEnabled = ! busy;
+        titleBar.refreshEnabled = true;
     }
     actions: [
         InvokeActionItem {
@@ -65,8 +65,9 @@ Page {
             title: "View Article"
             imageSource: "asset:///images/icons/ic_article.png"
             onTriggered: {
+                console.log(articleLink);
                 var page = webPage.createObject();
-                tabbedpane.activeTab.push(page);
+                root.activePane.push(page);
                 page.htmlContent = articleLink;
                 page.text = commentPane.title;
             }
@@ -78,7 +79,7 @@ Page {
             id: browserQuery
             query.mimeType: "text/plain"
             query.invokeActionId: "bb.action.OPEN"
-            query.uri: commentPane.commentLink
+            query.uri: "https://news.ycombinator.com/item?id=" + commentPane.commentLink
 
             query.onQueryChanged: {
                 browserQuery.query.updateQuery();
@@ -92,7 +93,7 @@ Page {
             text: title
             onRefreshPage: {
                 busy = true;
-                Tart.send('requstPage', {
+                Tart.send('requestPage', {
                         source: commentLink,
                         sentBy: 'commentPage',
                         askPost: isAsk,
@@ -100,10 +101,7 @@ Page {
                     });
                 console.log("pressed");
                 commentModel.clear();
-                refreshEnabled = ! busy;
-            }
-            onTouch: {
-                commentList.scrollToPosition(0, 0x2);
+                titleBar.refreshEnabled = false;
             }
         }
         Container {
@@ -198,7 +196,7 @@ Page {
                 function pushPage(pageToPush) {
                     console.log(pageToPush)
                     var page = eval(pageToPush).createObject();
-                    tabbedpane.activeTab.push(page);
+                    topPage.push(page);
                     return page;
                 }
                 onTriggered: {
