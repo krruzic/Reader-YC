@@ -113,7 +113,7 @@ TabbedPane {
         }
         signal push(variant p)
         onPush: {
-            userTab.push(p);
+            userPage.push(p);
         }
     }
 
@@ -143,7 +143,11 @@ TabbedPane {
     }
     onActiveTabChanged: {
         userPage.searchVisible = false;
-
+        if (activeTab == favouritesTab) {
+            console.log("Loading favourites")
+            //favourites.favouritesModel.clear();
+            Tart.send('loadFavourites', {});
+        }
     }
     onCreationCompleted: {
         top.busy = true;
