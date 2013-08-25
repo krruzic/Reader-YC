@@ -1,4 +1,5 @@
 import bb.cascades 1.0
+import bb.system 1.0
 import "tart.js" as Tart
 
 Container {
@@ -12,6 +13,7 @@ Container {
     property alias postDomain: labelPostDomain.text
     property alias postUsername: labelUsername.text
     property alias postTime: labelTimePosted.text
+    property variant selectedItem: hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath)
 
     onCreationCompleted: {
         Tart.register(hnPage)
@@ -23,22 +25,24 @@ Container {
             ActionItem {
                 imageSource: "asset:///images/icons/ic_comments.png"
                 title: "Open Comments"
+                enabled: if (hnPage.selectedItem.hnid != '-1') {
+                    true
+                }
                 onTriggered: {
                     console.log("Pushing comments page");
-                    var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
-                    console.log(selectedItem.title);
+                    console.log(hnPage.selectedItem.title);
                     var page = hnItem.ListItem.view.pushPage('commentPage');
-                    page.title = selectedItem.title;
-                    page.titlePoster = selectedItem.poster;
-                    page.titleTime = selectedItem.timePosted + "| " + selectedItem.points;
-                    page.titleDomain = selectedItem.domain;
-                    page.commentLink = selectedItem.hnid;
-                    page.articleLink = selectedItem.articleURL;
+                    page.title = hnPage.selectedItem.title;
+                    page.titlePoster = hnPage.selectedItem.poster;
+                    page.titleTime = hnPage.selectedItem.timePosted + "| " + hnPage.selectedItem.points;
+                    page.titleDomain = hnPage.selectedItem.domain;
+                    page.commentLink = hnPage.selectedItem.hnid;
+                    page.articleLink = hnPage.selectedItem.articleURL;
                     page.isAsk = selectedItem.isAsk;
-                    Tart.send('requestPage',{
-                            source: selectedItem.hnid,
+                    Tart.send('requestPage', {
+                            source: hnPage.selectedItem.hnid,
                             sentBy: 'commentPage',
-                            askPost: selectedItem.isAsk,
+                            askPost: hnPage.selectedItem.isAsk,
                             deleteComments: "False"
                         });
                 }
@@ -46,12 +50,14 @@ Container {
             ActionItem {
                 title: "View Article"
                 imageSource: "asset:///images/icons/ic_article.png"
+                enabled: if (hnPage.selectedItem.articleURL != '') {
+                    true
+                }
                 onTriggered: {
                     console.log("Pushing Article page");
-                    var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
                     console.log(selectedItem.title);
                     var page = hnItem.ListItem.view.pushPage('webPage');
-                    page.text = selectedItem.title;
+                    page.text = hnPage.selectedItem.title;
                     page.htmlContent = selectedItem.articleURL;
                 }
             }
@@ -63,8 +69,31 @@ Container {
                     invokeActionId: "bb.action.SHARE"
                 }
                 onTriggered: {
-                    var selectedItem = hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath);
-                    data = selectedItem.title + "\n" + selectedItem.articleURL + "\n"  + " Shared using Reader|YC "
+                    data = hnPage.selectedItem.title + "\n" + hnPage.selectedItem.articleURL + "\nShared using Reader|YC "
+                }
+            }
+            ActionItem {
+                title: "Favourite Article"
+                imageSource: "asset:///images/icons/ic_star_add.png"
+                onTriggered: {
+                    var date = new Date();
+                    var formattedDate = Qt.formatDateTime(date, "dd-MM-yyyy"); //to format date
+                    var articleDetails = [ hnPage.selectedItem.title, hnPage.selectedItem.articleURL, String(formattedDate),
+                        hnPage.selectedItem.poster, hnPage.selectedItem.commentCount, hnPage.selectedItem.isAsk,
+                        hnPage.selectedItem.domain, hnPage.selectedItem.points, hnPage.selectedItem.hnid ];
+
+                    Tart.send('saveArticle', {
+                            article: articleDetails
+                        });
+                }
+            }
+            ActionItem {
+                title: "Copy Article Link"
+                imageSource: "asset:///images/icons/ic_copy_link.png"
+                onTriggered: {
+                    Tart.send('copyLink', {
+                        articleLink: hnPage.selectedItem.articleURL
+                    });
                 }
             }
         }
@@ -79,7 +108,6 @@ Container {
     leftPadding: padding
     rightPadding: padding
 
-    signal commentsClicked()
     function setHighlight(highlighted) {
         if (highlighted) {
             highlightContainer.opacity = 0.9;
@@ -87,10 +115,18 @@ Container {
             highlightContainer.opacity = 0.0;
         }
     }
+    function onSaveResult(data) {
+        saveResultToast.body = data.text;
+        saveResultToast.show();
+    }
+    
+    function onCopyResult(data) {
+        copyResultToast.body = data.text;
+        copyResultToast.show();
+    }
     // Highlight function for the highlight Container
 
     // Connect the onActivedChanged signal to the highlight function
-
     ListItem.onActivationChanged: {
         setHighlight(ListItem.active);
     }
@@ -103,6 +139,14 @@ Container {
         ImagePaintDefinition {
             id: itemBackground
             imageSource: "asset:///images/full.png.amd"
+        },
+        SystemToast {
+            id: saveResultToast
+            body: ""
+        },
+        SystemToast {
+            id: copyResultToast
+            body: ""
         }
     ]
     Container {

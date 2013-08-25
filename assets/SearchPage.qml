@@ -8,8 +8,15 @@ NavigationPane {
     property string lastItemType: ""
     property bool busy: false
     property int start: 0
+    
+    onPopTransitionEnded: {
+        page.destroy();
+        Application.menuEnabled = !Application.menuEnabled;
+    }
 
     function onAddSearchStories(data) {
+        loading.visible = false;
+        searchField.enabled = true;
         var story = data.story;
         searchModel.append({
                 type: 'item',
@@ -25,11 +32,12 @@ NavigationPane {
                 isAsk: story[9]
             });
         console.log(story[9])
-        busy = false;
         searchField.visible = true;
     }
 
     function onSearchError(data) {
+        searchField.enabled = true;
+        loading.visible = false;
         var lastItem = searchModel.size() - 1
         console.log(lastItemType);
         if (lastItemType == 'error') {
@@ -39,7 +47,6 @@ NavigationPane {
                 type: 'error',
                 title: data.text
             });
-        busy = false;
         searchField.visible = true;
     }
     Page {
@@ -59,6 +66,7 @@ NavigationPane {
                 TextField {
                     visible: true
                     objectName: "searchField"
+                    enabled: true
                     textStyle.color: Color.create("#262626")
                     textStyle.fontSize: FontSize.Medium
                     horizontalAlignment: HorizontalAlignment.Fill
@@ -68,12 +76,6 @@ NavigationPane {
                     }
                     input {
                         flags: TextInputFlag.AutoCapitalizationOff | TextInputFlag.SpellCheckOff
-                    }
-                    validator: Validator {
-                        state: ValidationState.Unknown
-                        errorMessage: "Entry cannot have spaces"
-                        validationRequested: true
-
                     }
                     hintText: qsTr("Search Posts on HN")
                     id: searchField
@@ -87,14 +89,14 @@ NavigationPane {
                                 startIndex: start
                             });
                         start = start + 30;
-                        busy = true;
+                        loading.visible = true;
                         searchField.visible = false;
                     }
                 }
             }
 
             Container {
-                visible: busy
+                visible: loading.visible
                 rightPadding: 220
                 leftPadding: 220
                 topPadding: 80
@@ -103,7 +105,7 @@ NavigationPane {
                     minHeight: 300
                     minWidth: 300
                     running: true
-                    visible: busy
+                    visible: false
                 }
             }
             ListView {
@@ -210,9 +212,9 @@ NavigationPane {
                                         sentBy: 'searchPage',
                                         startIndex: start
                                     });
-                                busy = true;
                                 loading.visible = false;
                                 start = start + 30;
+                                searchField.enabled = false;
                             }
                         }
                     }

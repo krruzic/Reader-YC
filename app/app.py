@@ -1,4 +1,4 @@
-import urllib.request, threading
+import urllib.request, threading, sqlite3
 from .HNStoryAPI import HackerNewsStoryAPI
 from .HNCommentAPI import HackerNewsCommentAPI
 from .HNUserAPI import HackerNewsUserAPI
@@ -13,6 +13,9 @@ HQ = HackerNewsSearchAPI()
 class App(tart.Application):
     """ The class that directly communicates with Tart and Cascades
     """
+
+    conn = sqlite3.connect("data/favourites.db")
+
 
     def onUiReady(self):
         self.onRequestPage("topPage", "topPage")
@@ -95,9 +98,65 @@ class App(tart.Application):
         except urllib.error.URLError:
             tart.send('seachError', text="Error getting search results, Check your connection \nand try again")
 
-    def onDownloadInvite(self):
-        rc = bbmsp_send_download_invitation()
+    def onSaveArticle(self, article):
+        article = tuple(article)
+        cursor = self.conn.cursor()
 
+        try:
+            cursor.execute("""CREATE TABLE articles
+                              (title text, articleURL text, saveTime text,
+                               poster text, numComments text, isAsk text,
+                               domain text, points text, hnid text PRIMARY KEY)
+                           """)
+        except:
+            print('table already exists')
+
+        # insert to table
+        try:
+            cursor.execute("INSERT INTO articles VALUES (?,?,?,?,?,?,?,?,?)", article)
+            print("Article saved!")
+        except sqlite3.IntegrityError:
+            print("Article already saved!")
+            tart.send('saveResult', text="Article already favourited")
+            return
+
+        # save data to database
+        self.conn.commit()
+
+        tart.send('saveResult', text="Article successfully favourited")
+
+    def onDeleteArticle(self, hnid):
+        hnid = str(hnid)
+        cursor = self.conn.cursor()
+        try:
+            cursor.execute("DELETE FROM TABLE articles WHERE hnid=?", (hnid,) )
+        except:
+            print("Article hasn't been saved, not deleting")
+            return
+
+        self.conn.commit()
+        # Return information to display a 'deleted' toast
+        tart.send('deleteResult', text="Article unfavourited")
+
+    def onLoadFavourites(self):
+        cursor = self.conn.execute('select * from table')
+        tart.send('mydata', data=list(get_rowdicts(cursor)))
+
+
+    def get_rowdicts(cursor):
+        fields = [col[0] for col in cursor.description]
+        for row in cursor:
+            d = {}
+            for key in fields:
+                d[key] = row[key]
+            yield d
+
+    def onCopyLink(self, articleLink):
+        from tart import clipboard
+        c = clipboard.Clipboard()
+        mimeType = 'text/plain'
+        c.insert(mimeType, articleLink)
+        tart.send('copyResult', text=articleLink + " copied to clipboard!")
 
 # class utility(object):
 #     """A class used by App to simplify things :)

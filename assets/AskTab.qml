@@ -18,6 +18,7 @@ NavigationPane {
 
     onPopTransitionEnded: {
         page.destroy();
+        Application.menuEnabled = !Application.menuEnabled;
     }
 
     function onAddaskStories(data) {
@@ -75,6 +76,7 @@ NavigationPane {
                     console.log("pressed")
                     theModel.clear();
                     refreshEnabled = ! busy;
+                    loading.visible = true;
                     }
                 }
             }

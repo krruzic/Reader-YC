@@ -29,7 +29,7 @@ Page {
                         Label {
                             topMargin: 0
                             bottomMargin: 0
-                            text: "<b>What is Hacker News?</b>"
+                            text: "<b>What is Hacker News?</b>" 
                             textFormat: TextFormat.Html
                             textStyle.color: Color.create("#434344")
                         }
