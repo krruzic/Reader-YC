@@ -3,7 +3,7 @@ import bb.system 1.0
 import "tart.js" as Tart
 
 Container {
-    id: hnPage
+    id: saveItem
     property string postArticle: ''
     property string askPost: ''
     property string commentSource: ''
@@ -16,7 +16,7 @@ Container {
     property variant selectedItem: hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath)
 
     onCreationCompleted: {
-        Tart.register(hnPage)
+        Tart.register(saveItem)
     }
     contextActions: [
         ActionSet {
@@ -25,24 +25,24 @@ Container {
             ActionItem {
                 imageSource: "asset:///images/icons/ic_comments.png"
                 title: "Open Comments"
-                enabled: if (hnPage.selectedItem.hnid != '-1') {
+                enabled: if (saveItem.selectedItem.hnid != '-1') {
                     true
                 }
                 onTriggered: {
                     console.log("Pushing comments page");
-                    console.log(hnPage.selectedItem.title);
+                    console.log(saveItem.selectedItem.title);
                     var page = hnItem.ListItem.view.pushPage('commentPage');
-                    page.title = hnPage.selectedItem.title;
-                    page.titlePoster = hnPage.selectedItem.poster;
-                    page.titleTime = hnPage.selectedItem.timePosted + "| " + hnPage.selectedItem.points;
-                    page.titleDomain = hnPage.selectedItem.domain;
-                    page.commentLink = hnPage.selectedItem.hnid;
-                    page.articleLink = hnPage.selectedItem.articleURL;
+                    page.title = saveItem.selectedItem.title;
+                    page.titlePoster = saveItem.selectedItem.poster;
+                    page.titleTime = "Saved on: " + saveItem.selectedItem.timePosted
+                    page.titleDomain = saveItem.selectedItem.domain;
+                    page.commentLink = saveItem.selectedItem.hnid;
+                    page.articleLink = saveItem.selectedItem.articleURL;
                     page.isAsk = selectedItem.isAsk;
                     Tart.send('requestPage', {
-                            source: hnPage.selectedItem.hnid,
+                            source: saveItem.selectedItem.hnid,
                             sentBy: 'commentPage',
-                            askPost: hnPage.selectedItem.isAsk,
+                            askPost: saveItem.selectedItem.isAsk,
                             deleteComments: "False"
                         });
                 }
@@ -50,14 +50,14 @@ Container {
             ActionItem {
                 title: "View Article"
                 imageSource: "asset:///images/icons/ic_article.png"
-                enabled: if (hnPage.selectedItem.articleURL != '') {
+                enabled: if (saveItem.selectedItem.articleURL != '') {
                     true
                 }
                 onTriggered: {
                     console.log("Pushing Article page");
                     console.log(selectedItem.title);
                     var page = hnItem.ListItem.view.pushPage('webPage');
-                    page.text = hnPage.selectedItem.title;
+                    page.text = saveItem.selectedItem.title;
                     page.htmlContent = selectedItem.articleURL;
                 }
             }
@@ -69,22 +69,7 @@ Container {
                     invokeActionId: "bb.action.SHARE"
                 }
                 onTriggered: {
-                    data = hnPage.selectedItem.title + "\n" + hnPage.selectedItem.articleURL + "\nShared using Reader|YC "
-                }
-            }
-            ActionItem {
-                title: "Favourite Article"
-                imageSource: "asset:///images/icons/ic_star_add.png"
-                onTriggered: {
-                    var date = new Date();
-                    var formattedDate = Qt.formatDateTime(date, "dd-MM-yyyy"); //to format date
-                    var articleDetails = [ hnPage.selectedItem.title, hnPage.selectedItem.articleURL, String(formattedDate),
-                        hnPage.selectedItem.poster, hnPage.selectedItem.commentCount, hnPage.selectedItem.isAsk,
-                        hnPage.selectedItem.domain, hnPage.selectedItem.points, hnPage.selectedItem.hnid ];
-
-                    Tart.send('saveArticle', {
-                            article: articleDetails
-                        });
+                    data = saveItem.selectedItem.title + "\n" + saveItem.selectedItem.articleURL + "\nShared using Reader|YC "
                 }
             }
             ActionItem {
@@ -92,8 +77,17 @@ Container {
                 imageSource: "asset:///images/icons/ic_copy_link.png"
                 onTriggered: {
                     Tart.send('copyLink', {
-                        articleLink: hnPage.selectedItem.articleURL
-                    });
+                            articleLink: saveItem.selectedItem.articleURL
+                        });
+                }
+            }
+            DeleteActionItem {
+                title: "Un-favourite"
+                onTriggered: {
+                    Tart.send('deleteArticle', {
+                            hnid: saveItem.selectedItem.hnid,
+                            selected: hnItem.ListItem.indexInSection
+                        });
                 }
             }
         }
@@ -115,15 +109,9 @@ Container {
             highlightContainer.opacity = 0.0;
         }
     }
-    function onSaveResult(data) {
-        saveResultToast.body = data.text;
-        saveResultToast.cancel();
-        saveResultToast.show();
-    }
-    
+
     function onCopyResult(data) {
         copyResultToast.body = data.text;
-        copyResultToast.cancel();
         copyResultToast.show();
     }
     // Highlight function for the highlight Container
@@ -141,10 +129,6 @@ Container {
         ImagePaintDefinition {
             id: itemBackground
             imageSource: "asset:///images/full.png.amd"
-        },
-        SystemToast {
-            id: saveResultToast
-            body: ""
         },
         SystemToast {
             id: copyResultToast

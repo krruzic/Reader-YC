@@ -125,31 +125,36 @@ class App(tart.Application):
 
         tart.send('saveResult', text="Article successfully favourited")
 
-    def onDeleteArticle(self, hnid):
+    def onDeleteArticle(self, hnid, selected):
         hnid = str(hnid)
         cursor = self.conn.cursor()
-        try:
-            cursor.execute("DELETE FROM TABLE articles WHERE hnid=?", (hnid,) )
-        except:
-            print("Article hasn't been saved, not deleting")
-            return
+        cursor.execute("DELETE FROM articles WHERE hnid=?", (hnid,) )
+
 
         self.conn.commit()
         # Return information to display a 'deleted' toast
-        tart.send('deleteResult', text="Article unfavourited")
+        tart.send('deleteResult', text="Article unfavourited", itemToRemove=selected)
 
     def onLoadFavourites(self):
-        cursor = self.conn.execute('select * from table')
-        tart.send('mydata', data=list(get_rowdicts(cursor)))
+        cursor = self.conn.execute('SELECT * FROM articles')
+        tart.send('fillList', list=self.get_rowdicts(cursor))
 
 
-    def get_rowdicts(cursor):
-        fields = [col[0] for col in cursor.description]
-        for row in cursor:
-            d = {}
-            for key in fields:
-                d[key] = row[key]
-            yield d
+    def get_rowdicts(self, cursor):
+        return list(cursor)
+
+
+    # #         d = {}
+    # # for idx, col in enumerate(cursor.description):
+    # #     d[col[0]] = row[idx]
+    # # return d
+    #     print(cursor)
+    #     fields = [col[0] for col in cursor.description]
+    #     for row in cursor:
+    #         d = {}
+    #         for key in fields:
+    #             d[key] = row[key]
+    #         yield d
 
     def onCopyLink(self, articleLink):
         from tart import clipboard
