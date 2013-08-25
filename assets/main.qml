@@ -9,19 +9,21 @@ TabbedPane {
             ActionItem {
                 imageSource: "asset:///images/icons/ic_info.png"
                 title: "About"
-                enabled: true
+                enabled: if (root.activePane != aboutPage){true}
                 onTriggered: {
                     var np = aboutPage.createObject(activeTab.content);
                     activeTab.push(np)
+                    Application.menuEnabled = !Application.menuEnabled;
                 }
             },
             ActionItem {
                 imageSource: "asset:///images/icons/ic_help.png"
                 title: "Help"
-                enabled: true
+                enabled: if (root.activePane != helpPage){true}
                 onTriggered: {
                     var np = helpPage.createObject(activeTab.content);
                     activeTab.push(np)
+                    Application.menuEnabled = !Application.menuEnabled;
                 }
             }
         ]
@@ -106,12 +108,12 @@ TabbedPane {
         title: qsTr("User Pages")
         imageSource: "asset:///images/icons/ic_users.png"
         id: userTab
-        UserPage {
+        NavUserPage {
             id: userPage
         }
         signal push(variant p)
         onPush: {
-            top.push(p);
+            userTab.push(p);
         }
     }
 
@@ -125,6 +127,18 @@ TabbedPane {
         signal push(variant p)
         onPush: {
             search.push(p)
+        }
+    }
+    Tab {
+        title: qsTr("Favourites")
+        imageSource: "asset:///images/icons/ic_star.png"
+        id: favouritesTab
+        FavouritesTab {
+            id: favourites
+        }
+        signal push(variant p)
+        onPush: {
+            favourites.push(p)
         }
     }
     onActiveTabChanged: {
