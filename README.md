@@ -24,8 +24,6 @@ First create a root directory, I called mine 'apps', then
 **Install Blackberry Tart**
 To do this you'll need to grab the tartV1.1 zip found [here](http://blackberry-py.microcode.ca/downloads/), and extract it to the root directory you created previously
 
-Now, clone this repo and place it in the root directory too.
-
 **REQUEST DEBUG TOKEN BAR FILE**
 `blackberry-debugtokenrequest -storepass STOREPASS -devicepin DEVICEPIN debugtoken.bar`
 
