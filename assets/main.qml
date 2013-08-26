@@ -161,8 +161,8 @@ TabbedPane {
         }
     }
     onCreationCompleted: {
-        Application.fullscreen.connect(onFullscreen);
-        Application.thumbnail.connect(onThumbnailed);
+//        Application.fullscreen.connect(onFullscreen);
+//        Application.thumbnail.connect(onThumbnailed);
         top.busy = true;
         Tart.init(_tart, Application);
 
