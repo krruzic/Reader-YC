@@ -25,8 +25,8 @@ Container {
                 layoutProperties: StackLayoutProperties {
                     spaceQuota: 5
                 }
-                minWidth: 620
-                maxWidth: 620
+                minWidth: 600
+                maxWidth: 600
                 horizontalAlignment: horizontalAlignment.Left
                 scrollViewProperties.scrollMode: ScrollMode.Horizontal
                 scrollViewProperties.pinchToZoomEnabled: false

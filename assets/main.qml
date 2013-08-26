@@ -1,29 +1,40 @@
 import bb.cascades 1.0
 import "tart.js" as Tart
+import "global.js" as Global
 
 TabbedPane {
     id: root
+    property int numOfStories
+
+//    function onAddCoverStories(data) {
+//        Global.stories = data.stories;
+//        numOfStories = Global.stories.length;
+//    }
 
     Menu.definition: MenuDefinition {
         actions: [
             ActionItem {
                 imageSource: "asset:///images/icons/ic_info.png"
                 title: "About"
-                enabled: if (root.activePane != aboutPage){true}
+                enabled: if (root.activePane != aboutPage) {
+                    true
+                }
                 onTriggered: {
                     var np = aboutPage.createObject(activeTab.content);
                     activeTab.push(np)
-                    Application.menuEnabled = !Application.menuEnabled;
+                    Application.menuEnabled = ! Application.menuEnabled;
                 }
             },
             ActionItem {
                 imageSource: "asset:///images/icons/ic_help.png"
                 title: "Help"
-                enabled: if (root.activePane != helpPage){true}
+                enabled: if (root.activePane != helpPage) {
+                    true
+                }
                 onTriggered: {
                     var np = helpPage.createObject(activeTab.content);
                     activeTab.push(np)
-                    Application.menuEnabled = !Application.menuEnabled;
+                    Application.menuEnabled = ! Application.menuEnabled;
                 }
             }
         ]
@@ -145,11 +156,13 @@ TabbedPane {
         userPage.searchVisible = false;
         if (activeTab == favouritesTab) {
             console.log("Loading favourites")
-            //favourites.favouritesModel.clear();
-            Tart.send('loadFavourites', {});
+            Tart.send('loadFavourites', {
+                });
         }
     }
     onCreationCompleted: {
+        Application.fullscreen.connect(onFullscreen);
+        Application.thumbnail.connect(onThumbnailed);
         top.busy = true;
         Tart.init(_tart, Application);
 
@@ -158,6 +171,16 @@ TabbedPane {
     }
     showTabsOnActionBar: true
     activeTab: topTab
+
+//    function onThumbnailed() {
+//       // switchTimer.start();
+//        Application.cover = appCover.createObject();
+//    }
+//
+//    function onFullscreen() {
+//       // switchTimer.stop();
+//        Application.cover = null;
+//    }
 
     attachedObjects: [
         ComponentDefinition {
@@ -169,6 +192,26 @@ TabbedPane {
             id: helpPage
             HelpPage {
             }
+        },
+        ComponentDefinition {
+            id: appCover
+            AppCover {
+            }
         }
+    //        },
+    //        QTimer {
+    //            id: switchTimer
+    //            interval: 1000 // 30 second interval
+    //            onTimeout: {
+    //                console.log("FIRED")
+    //                if (Global.stories[0] != undefined) {
+    //                    Global.showImgCover = false;
+    //                    Global.coverTitle = Global.stories[0][1]
+    //                } else {
+    //                    Global.showImgCover = true;
+    //                    Global.coverTitle = "No recent stories..."
+    //                }
+    //            }
+    //        }
     ]
 }
