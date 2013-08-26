@@ -13,6 +13,7 @@ NavigationPane {
         Tart.register(favouritesPage)
     }
     function onFillList(data) {
+        favouritesModel.clear();
         var stories = data.list
         for (var i = 0; i < stories.length; i ++) {
             var story = stories[i];
@@ -40,6 +41,7 @@ NavigationPane {
     }
 
     Page {
+        id: favourites
         Container {
             HNTitleBar {
                 id: titleBar
@@ -75,7 +77,7 @@ NavigationPane {
                     if (selectedItem.isAsk == "true" && selectedItem.hnid != '-1') {
                         console.log("Ask post");
                         var page = commentPage.createObject();
-                        topPage.push(page);
+                        favouritesPage.push(page);
                         console.log(selectedItem.commentsURL)
                         page.commentLink = selectedItem.hnid;
                         page.title = selectedItem.title;
@@ -91,7 +93,7 @@ NavigationPane {
                     } else {
                         console.log('Item triggered. ' + selectedItem.articleURL);
                         var page = webPage.createObject();
-                        topPage.push(page);
+                        favouritesPage.push(page);
                         page.htmlContent = selectedItem.articleURL;
                         page.text = selectedItem.title;
                     }

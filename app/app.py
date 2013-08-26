@@ -13,7 +13,7 @@ HQ = HackerNewsSearchAPI()
 class App(tart.Application):
     """ The class that directly communicates with Tart and Cascades
     """
-
+    bbm = False
     conn = sqlite3.connect("data/favourites.db")
 
 
@@ -69,6 +69,9 @@ class App(tart.Application):
             stories.append(item.getDetails())
 
         tart.send('add{0}Stories'.format(sentByShort), stories=stories, moreLink=moreLink, sentTo=sentBy)
+        if (source == 'news'):
+            return
+            #tart.send('addCoverStories', stories=stories)
 
 
     def comments_routine(self, source, askPost, deleteComments):
