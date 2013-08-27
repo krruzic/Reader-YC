@@ -18,7 +18,16 @@ class App(tart.Application):
 
 
     def onUiReady(self):
+        print("UI READY!!")
         self.onRequestPage("topPage", "topPage")
+        readCursor = sqlite3.connect("data/read.db")
+        readCursor.execute("CREATE TABLE IF NOT EXISTS readTable (link text PRIMARY KEY)")
+        # favCursor = self.conn.cursor()
+        # favCursor.execute("""CREATE TABLE IF NOT EXISTS articles
+        #                   (title text, articleURL text, saveTime text,
+        #                    poster text, numComments text, isAsk text,
+        #                    domain text, points text, hnid text PRIMARY KEY)
+        #                """)
         # self.onRequestPage("Ask HN", "askPage")
         # self.onRequestPage("Newest Posts", "newestPage")
 
@@ -55,7 +64,7 @@ class App(tart.Application):
 
         try:
             postList, moreLink = HS.getPage("https://news.ycombinator.com/" + source)
-        except (urllib.error.URLError, socket.error):
+        except urllib.error.URLError:
             print("error from python: " + "URLError")
             tart.send('{0}ListError'.format(sentByShort), text="Error getting news feed, check your connection and try again")
             return
@@ -105,14 +114,6 @@ class App(tart.Application):
         article = tuple(article)
         cursor = self.conn.cursor()
 
-        try:
-            cursor.execute("""CREATE TABLE articles
-                              (title text, articleURL text, saveTime text,
-                               poster text, numComments text, isAsk text,
-                               domain text, points text, hnid text PRIMARY KEY)
-                           """)
-        except:
-            print('table already exists')
 
         # insert to table
         try:
@@ -146,18 +147,40 @@ class App(tart.Application):
     def get_rowdicts(self, cursor):
         return list(cursor)
 
+    # def onReadArticle(self, link):
+    #     cursor = sqlite3.connect("data/read.db")
+    #     sel = cursor.execute( "SELECT COUNT(*) FROM readTable" )
+    #     Result = sel.fetchall()
+    #     records = Result[0][0]
+    #     if (records >= 300):
+    #         print("Read Table emptied!")
+    #         cursor.execute("DELETE from * readTable")
+    #         cursor.commit()
 
-    # #         d = {}
-    # # for idx, col in enumerate(cursor.description):
-    # #     d[col[0]] = row[idx]
-    # # return d
-    #     print(cursor)
-    #     fields = [col[0] for col in cursor.description]
-    #     for row in cursor:
-    #         d = {}
-    #         for key in fields:
-    #             d[key] = row[key]
-    #         yield d
+    #     try:
+    #         cursor.execute("INSERT INTO readTable VALUES (?)", (link,))
+    #         print("article marked as read")
+    #         tart.send('readState', state="read")
+    #     except sqlite3.IntegrityError:
+    #         cursor.close()
+    #         print("Error inserting...")
+    #         return
+
+    #     # save data to database
+    #     cursor.commit()
+    #     cursor.close()
+
+
+    # def onCheckReadState(self, link):
+    #     cursor = sqlite3.connect("data/read.db")
+    #     sel = cursor.execute("SELECT * FROM readTable WHERE link = ?", (link,))
+    #     data = sel.fetchall()
+    #     if (len(data) == 0):
+    #         tart.send('readState', state="unread")
+    #     else:
+    #         tart.send('readState', state="read")
+    #     cursor.close()
+
 
     def onCopyLink(self, articleLink):
         from tart import clipboard
@@ -165,33 +188,3 @@ class App(tart.Application):
         mimeType = 'text/plain'
         c.insert(mimeType, articleLink)
         tart.send('copyResult', text=articleLink + " copied to clipboard!")
-
-# class utility(object):
-#     """A class used by App to simplify things :)
-#     """
-
-#     def cacheWriter(self, comments, url):
-#         pageIDStart = url.find('=') + 1
-#         pageID = url[pageIDStart:-1] + '.xml'
-
-#         fileToWrite = os.getcwd() + '/cache/' + pageID
-#         cacheFile = open(fileToRead, 'w+')
-
-#         cacheFile.write('<articles>\n')
-#         for comment in comments:
-#             cacheFile.write('\t<item>\n')
-#             for detail in comment:
-#                 cacheFile.write('\t\t<commentNum>' detail[0] + '</commentNum>')
-#                 cacheFile.write('\t\t<poster>' + detail[1] + '</poster>')
-#                 cacheFile.write('\t\t<timePosted>' + detail[2] + '</timePosted>')
-#                 cacheFile.write('\t\t<indent>' + detail[3] + '</indent>')
-#                 cacheFile.write('\t\t<text>' + detail[4] + '</text>')
-#         cacheFile.write('</articles>')
-#         cacheFile.close()
-
-#     def addFavourite(self, itemDetails):
-#         fileToWrite = os.getcwd() + '/history' + '.xml'
-#         try:
-#             with open(fileToWrite): pass
-#         except IOError:
-#             print("History file doesn't exist, creating now.")

@@ -95,6 +95,9 @@ TabbedPane {
         title: qsTr("Newest")
         imageSource: "asset:///images/icons/ic_new.png"
         id: newTab
+        function test() {
+            console.log("TESTING JS STUFF")
+        }
         NewTab {
             id: newest
             onCreationCompleted: {

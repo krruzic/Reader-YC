@@ -18,15 +18,19 @@ NavigationPane {
 
     onPopTransitionEnded: {
         page.destroy();
-        Application.menuEnabled = !Application.menuEnabled;
+        Application.menuEnabled = ! Application.menuEnabled;
     }
 
     function onAddtopStories(data) {
+
         var stories = data.stories;
         morePage = data.moreLink;
         //refreshEnabled = true;
         for (var i = 0; i < stories.length; i ++) {
             var story = stories[i];
+//            Tart.send('checkReadState', {
+//                    link: story[7]
+//                });
             theModel.append({
                     type: 'item',
                     title: story[1],
@@ -178,6 +182,9 @@ NavigationPane {
                     }
                 ]
                 onTriggered: {
+//                    Tart.send('readArticle', {
+//                            link: dataModel.data(indexPath).articleURL
+//                        });
                     var selectedItem = dataModel.data(indexPath);
                     console.log(selectedItem.isAsk);
                     if (selectedItem.isAsk == "true" && selectedItem.hnid != '-1') {

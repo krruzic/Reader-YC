@@ -14,7 +14,8 @@ Container {
     property alias postUsername: labelUsername.text
     property alias postTime: labelTimePosted.text
     property variant selectedItem: hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath)
-
+    //property variant backgroundVar: unreadBackground.imagePaint
+        
     onCreationCompleted: {
         Tart.register(hnPage)
     }
@@ -92,8 +93,8 @@ Container {
                 imageSource: "asset:///images/icons/ic_copy_link.png"
                 onTriggered: {
                     Tart.send('copyLink', {
-                        articleLink: hnPage.selectedItem.articleURL
-                    });
+                            articleLink: hnPage.selectedItem.articleURL
+                        });
                 }
             }
         }
@@ -120,11 +121,21 @@ Container {
         saveResultToast.cancel();
         saveResultToast.show();
     }
-    
+
     function onCopyResult(data) {
         copyResultToast.body = data.text;
         copyResultToast.cancel();
         copyResultToast.show();
+    }
+
+    function onReadState(data) {
+        if (data.state == "unread") { 	
+            console.log("UNREAD");
+            mainContainer.background = unreadBackground.imagePaint
+        } else {
+            console.log("READ");
+            mainContainer.background = readBackground.imagePaint
+        }
     }
     // Highlight function for the highlight Container
 
@@ -137,31 +148,15 @@ Container {
     ListItem.onSelectionChanged: {
         setHighlight(ListItem.selected);
     }
-    attachedObjects: [
-        ImagePaintDefinition {
-            id: itemBackground
-            imageSource: "asset:///images/full.png.amd"
-        },
-        SystemToast {
-            id: saveResultToast
-            body: ""
-        },
-        SystemToast {
-            id: copyResultToast
-            body: ""
-        }
-    ]
+
     Container {
         visible: true
         id: mainContainer
         preferredWidth: 730
         preferredHeight: 155
-        maxHeight: 155
+        //maxHeight: 155
         maxWidth: 730
-        background: itemBackground.imagePaint
-        layout: StackLayout {
-            orientation: LayoutOrientation.LeftToRight
-        }
+        background: unreadBackground.imagePaint
         Container {
             topPadding: 5
             leftPadding: 10
@@ -171,18 +166,18 @@ Container {
             bottomPadding: 20
 
             Label {
-                rightMargin: 42
                 id: labelPostTitle
                 preferredWidth: 680
-                maxWidth: 680
-                text: "Billing Incident Update, from the makers of cheese"
+                text: "Billing Incident Update, from the makers of cheese, testing this out"
                 textStyle.fontSize: FontSize.PointValue
                 textStyle.fontSizeValue: 7
                 bottomMargin: 1
+                multiline: true
                 textStyle.color: Color.Black
+                autoSize.maxLineCount: 2
+                textFormat: TextFormat.Html
             }
             Container {
-                translationY: -5
                 topMargin: 0
                 leftMargin: 1
                 rightPadding: 15
@@ -193,16 +188,18 @@ Container {
                 Label {
                     id: labelPostDomain
                     layoutProperties: StackLayoutProperties {
-                        spaceQuota: 2
+                        spaceQuota: 1
                     }
-                    translationX: 10
-                    text: "http://dailymail.co.uk/"
+                    topMargin: 1
+                    bottomMargin: 1
+                    translationX: 2
+                    minWidth: 400
+                    maxWidth: 440
+                    text: "http://www.dailymail.com/"
                     multiline: false
-                    textStyle.fontSize: FontSize.PointValue
-                    textStyle.fontSizeValue: 7
-                    textStyle.color: Color.Gray
-                    horizontalAlignment: HorizontalAlignment.Left
-                    textStyle.textAlign: TextAlign.Left
+                    textStyle.fontSize: FontSize.Small
+                    textStyle.color: Color.create("#ff69696c")
+                    textStyle.fontStyle: FontStyle.Italic
                 }
 
                 Label {
@@ -265,4 +262,22 @@ Container {
         maxWidth: 730
         opacity: 0
     }
+    attachedObjects: [
+        ImagePaintDefinition {
+            id: unreadBackground
+            imageSource: "asset:///images/unread.amd"
+        },
+        ImagePaintDefinition {
+            id: readBackground
+            imageSource: "asset:///images/read.amd"
+        },
+        SystemToast {
+            id: saveResultToast
+            body: ""
+        },
+        SystemToast {
+            id: copyResultToast
+            body: ""
+        }
+    ]
 }

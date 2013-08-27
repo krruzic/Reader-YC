@@ -25,7 +25,7 @@ Container {
         attachedObjects: [
             ImagePaintDefinition {
                 id: itemBackground
-                imageSource: "asset:///images/full.png.amd"
+                imageSource: "asset:///images/unread.amd"
             },
             ImagePaintDefinition {
                 id: textBackground
@@ -50,8 +50,10 @@ Container {
                     preferredWidth: 680
                     maxWidth: 680
                     text: "Billing Incident Update for your idiotic product, from the makers of cheese"
-                    textStyle.fontSize: FontSize.Small
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 7
                     bottomMargin: 1
+                    textFormat: TextFormat.Html
                     textStyle.color: Color.Black
                     multiline: true
                     autoSize.maxLineCount: 3
@@ -61,7 +63,7 @@ Container {
                     id: labelPostDomain
                     topMargin: 1
                     bottomMargin: 1
-                    translationX: 10
+                    translationX: 1
                     maxWidth: 500.0
                     text: "http://www.dailymail.com/"
                     multiline: false
