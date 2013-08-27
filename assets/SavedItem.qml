@@ -128,7 +128,7 @@ Container {
     attachedObjects: [
         ImagePaintDefinition {
             id: itemBackground
-            imageSource: "asset:///images/full.png.amd"
+            imageSource: "asset:///images/unread.amd"
         },
         SystemToast {
             id: copyResultToast
@@ -162,6 +162,7 @@ Container {
                 text: "Billing Incident Update, from the makers of cheese"
                 textStyle.fontSize: FontSize.PointValue
                 textStyle.fontSizeValue: 7
+                textFormat: TextFormat.Html
                 bottomMargin: 1
                 textStyle.color: Color.Black
             }
@@ -177,16 +178,18 @@ Container {
                 Label {
                     id: labelPostDomain
                     layoutProperties: StackLayoutProperties {
-                        spaceQuota: 2
+                        spaceQuota: 1
                     }
-                    translationX: 10
-                    text: "http://dailymail.co.uk/"
+                    topMargin: 1
+                    bottomMargin: 1
+                    translationX: 2
+                    minWidth: 400
+                    maxWidth: 440
+                    text: "http://www.dailymail.com/"
                     multiline: false
-                    textStyle.fontSize: FontSize.PointValue
-                    textStyle.fontSizeValue: 7
-                    textStyle.color: Color.Gray
-                    horizontalAlignment: HorizontalAlignment.Left
-                    textStyle.textAlign: TextAlign.Left
+                    textStyle.fontSize: FontSize.Small
+                    textStyle.color: Color.create("#ff69696c")
+                    textStyle.fontStyle: FontStyle.Italic
                 }
 
                 Label {
