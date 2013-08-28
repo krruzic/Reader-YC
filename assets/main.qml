@@ -11,7 +11,6 @@ TabbedPane {
     property string coverComments: ""
     property int currStory: 0
 
-
     Menu.definition: MenuDefinition {
         actions: [
             ActionItem {
@@ -167,7 +166,7 @@ TabbedPane {
     onCreationCompleted: {
         Application.fullscreen.connect(onFullscreen);
         Application.thumbnail.connect(onThumbnailed);
-        Application.invisible.connect(onInvisible);
+        //Application.invisible.connect(onInvisible);
         //Application.awake.connect(onVisible);
 
         top.busy = true;
@@ -181,6 +180,21 @@ TabbedPane {
 
     function onThumbnailed() {
         console.log("VISIBLE!!!");
+        console.log("FIRED, stories: " + Global.stories[0]);
+        if (Global.stories[0] != undefined) {
+            if (currStory < numOfStories - 1) {
+                currStory ++;
+            } else {
+                currStory = 0;
+            }
+            console.log(currStory + "   " + numOfStories);
+            coverTitle = Global.stories[currStory][1];
+            coverPoster = Global.stories[currStory][4];
+            coverDetails = Global.stories[currStory][5] + "| " + Global.stories[currStory][3];
+            coverComments = Global.stories[currStory][6] + " Comments";
+        } else {
+            coverTitle = "No recent stories...";
+        }
         switchTimer.start();
         Application.cover = appCover.createObject();
     }
@@ -189,18 +203,17 @@ TabbedPane {
         switchTimer.stop();
         Application.cover = null;
     }
-    
-    function onInvisible() {
-        console.log("INVISIBlE!!!");
-        switchTimer.stop();
-    }
-    
-//    function onVisible() {
-//        console.log("VISIBLE!!!!");
-//        switchTimer.start();
-//    }
-    
-    
+
+    //    function onInvisible() {
+    //        console.log("INVISIBlE!!!");
+    //        switchTimer.stop();
+    //    }
+
+    //    function onVisible() {
+    //        console.log("VISIBLE!!!!");
+    //        switchTimer.start();
+    //    }
+
     function onAddCoverStories(data) {
         Global.stories = data.stories;
         numOfStories = data.stories.length;
@@ -209,9 +222,7 @@ TabbedPane {
         coverDetails = data.stories[0][5] + "| " + data.stories[0][3];
         coverComments = data.stories[0][6] + " Comments";
     }
-    
-    
-    
+
     attachedObjects: [
         ComponentDefinition {
             id: aboutPage
