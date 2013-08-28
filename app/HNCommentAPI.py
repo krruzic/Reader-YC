@@ -35,7 +35,7 @@ class HackerNewsCommentAPI:
 
         del comment_tables[0:4]
         if (len(comment_tables) == 0):
-            return None
+            return None, text
         del comment_tables[-1]
 
 
@@ -165,9 +165,6 @@ class HackerNewsCommentAPI:
             tart.send('commentError', text="Jobs posting, no comments.")
             return
 
-
-
-
         workingDir = os.getcwd() + '/data/cache/'
         url = 'https://news.ycombinator.com/item?id=%s' % source
         cacheList = []
@@ -199,7 +196,7 @@ class HackerNewsCommentAPI:
         comments, text = self.parse_comments(urlSource, isAsk)
         if (comments == None):
             tart.send('addText', text=text)
-            tart.send('commentError', text="No comments! Check back later!")
+            tart.send('commentError', text="No comments! Check back later!", hnid=source)
             return
         jsonComments = json.dumps(comments)
         comments = json.loads(jsonComments)
@@ -207,5 +204,5 @@ class HackerNewsCommentAPI:
 
         tart.send('addText', text=text)
         for comment in comments:
-            tart.send('addComments', comment=comment)
+            tart.send('addComments', comment=comment, hnid=source)
         self.cacheComments(source, comments, text)

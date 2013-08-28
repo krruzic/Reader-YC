@@ -17,37 +17,40 @@ Page {
     onCreationCompleted: {
         busy = true;
         Tart.register(commentPane);
-
         commentList.scrollToPosition(-1, ScrollAnimation.Smooth)
-
     }
-    
 
     function onCommentError(data) {
-        var lastItem = commentModel.size() - 1
-        console.log(lastItemType);
-        if (lastItemType == 'error') {
-            commentModel.removeAt(lastItem)
+        if (commentLink == data.hnid) {
+            var lastItem = commentModel.size() - 1
+            console.log(lastItemType);
+            if (lastItemType == 'error') {
+                commentModel.removeAt(lastItem)
+            }
+            commentModel.append({
+                    type: 'error',
+                    title: data.text
+                });
+            busy = false;
+            console.log(data.text)
+            titleBar.refreshEnabled = true;
         }
-        commentModel.append({
-                type: 'error',
-                title: data.text
-            });
-        busy = false;
-        console.log(data.text)
     }
 
     function onAddComments(data) {
-        commentModel.append({
-                type: 'item',
-                poster: data.comment["author"],
-                timePosted: data.comment["time"],
-                indent: data.comment["indent"],
-                text: data.comment["text"],
-                link: "https://news.ycombinator.com/item?id=" + data.comment["link"]
-            });
-        busy = false;
-        titleBar.refreshEnabled = true;
+        if (commentLink == data.hnid) {
+
+            commentModel.append({
+                    type: 'item',
+                    poster: data.comment["author"],
+                    timePosted: data.comment["time"],
+                    indent: data.comment["indent"],
+                    text: data.comment["text"],
+                    link: "https://news.ycombinator.com/item?id=" + data.comment["link"]
+                });
+            busy = false;
+            titleBar.refreshEnabled = true;
+        }
     }
     actions: [
         InvokeActionItem {

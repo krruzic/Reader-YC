@@ -47,6 +47,7 @@ Container {
             opacity: 0
         }
         ImageButton {
+            enabled: false
             translationY: -6
             layoutProperties: StackLayoutProperties {
                 spaceQuota: 1

@@ -79,8 +79,7 @@ class App(tart.Application):
 
         tart.send('add{0}Stories'.format(sentByShort), stories=stories, moreLink=moreLink, sentTo=sentBy)
         if (source == 'news'):
-            return
-            #tart.send('addCoverStories', stories=stories)
+            tart.send('addCoverStories', stories=stories)
 
 
     def comments_routine(self, source, askPost, deleteComments):
