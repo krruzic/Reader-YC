@@ -5,11 +5,12 @@ import "global.js" as Global
 TabbedPane {
     id: root
     property int numOfStories
+    property string coverTitle: "No recent stories..."
+    property string coverDetails: ""
+    property string coverPoster: ""
+    property string coverComments: ""
+    property int currStory: 0
 
-//    function onAddCoverStories(data) {
-//        Global.stories = data.stories;
-//        numOfStories = Global.stories.length;
-//    }
 
     Menu.definition: MenuDefinition {
         actions: [
@@ -164,8 +165,11 @@ TabbedPane {
         }
     }
     onCreationCompleted: {
-//        Application.fullscreen.connect(onFullscreen);
-//        Application.thumbnail.connect(onThumbnailed);
+        Application.fullscreen.connect(onFullscreen);
+        Application.thumbnail.connect(onThumbnailed);
+        Application.invisible.connect(onInvisible);
+        //Application.awake.connect(onVisible);
+
         top.busy = true;
         Tart.init(_tart, Application);
 
@@ -175,16 +179,39 @@ TabbedPane {
     showTabsOnActionBar: true
     activeTab: topTab
 
-//    function onThumbnailed() {
-//       // switchTimer.start();
-//        Application.cover = appCover.createObject();
-//    }
-//
-//    function onFullscreen() {
-//       // switchTimer.stop();
-//        Application.cover = null;
-//    }
+    function onThumbnailed() {
+        console.log("VISIBLE!!!");
+        switchTimer.start();
+        Application.cover = appCover.createObject();
+    }
 
+    function onFullscreen() {
+        switchTimer.stop();
+        Application.cover = null;
+    }
+    
+    function onInvisible() {
+        console.log("INVISIBlE!!!");
+        switchTimer.stop();
+    }
+    
+//    function onVisible() {
+//        console.log("VISIBLE!!!!");
+//        switchTimer.start();
+//    }
+    
+    
+    function onAddCoverStories(data) {
+        Global.stories = data.stories;
+        numOfStories = data.stories.length;
+        coverTitle = data.stories[0][1];
+        coverPoster = data.stories[0][4];
+        coverDetails = data.stories[0][5] + "| " + data.stories[0][3];
+        coverComments = data.stories[0][6] + " Comments";
+    }
+    
+    
+    
     attachedObjects: [
         ComponentDefinition {
             id: aboutPage
@@ -198,23 +225,28 @@ TabbedPane {
         },
         ComponentDefinition {
             id: appCover
-            AppCover {
+            source: "asset:///AppCover.qml"
+        },
+        QTimer {
+            id: switchTimer
+            interval: 30000 // 30 second interval
+            onTimeout: {
+                console.log("FIRED, stories: " + Global.stories[0]);
+                if (Global.stories[0] != undefined) {
+                    console.log(currStory + "   " + numOfStories);
+                    coverTitle = Global.stories[currStory][1];
+                    coverPoster = Global.stories[currStory][4];
+                    coverDetails = Global.stories[currStory][5] + "| " + Global.stories[currStory][3];
+                    coverComments = Global.stories[currStory][6] + " Comments";
+                    if (currStory < numOfStories - 1) {
+                        currStory ++;
+                    } else {
+                        currStory = 0;
+                    }
+                } else {
+                    coverTitle = "No recent stories...";
+                }
             }
         }
-    //        },
-    //        QTimer {
-    //            id: switchTimer
-    //            interval: 1000 // 30 second interval
-    //            onTimeout: {
-    //                console.log("FIRED")
-    //                if (Global.stories[0] != undefined) {
-    //                    Global.showImgCover = false;
-    //                    Global.coverTitle = Global.stories[0][1]
-    //                } else {
-    //                    Global.showImgCover = true;
-    //                    Global.coverTitle = "No recent stories..."
-    //                }
-    //            }
-    //        }
     ]
 }
