@@ -9,11 +9,24 @@ NavigationPane {
         page.destroy();
         Application.menuEnabled = ! Application.menuEnabled;
     }
+    
+    onPushTransitionEnded: {
+        if (page.objectName == 'commentPage') {
+            Tart.send('requestPage', {
+                    source: page.commentLink,
+                    sentBy: 'commentPage',
+                    askPost: page.isAsk,
+                    deleteComments: "False"
+            });
+        }
+    }
+    
     onCreationCompleted: {
         Tart.register(favouritesPage)
     }
     function onFillList(data) {
         favouritesModel.clear();
+
         var stories = data.list
         for (var i = 0; i < stories.length; i ++) {
             var story = stories[i];
@@ -32,77 +45,115 @@ NavigationPane {
                     hnid: story[8]
                 });
         }
+        if (favouritesModel.isEmpty() == true) {
+            emptyContainer.visible = true
+        } else {
+            emptyContainer.visible = false
+        }
     }
-    
+
     function onDeleteResult(data) {
         favouritesModel.removeAt(data.itemToRemove);
         deleteResultToast.cancel();
         deleteResultToast.show();
+        if (favouritesModel.isEmpty() == true) {
+            emptyContainer.visible = true
+        } else {
+            emptyContainer.visible = false
+        }
     }
 
     Page {
         id: favourites
         Container {
-            HNTitleBar {
-                id: titleBar
-                text: "Reader|YC - Favourites"
-                showButton: false
+            layout: DockLayout {
             }
-            ListView {
-                id: favouritesList
-                dataModel: ArrayDataModel {
-                    id: favouritesModel
+
+            HNTitleBar {
+                text: "Reader|YC - Favourites"
+                horizontalAlignment: HorizontalAlignment.Center
+                verticalAlignment: VerticalAlignment.Top
+            }
+            Container {
+                id: emptyContainer
+                horizontalAlignment: HorizontalAlignment.Center
+                verticalAlignment: VerticalAlignment.Center
+                layout: StackLayout {
+
                 }
-                listItemComponents: [
-                    ListItemComponent {
-                        type: ''
-                        SavedItem {
-                            id: hnItem
-                            property string type: ListItemData.type
-                            postComments: ListItemData.commentCount
-                            postTitle: ListItemData.title
-                            postDomain: ListItemData.domain
-                            postUsername: ListItemData.poster
-                            postTime: "Saved on: " + ListItemData.timePosted
-                            postArticle: ListItemData.articleURL
-                            askPost: ListItemData.isAsk
-                            commentSource: ListItemData.commentsURL
-                            commentID: ListItemData.hnid
+                Label {
+                    text: "<b><span style='color:#fe8515'>Nothing to see here,</span></b>\nTry favouriting a story!"
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.textAlign: TextAlign.Center
+                    textStyle.fontSizeValue: 9
+                    textStyle.color: Color.DarkGray
+                    textFormat: TextFormat.Html
+                    multiline: true
+                }
+            }
+            Container {
+                horizontalAlignment: horizontalAlignment.Center
+                verticalAlignment: verticalAlignment.Center
+                topPadding: 118
+                layout: StackLayout {
+
+                }
+                ListView {
+                    id: favouritesList
+                    dataModel: ArrayDataModel {
+                        id: favouritesModel
+                    }
+                    listItemComponents: [
+                        ListItemComponent {
+                            type: ''
+                            SavedItem {
+                                id: hnItem
+                                property string type: ListItemData.type
+                                postComments: ListItemData.commentCount
+                                postTitle: ListItemData.title
+                                postDomain: ListItemData.domain
+                                postUsername: ListItemData.poster
+                                postTime: "Saved on: " + ListItemData.timePosted
+                                postArticle: ListItemData.articleURL
+                                askPost: ListItemData.isAsk
+                                commentSource: ListItemData.commentsURL
+                                commentID: ListItemData.hnid
+                            }
+                        }
+                    ]
+                    onTriggered: {
+                        var selectedItem = dataModel.data(indexPath);
+                        console.log(selectedItem.isAsk);
+                        if (selectedItem.isAsk == "true" && selectedItem.hnid != '-1') {
+                            console.log("Ask post");
+                            var page = commentPage.createObject();
+                            favouritesPage.push(page);
+                            console.log(selectedItem.commentsURL)
+                            page.commentLink = selectedItem.hnid;
+                            page.title = selectedItem.title;
+                            page.titlePoster = selectedItem.poster;
+                            page.titleTime = "Saved on: " + selectedItem.timePosted
+                            page.isAsk = selectedItem.isAsk;
+                            Tart.send('requestPage', {
+                                    source: selectedItem.hnid,
+                                    sentBy: 'commentPage',
+                                    askPost: selectedItem.isAsk,
+                                    deleteComments: "false"
+                                });
+                        } else {
+                            console.log('Item triggered. ' + selectedItem.articleURL);
+                            var page = webPage.createObject();
+                            favouritesPage.push(page);
+                            page.htmlContent = selectedItem.articleURL;
+                            page.text = selectedItem.title;
                         }
                     }
-                ]
-                onTriggered: {
-                    var selectedItem = dataModel.data(indexPath);
-                    console.log(selectedItem.isAsk);
-                    if (selectedItem.isAsk == "true" && selectedItem.hnid != '-1') {
-                        console.log("Ask post");
-                        var page = commentPage.createObject();
+                    function pushPage(pageToPush) {
+                        console.log(pageToPush)
+                        var page = eval(pageToPush).createObject();
                         favouritesPage.push(page);
-                        console.log(selectedItem.commentsURL)
-                        page.commentLink = selectedItem.hnid;
-                        page.title = selectedItem.title;
-                        page.titlePoster = selectedItem.poster;
-                        page.titleTime = "Saved on: " + selectedItem.timePosted
-                        page.isAsk = selectedItem.isAsk;
-                        Tart.send('requestPage', {
-                                source: selectedItem.hnid,
-                                sentBy: 'commentPage',
-                                askPost: selectedItem.isAsk,
-                                deleteComments: "false"
-                        });
-                    } else {
-                        console.log('Item triggered. ' + selectedItem.articleURL);
-                        var page = webPage.createObject();
-                        favouritesPage.push(page);
-                        page.htmlContent = selectedItem.articleURL;
-                        page.text = selectedItem.title;
+                        return page;
                     }
-                }
-                function pushPage(pageToPush) {
-                    console.log(pageToPush)
-                    var page = eval(pageToPush).createObject();
-                    favouritesPage.push(page);
-                    return page;
                 }
             }
         }
@@ -121,7 +172,7 @@ NavigationPane {
             },
             SystemToast {
                 id: deleteResultToast
-                body: "Article un-favourited!"
+                body: "Favourite Removed!"
             }
         ]
     }

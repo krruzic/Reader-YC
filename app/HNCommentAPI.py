@@ -184,7 +184,7 @@ class HackerNewsCommentAPI:
             textCache.close()
 
             for comment in comments:
-                tart.send('addComments', comment=comment)
+                tart.send('addComments', comment=comment, hnid=source)
             return
 
         else:

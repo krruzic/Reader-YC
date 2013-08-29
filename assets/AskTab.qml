@@ -6,6 +6,7 @@ import "tart.js" as Tart
 NavigationPane {
     id: askPage
     property variant theModel: theModel
+    property alias loading: loading.visible
     property string whichPage: ""
     property string morePage: ""
     property string errorText: ""
@@ -19,6 +20,17 @@ NavigationPane {
     onPopTransitionEnded: {
         page.destroy();
         Application.menuEnabled = !Application.menuEnabled;
+    }
+    
+    onPushTransitionEnded: {
+        if (page.objectName == 'commentPage') {
+            Tart.send('requestPage', {
+                    source: page.commentLink,
+                    sentBy: 'commentPage',
+                    askPost: page.isAsk,
+                    deleteComments: "False"
+            });
+        }
     }
 
     function onAddaskStories(data) {
@@ -46,7 +58,7 @@ NavigationPane {
         titleBar.refreshEnabled = ! busy;
     }
 
-    function onaskListError(data) {
+    function onAskListError(data) {
         var lastItem = theModel.size() - 1
         console.log(lastItemType);
         if (lastItemType == 'error') {
@@ -106,7 +118,7 @@ NavigationPane {
                     minHeight: 300
                     minWidth: 300
                     running: true
-                    visible: busy
+                    visible: true
                 }
             }
 

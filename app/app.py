@@ -107,7 +107,7 @@ class App(tart.Application):
         try:
             HQ.getResults(startIndex, source)
         except urllib.error.URLError:
-            tart.send('seachError', text="Error getting search results, Check your connection \nand try again")
+            tart.send('searchError', text="Error getting search results, Check your connection \nand try again")
 
     def onSaveArticle(self, article):
         article = tuple(article)

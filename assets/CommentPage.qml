@@ -2,6 +2,7 @@ import bb.cascades 1.0
 import "tart.js" as Tart
 
 Page {
+    objectName: 'commentPage'
     id: commentPane
     property string isAsk: ""
     property string commentLink: ""
@@ -21,16 +22,22 @@ Page {
     }
 
     function onCommentError(data) {
+        commentList.visible = true;
+        if (commentModel.isEmpty() == true) {
+            emptyContainer.visible = true
+        } else {
+            emptyContainer.visible = false
+        }
         if (commentLink == data.hnid) {
-            var lastItem = commentModel.size() - 1
-            console.log(lastItemType);
-            if (lastItemType == 'error') {
-                commentModel.removeAt(lastItem)
-            }
-            commentModel.append({
-                    type: 'error',
-                    title: data.text
-                });
+            //            var lastItem = commentModel.size() - 1
+            //            console.log(lastItemType);
+            //            if (lastItemType == 'error') {
+            //                commentModel.removeAt(lastItem)
+            //            }
+            //            commentModel.append({
+            //                    type: 'error',
+            //                    title: data.text
+            //                });
             busy = false;
             console.log(data.text)
             titleBar.refreshEnabled = true;
@@ -39,7 +46,6 @@ Page {
 
     function onAddComments(data) {
         if (commentLink == data.hnid) {
-
             commentModel.append({
                     type: 'item',
                     poster: data.comment["author"],
@@ -48,6 +54,7 @@ Page {
                     text: data.comment["text"],
                     link: "https://news.ycombinator.com/item?id=" + data.comment["link"]
                 });
+            commentList.visible = true;
             busy = false;
             titleBar.refreshEnabled = true;
         }
@@ -92,7 +99,11 @@ Page {
     ]
 
     Container {
+        layout: DockLayout {
+        }
         HNTitleBar {
+            horizontalAlignment: HorizontalAlignment.Center
+            verticalAlignment: VerticalAlignment.Top
             id: titleBar
             text: title
             onRefreshPage: {
@@ -109,11 +120,28 @@ Page {
             }
         }
         Container {
+            id: emptyContainer
+            visible: false
+            horizontalAlignment: HorizontalAlignment.Center
+            verticalAlignment: VerticalAlignment.Center
+            layout: StackLayout {
+
+            }
+            Label {
+                text: "<b><span style='color:#fe8515'>No comments,</span></b>\nCheck back later!"
+                textStyle.fontSize: FontSize.PointValue
+                textStyle.textAlign: TextAlign.Center
+                textStyle.fontSizeValue: 9
+                textStyle.color: Color.DarkGray
+                textFormat: TextFormat.Html
+                multiline: true
+            }
+        }
+        Container {
+            horizontalAlignment: HorizontalAlignment.Center
+            verticalAlignment: VerticalAlignment.Center
             Container {
                 visible: busy
-                rightPadding: 220
-                leftPadding: 220
-                topPadding: 80
                 ActivityIndicator {
                     minHeight: 300
                     minWidth: 300
@@ -121,90 +149,104 @@ Page {
                     visible: busy
                 }
             }
-            ListView {
-                leadingVisual: CommentHeader {
-                    topPadding: 10
-                    leftPadding: 19
-                    rightPadding: 19
-                    id: commentHeader
-                }
-                id: commentList
+            Container {
+                horizontalAlignment: HorizontalAlignment.Center
+                verticalAlignment: VerticalAlignment.Center
+                topPadding: 118
 
-                dataModel: ArrayDataModel {
-                    id: commentModel
-                }
-
-                function itemType(data, indexPath) {
-                    if (data.type != 'error') {
-                        lastItemType = 'item';
-                        return 'item';
-                    } else {
-                        lastItemType = 'error';
-                        return 'error';
-                    }
-                }
-
-                listItemComponents: [
-                    ListItemComponent {
-                        type: 'item'
-                        Comment {
-                            id: commentItem
+                Container {
+                    ListView {
+                        leadingVisual: CommentHeader {
+                            topPadding: 10
                             leftPadding: 19
                             rightPadding: 19
-                            property string type: ListItemData.type
-                            poster: ListItemData.poster
-                            time: ListItemData.timePosted
-                            indent: ListItemData.indent
-                            text: ListItemData.text
+                            id: commentHeader
                         }
-                    },
-                    ListItemComponent {
-                        type: 'error'
-                        Label {
-                            id: errorItem
-                            property string type: ListItemData.type
-                            text: ListItemData.title
-                            visible: true
-                            multiline: true
-                            autoSize.maxLineCount: 2
-                            textStyle.fontSize: FontSize.Medium
-                            textStyle.fontStyle: FontStyle.Italic
-                            textStyle.textAlign: TextAlign.Center
+                        id: commentList
+                        visible: false
+                        dataModel: ArrayDataModel {
+                            id: commentModel
+                        }
+
+                        function itemType(data, indexPath) {
+                            if (data.type != 'error') {
+                                lastItemType = 'item';
+                                return 'item';
+                            } else {
+                                lastItemType = 'error';
+                                return 'error';
+                            }
+                        }
+
+                        listItemComponents: [
+                            ListItemComponent {
+                                type: 'item'
+                                Comment {
+                                    id: commentItem
+                                    leftPadding: 19
+                                    rightPadding: 19
+                                    property string type: ListItemData.type
+                                    poster: ListItemData.poster
+                                    time: ListItemData.timePosted
+                                    indent: ListItemData.indent
+                                    text: ListItemData.text
+                                }
+                            },
+                            ListItemComponent {
+                                type: 'error'
+                                Container {
+                                    layout: DockLayout {
+                                    }
+                                    horizontalAlignment: horizontalAlignment.Center
+                                    verticalAlignment: verticalAlignment.Center
+                                    Label {
+                                        id: errorItem
+                                        property string type: ListItemData.type
+                                        text: ListItemData.title
+                                        visible: true
+                                        multiline: true
+                                        autoSize.maxLineCount: 2
+                                        textStyle.fontSize: FontSize.Medium
+                                        textStyle.fontStyle: FontStyle.Italic
+                                        textStyle.textAlign: TextAlign.Center
+                                    }
+                                }
+                            }
+                        ]
+                        function hideChildren(index) {
+                            for (var i = index + 1; i < commentModel.size() - 1; i ++) {
+                                var sentItem = commentModel.value(index)
+                                var currentItem = commentModel.value(i)
+                                console.log(currentItem.indent)
+                                if (currentItem.indent > sentItem.indent) {
+                                    currentItem.commentContainer.visible = false;
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                        function showChildren(index) {
+                            for (var i = index + 1; i < commentModel.size() - 1; i ++) {
+                                var sentItem = commentModel.value(index)
+                                var currentItem = commentModel.value(i)
+                                console.log(currentItem.indent)
+                                if (currentItem.indent > sentItem.indent) {
+                                    currentItem.commentContatiner.visible = true;
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                        function pushPage(pageToPush) {
+                            console.log(pageToPush)
+                            var page = eval(pageToPush).createObject();
+                            root.activePane.push(page);
+                            return page;
+                        }
+                        onTriggered: {
+                            console.log("Comment triggered!")
                         }
                     }
-                ]
-                function hideChildren(index) {
-                    for (var i = index + 1; i < commentModel.size() - 1; i ++) {
-                        var sentItem = commentModel.value(index)
-                        var currentItem = commentModel.value(i)
-                        console.log(currentItem.indent)
-                        if (currentItem.indent > sentItem.indent) {
-                            currentItem.commentContainer.visible = false;
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                function showChildren(index) {
-                    for (var i = index + 1; i < commentModel.size() - 1; i ++) {
-                        var sentItem = commentModel.value(index)
-                        var currentItem = commentModel.value(i)
-                        console.log(currentItem.indent)
-                        if (currentItem.indent > sentItem.indent) {
-                            currentItem.commentContatiner.visible = true;
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                function pushPage(pageToPush) {
-                    console.log(pageToPush)
-                    var page = eval(pageToPush).createObject();
-                    root.activePane.push(page);
-                    return page;
-                }
-                onTriggered: {
-                    console.log("Comment triggered!")
                 }
             }
         }

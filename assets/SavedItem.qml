@@ -38,13 +38,13 @@ Container {
                     page.titleDomain = saveItem.selectedItem.domain;
                     page.commentLink = saveItem.selectedItem.hnid;
                     page.articleLink = saveItem.selectedItem.articleURL;
-                    page.isAsk = selectedItem.isAsk;
-                    Tart.send('requestPage', {
-                            source: saveItem.selectedItem.hnid,
-                            sentBy: 'commentPage',
-                            askPost: saveItem.selectedItem.isAsk,
-                            deleteComments: "False"
-                        });
+                    page.isAsk = saveItem.selectedItem.isAsk;
+//                    Tart.send('requestPage', {
+//                            source: saveItem.selectedItem.hnid,
+//                            sentBy: 'commentPage',
+//                            askPost: saveItem.selectedItem.isAsk,
+//                            deleteComments: "False"
+//                        });
                 }
             }
             ActionItem {
@@ -82,7 +82,7 @@ Container {
                 }
             }
             DeleteActionItem {
-                title: "Un-favourite"
+                title: "Remove from Favourites"
                 onTriggered: {
                     Tart.send('deleteArticle', {
                             hnid: saveItem.selectedItem.hnid,
