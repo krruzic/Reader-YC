@@ -10,11 +10,12 @@ SceneCover {
     ]
 
     id: cover
-    onCreationCompleted: {
-        Tart.register(cover);
-    }
+
     content: Container {
-        //property alias titleText: titleLabel.text
+        maxHeight: 360
+        maxWidth: 300
+        minHeight: 360
+        minWidth: 300
 
         Container {
             topMargin: 20
@@ -62,7 +63,7 @@ SceneCover {
                 verticalAlignment: VerticalAlignment.Top
                 horizontalAlignment: HorizontalAlignment.Center
                 textStyle.fontSize: FontSize.PointValue
-                textStyle.textAlign: TextAlign.Left
+                textStyle.textAlign: TextAlign.Center
                 textStyle.color: Color.DarkGray
                 textFormat: TextFormat.Plain
                 textStyle.fontStyle: FontStyle.Italic
@@ -71,72 +72,96 @@ SceneCover {
                 autoSize.maxLineCount: 2
             }
             Divider {
-
+                maxWidth: 320
+            }
+        }
+        Container {
+            leftPadding: 10
+            rightPadding: 10
+            maxWidth: 320
+            minWidth: 320
+            verticalAlignment: VerticalAlignment.Bottom
+            horizontalAlignment: HorizontalAlignment.Center
+            layout: StackLayout {
+                orientation: LayoutOrientation.LeftToRight
             }
             Container {
-                verticalAlignment: VerticalAlignment.Bottom
-                horizontalAlignment: HorizontalAlignment.Center
-                layout: StackLayout {
-                    orientation: LayoutOrientation.LeftToRight
+                layoutProperties: StackLayoutProperties {
+                    spaceQuota: 1
                 }
+                topMargin: 0
+                bottomMargin: 0
                 Label {
+                    topMargin: 0
+                    bottomMargin: 0
                     id: posterLabel
                     text: root.coverPoster
                     textStyle.fontSize: FontSize.PointValue
-                    textStyle.textAlign: TextAlign.Left
+                    textStyle.textAlign: TextAlign.Center
                     textStyle.color: Color.DarkGray
                     textFormat: TextFormat.Plain
                     textStyle.fontStyle: FontStyle.Italic
-                    textStyle.fontSizeValue: 4.0
+                    textStyle.fontSizeValue: 6.0
                 }
-                //                Divider {
-                //                    visible: if (commentLabel.text != "") {
-                //                        true;
-                //                    } else {
-                //                        false;
-                //                    }
-                //                    rotationZ: 90
-                //                    minWidth: 200
-                //                }
-                Container {
-                    maxHeight: 100
-                    minHeight: 100
-                    maxWidth: 2
-                    minWidth: 2
-                    background: Color.create("#878787")
-                    rightMargin: 6
-                    visible: if (commentLabel.text != "") {
-                        true;
-                    } else {
-                        false;
-                    }
-                }
-                Container {
+                Label {
                     topMargin: 0
                     bottomMargin: 0
-                    Label {
-                        id: commentLabel
-                        text: root.coverComments
-                        textStyle.fontSize: FontSize.PointValue
-                        textStyle.color: Color.DarkGray
-                        textFormat: TextFormat.Plain
-                        textStyle.fontStyle: FontStyle.Italic
-                        textStyle.fontSizeValue: 4.0
-                        topMargin: 0
-                        bottomMargin: 0
-                    }
-                    Label {
-                        id: detailLabel
-                        text: root.coverDetails
-                        textStyle.fontSize: FontSize.PointValue
-                        textStyle.textAlign: TextAlign.Left
-                        textStyle.color: Color.DarkGray
-                        textFormat: TextFormat.Plain
-                        textStyle.fontStyle: FontStyle.Italic
-                        textStyle.fontSizeValue: 4.0
-                        topMargin: 0
-                        bottomMargin: 0
-                    }
+                    id: commentLabel
+                    text: root.coverComments
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.color: Color.DarkGray
+                    textStyle.textAlign: TextAlign.Center
+                    textFormat: TextFormat.Plain
+                    textStyle.fontSizeValue: 4.0
+                }
+            }
+
+            Container {
+                layoutProperties: StackLayoutProperties {
+                    spaceQuota: 2
+                }
+                maxHeight: 100
+                minHeight: 100
+                maxWidth: 2
+                minWidth: 2
+                background: Color.LightGray
+                rightMargin: 20
+                visible: if (commentLabel.text != "") {
+                    true;
+                } else {
+                    false;
+                }
+            }
+            Container {
+                layoutProperties: StackLayoutProperties {
+                    spaceQuota: 1
+                }
+                horizontalAlignment: HorizontalAlignment.Center
+                topMargin: 0
+                bottomMargin: 0
+                Label {
+                    id: pointsLabel
+                    text: root.coverPoints
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.textAlign: TextAlign.Center
+                    textStyle.color: Color.DarkGray
+                    textFormat: TextFormat.Plain
+                    textStyle.fontStyle: FontStyle.Italic
+                    textStyle.fontSizeValue: 6.0
+                    topMargin: 0
+                    bottomMargin: 0
+                }
+                Label {
+                    id: timeLabel
+                    text: root.coverTime
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.color: Color.DarkGray
+                    textFormat: TextFormat.Plain
+                    textStyle.fontStyle: FontStyle.Italic
+                    textStyle.textAlign: TextAlign.Center
+                    textStyle.fontSizeValue: 4.0
+                    topMargin: 0
+                    bottomMargin: 0
                 }
             }
         }

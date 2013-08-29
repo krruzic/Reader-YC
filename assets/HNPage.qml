@@ -39,13 +39,13 @@ Container {
                     page.titleDomain = hnPage.selectedItem.domain;
                     page.commentLink = hnPage.selectedItem.hnid;
                     page.articleLink = hnPage.selectedItem.articleURL;
-                    page.isAsk = selectedItem.isAsk;
-                    Tart.send('requestPage', {
-                            source: hnPage.selectedItem.hnid,
-                            sentBy: 'commentPage',
-                            askPost: hnPage.selectedItem.isAsk,
-                            deleteComments: "False"
-                        });
+                    page.isAsk = hnPage.selectedItem.isAsk;
+//                    Tart.send('requestPage', {
+//                            source: hnPage.selectedItem.hnid,
+//                            sentBy: 'commentPage',
+//                            askPost: hnPage.selectedItem.isAsk,
+//                            deleteComments: "False"
+//                        });
                 }
             }
             ActionItem {

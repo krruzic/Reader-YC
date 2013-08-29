@@ -1,7 +1,7 @@
 import bb.cascades 1.0
 
 Container {
-    layout: DockLayout {
+    layout: StackLayout {
     }
     property alias text: pageTitle.text
     property alias refreshEnabled: refreshButton.enabled

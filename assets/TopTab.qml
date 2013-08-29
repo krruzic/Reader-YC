@@ -6,6 +6,7 @@ import "tart.js" as Tart
 NavigationPane {
     id: topPage
     property variant theModel: theModel
+    property alias loading: loading.visible
     property string whichPage: ""
     property string morePage: ""
     property string errorText: ""
@@ -21,16 +22,26 @@ NavigationPane {
         Application.menuEnabled = ! Application.menuEnabled;
     }
 
-    function onAddtopStories(data) {
+    onPushTransitionEnded: {
+        if (page.objectName == 'commentPage') {
+            Tart.send('requestPage', {
+                    source: page.commentLink,
+                    sentBy: 'commentPage',
+                    askPost: page.isAsk,
+                    deleteComments: "False"
+                });
+        }
+    }
 
+    function onAddtopStories(data) {
         var stories = data.stories;
         morePage = data.moreLink;
         //refreshEnabled = true;
         for (var i = 0; i < stories.length; i ++) {
             var story = stories[i];
-//            Tart.send('checkReadState', {
-//                    link: story[7]
-//                });
+            //            Tart.send('checkReadState', {
+            //                    link: story[7]
+            //                });
             theModel.append({
                     type: 'item',
                     title: story[1],
@@ -50,7 +61,7 @@ NavigationPane {
         titleBar.refreshEnabled = ! busy;
     }
 
-    function ontopListError(data) {
+    function onTopListError(data) {
         var lastItem = theModel.size() - 1
         console.log(lastItemType);
         if (lastItemType == 'error') {
@@ -182,9 +193,9 @@ NavigationPane {
                     }
                 ]
                 onTriggered: {
-//                    Tart.send('readArticle', {
-//                            link: dataModel.data(indexPath).articleURL
-//                        });
+                    //                    Tart.send('readArticle', {
+                    //                            link: dataModel.data(indexPath).articleURL
+                    //                        });
                     var selectedItem = dataModel.data(indexPath);
                     console.log(selectedItem.isAsk);
                     if (selectedItem.isAsk == "true" && selectedItem.hnid != '-1') {
@@ -197,6 +208,7 @@ NavigationPane {
                         page.titlePoster = selectedItem.poster;
                         page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
                         page.isAsk = selectedItem.isAsk;
+                        page.articleLink = selectedItem.articleURL;
                         Tart.send('requestPage', {
                                 source: selectedItem.hnid,
                                 sentBy: 'commentPage',

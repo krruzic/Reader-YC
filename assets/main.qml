@@ -6,9 +6,10 @@ TabbedPane {
     id: root
     property int numOfStories
     property string coverTitle: "No recent stories..."
-    property string coverDetails: ""
+    property string coverPoints: ""
     property string coverPoster: ""
     property string coverComments: ""
+    property string coverTime: ""
     property int currStory: 0
 
     Menu.definition: MenuDefinition {
@@ -54,6 +55,8 @@ TabbedPane {
         onTriggered: {
             if (top.theModel.isEmpty() && top.busy == false) {
                 top.busy = true;
+                top.loading = true;
+
                 Tart.send('requestPage', {
                         source: top.whichPage,
                         sentBy: top.whichPage
@@ -79,6 +82,8 @@ TabbedPane {
         onTriggered: {
             if (ask.theModel.isEmpty() && ask.busy == false) {
                 ask.busy = true;
+                ask.loading = true;
+
                 Tart.send('requestPage', {
                         source: ask.whichPage,
                         sentBy: ask.whichPage
@@ -107,6 +112,7 @@ TabbedPane {
         onTriggered: {
             if (newest.theModel.isEmpty() && newest.busy == false) {
                 newest.busy = true;
+                newest.loading = true;
                 Tart.send('requestPage', {
                         source: newest.whichPage,
                         sentBy: newest.whichPage
@@ -189,8 +195,9 @@ TabbedPane {
             }
             console.log(currStory + "   " + numOfStories);
             coverTitle = Global.stories[currStory][1];
+            coverPoints = Global.stories[currStory][3];
             coverPoster = Global.stories[currStory][4];
-            coverDetails = Global.stories[currStory][5] + "| " + Global.stories[currStory][3];
+            coverTime = Global.stories[currStory][5];
             coverComments = Global.stories[currStory][6] + " Comments";
         } else {
             coverTitle = "No recent stories...";
@@ -218,8 +225,9 @@ TabbedPane {
         Global.stories = data.stories;
         numOfStories = data.stories.length;
         coverTitle = data.stories[0][1];
+        coverPoints = data.stories[0][3];
         coverPoster = data.stories[0][4];
-        coverDetails = data.stories[0][5] + "| " + data.stories[0][3];
+        coverTime = data.stories[0][5];
         coverComments = data.stories[0][6] + " Comments";
     }
 
@@ -246,8 +254,9 @@ TabbedPane {
                 if (Global.stories[0] != undefined) {
                     console.log(currStory + "   " + numOfStories);
                     coverTitle = Global.stories[currStory][1];
+                    coverPoints = Global.stories[currStory][3];
                     coverPoster = Global.stories[currStory][4];
-                    coverDetails = Global.stories[currStory][5] + "| " + Global.stories[currStory][3];
+                    coverTime = Global.stories[currStory][5];
                     coverComments = Global.stories[currStory][6] + " Comments";
                     if (currStory < numOfStories - 1) {
                         currStory ++;
