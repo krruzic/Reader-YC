@@ -10,41 +10,42 @@ Page {
     property string errorText: ""
     property string lastItemType: ""
     property bool busy: false
-    property alias title: commentHeader.title
-    property alias titlePoster: commentHeader.poster
-    property alias titleDomain: commentHeader.domain
-    property alias titleTime: commentHeader.articleTime
+    property string title: ""
+    property string titlePoster: ""
+    property string titleDomain: ""
+    property string titleTime: ""
+    property string titleText: ""
 
     onCreationCompleted: {
         busy = true;
         Tart.register(commentPane);
-        commentList.scrollToPosition(-1, ScrollAnimation.Smooth)
     }
 
     function onCommentError(data) {
-        commentList.visible = true;
-        if (commentModel.isEmpty() == true) {
-            emptyContainer.visible = true
-        } else {
-            emptyContainer.visible = false
-        }
         if (commentLink == data.hnid) {
-            //            var lastItem = commentModel.size() - 1
-            //            console.log(lastItemType);
-            //            if (lastItemType == 'error') {
-            //                commentModel.removeAt(lastItem)
-            //            }
-            //            commentModel.append({
-            //                    type: 'error',
-            //                    title: data.text
-            //                });
+            spacer.visible = false;
+            commentList.visible = true;
             busy = false;
-            console.log(data.text)
             titleBar.refreshEnabled = true;
+            errorLabel.text = data.text;
+            errorLabel.visible = data.text;
         }
     }
 
+    function onAddText(data) {
+        commentModel.append({
+                type: 'commentHeader',
+                hTitle: commentPane.title,
+                poster: commentPane.titlePoster,
+                domain: commentPane.titleDomain,
+                articleTime: commentPane.titleTime,
+                text: data.text
+            });
+    }
+
     function onAddComments(data) {
+        errorLabel.visible = false;
+        spacer.visible = false;
         if (commentLink == data.hnid) {
             commentModel.append({
                     type: 'item',
@@ -59,6 +60,7 @@ Page {
             titleBar.refreshEnabled = true;
         }
     }
+
     actions: [
         InvokeActionItem {
             ActionBar.placement: ActionBarPlacement.OnBar
@@ -99,14 +101,13 @@ Page {
     ]
 
     Container {
-        layout: DockLayout {
-        }
         HNTitleBar {
             horizontalAlignment: HorizontalAlignment.Center
             verticalAlignment: VerticalAlignment.Top
             id: titleBar
             text: title
             onRefreshPage: {
+                spacer.visible = true;
                 busy = true;
                 Tart.send('requestPage', {
                         source: commentLink,
@@ -120,134 +121,135 @@ Page {
             }
         }
         Container {
-            id: emptyContainer
-            visible: false
+            id: spacer
             horizontalAlignment: HorizontalAlignment.Center
             verticalAlignment: VerticalAlignment.Center
-            layout: StackLayout {
+            visible: true
+            minHeight: 200
+            maxHeight: 200
+        }
 
-            }
-            Label {
-                text: "<b><span style='color:#fe8515'>No comments,</span></b>\nCheck back later!"
-                textStyle.fontSize: FontSize.PointValue
-                textStyle.textAlign: TextAlign.Center
-                textStyle.fontSizeValue: 9
-                textStyle.color: Color.DarkGray
-                textFormat: TextFormat.Html
-                multiline: true
+        Container {
+            visible: busy
+            horizontalAlignment: HorizontalAlignment.Center
+            verticalAlignment: VerticalAlignment.Center
+            ActivityIndicator {
+                id: loading
+                minHeight: 300
+                minWidth: 300
+                running: true
+                visible: busy
             }
         }
         Container {
             horizontalAlignment: HorizontalAlignment.Center
             verticalAlignment: VerticalAlignment.Center
             Container {
-                visible: busy
-                ActivityIndicator {
-                    minHeight: 300
-                    minWidth: 300
-                    running: true
-                    visible: busy
-                }
-            }
-            Container {
-                horizontalAlignment: HorizontalAlignment.Center
-                verticalAlignment: VerticalAlignment.Center
-                topPadding: 118
+                ListView {
+                    id: commentList
+                    dataModel: ArrayDataModel {
+                        id: commentModel
+                    }
 
-                Container {
-                    ListView {
-                        leadingVisual: CommentHeader {
-                            topPadding: 10
-                            leftPadding: 19
-                            rightPadding: 19
-                            id: commentHeader
+                    function itemType(data, indexPath) {
+                        if (data.type == 'commentHeader') {
+                            return 'header';
                         }
-                        id: commentList
-                        visible: false
-                        dataModel: ArrayDataModel {
-                            id: commentModel
-                        }
-
-                        function itemType(data, indexPath) {
-                            if (data.type != 'error') {
-                                lastItemType = 'item';
-                                return 'item';
-                            } else {
-                                lastItemType = 'error';
-                                return 'error';
-                            }
-                        }
-
-                        listItemComponents: [
-                            ListItemComponent {
-                                type: 'item'
-                                Comment {
-                                    id: commentItem
-                                    leftPadding: 19
-                                    rightPadding: 19
-                                    property string type: ListItemData.type
-                                    poster: ListItemData.poster
-                                    time: ListItemData.timePosted
-                                    indent: ListItemData.indent
-                                    text: ListItemData.text
-                                }
-                            },
-                            ListItemComponent {
-                                type: 'error'
-                                Container {
-                                    layout: DockLayout {
-                                    }
-                                    horizontalAlignment: horizontalAlignment.Center
-                                    verticalAlignment: verticalAlignment.Center
-                                    Label {
-                                        id: errorItem
-                                        property string type: ListItemData.type
-                                        text: ListItemData.title
-                                        visible: true
-                                        multiline: true
-                                        autoSize.maxLineCount: 2
-                                        textStyle.fontSize: FontSize.Medium
-                                        textStyle.fontStyle: FontStyle.Italic
-                                        textStyle.textAlign: TextAlign.Center
-                                    }
-                                }
-                            }
-                        ]
-                        function hideChildren(index) {
-                            for (var i = index + 1; i < commentModel.size() - 1; i ++) {
-                                var sentItem = commentModel.value(index)
-                                var currentItem = commentModel.value(i)
-                                console.log(currentItem.indent)
-                                if (currentItem.indent > sentItem.indent) {
-                                    currentItem.commentContainer.visible = false;
-                                } else {
-                                    break;
-                                }
-                            }
-                        }
-                        function showChildren(index) {
-                            for (var i = index + 1; i < commentModel.size() - 1; i ++) {
-                                var sentItem = commentModel.value(index)
-                                var currentItem = commentModel.value(i)
-                                console.log(currentItem.indent)
-                                if (currentItem.indent > sentItem.indent) {
-                                    currentItem.commentContatiner.visible = true;
-                                } else {
-                                    break;
-                                }
-                            }
-                        }
-                        function pushPage(pageToPush) {
-                            console.log(pageToPush)
-                            var page = eval(pageToPush).createObject();
-                            root.activePane.push(page);
-                            return page;
-                        }
-                        onTriggered: {
-                            console.log("Comment triggered!")
+                        if (data.type != 'error') {
+                            lastItemType = 'item';
+                            return 'item';
+                        } else {
+                            lastItemType = 'error';
+                            return 'error';
                         }
                     }
+
+                    listItemComponents: [
+                        ListItemComponent {
+                            type: 'header'
+                            CommentHeader {
+                                id: commentHeader
+                                topPadding: 10
+                                leftPadding: 19
+                                rightPadding: 19
+                                property string type: ListItemData.type
+                                hTitle: ListItemData.hTitle
+                                poster: ListItemData.poster
+                                domain: ListItemData.domain
+                                articleTime: ListItemData.articleTime
+                                text: ListItemData.text
+                            }
+                        },
+                        ListItemComponent {
+                            type: 'item'
+                            Comment {
+                                id: commentItem
+                                leftPadding: 19
+                                rightPadding: 19
+                                property string type: ListItemData.type
+                                poster: ListItemData.poster
+                                time: ListItemData.timePosted
+                                indent: ListItemData.indent
+                                text: ListItemData.text
+                            }
+                        },
+                        ListItemComponent {
+                            type: 'error'
+                            ErrorItem {
+                                id: errorItem
+                            }
+                        }
+                    ]
+                    function hideChildren(index) {
+                        for (var i = index + 1; i < commentModel.size() - 1; i ++) {
+                            var sentItem = commentModel.value(index)
+                            var currentItem = commentModel.value(i)
+                            console.log(currentItem.indent)
+                            if (currentItem.indent > sentItem.indent) {
+                                currentItem.commentContainer.visible = false;
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                    function showChildren(index) {
+                        for (var i = index + 1; i < commentModel.size() - 1; i ++) {
+                            var sentItem = commentModel.value(index)
+                            var currentItem = commentModel.value(i)
+                            console.log(currentItem.indent)
+                            if (currentItem.indent > sentItem.indent) {
+                                currentItem.commentContatiner.visible = true;
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                    function pushPage(pageToPush) {
+                        console.log(pageToPush)
+                        var page = eval(pageToPush).createObject();
+                        root.activePane.push(page);
+                        return page;
+                    }
+                    onTriggered: {
+                        console.log("Comment triggered!")
+                    }
                 }
+            }
+        }
+        Container {
+            visible: errorLabel.visible
+            horizontalAlignment: HorizontalAlignment.Center
+            verticalAlignment: VerticalAlignment.Center
+            minHeight: 300
+            Label {
+                id: errorLabel
+                textStyle.fontSize: FontSize.PointValue
+                textStyle.textAlign: TextAlign.Center
+                textStyle.fontSizeValue: 9
+                textStyle.color: Color.DarkGray
+                textFormat: TextFormat.Html
+                multiline: true
+                visible: false
             }
         }
     }

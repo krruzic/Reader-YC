@@ -36,12 +36,14 @@ NavigationPane {
     function onAddtopStories(data) {
         var stories = data.stories;
         morePage = data.moreLink;
-        //refreshEnabled = true;
+        errorLabel.visible = false;
+        var lastItem = theModel.size() - 1
+        console.log("LAST ITEM: " + lastItemType);
+        if (lastItemType == 'error') {
+            theModel.removeAt(lastItem)
+        }
         for (var i = 0; i < stories.length; i ++) {
             var story = stories[i];
-            //            Tart.send('checkReadState', {
-            //                    link: story[7]
-            //                });
             theModel.append({
                     type: 'item',
                     title: story[1],
@@ -56,28 +58,51 @@ NavigationPane {
                     isAsk: story[10]
                 });
         }
+        lastItemType = 'item'
         busy = false;
         loading.visible = false;
         titleBar.refreshEnabled = ! busy;
     }
 
     function onTopListError(data) {
-        var lastItem = theModel.size() - 1
-        console.log(lastItemType);
-        if (lastItemType == 'error') {
-            theModel.removeAt(lastItem)
+        lastItemType = 'error'
+        if (theModel.isEmpty() != true) {
+            var lastItem = theModel.size() - 1
+            console.log("LAST ITEM: " + lastItemType);
+            if (lastItemType == 'error') {
+                theModel.removeAt(lastItem)
+            }
+            theModel.append({
+                    type: 'error',
+                    title: data.text
+                });
+        } else {
+            if (data.text == "<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!") {
+                errorLabel.text = "<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!";
+                errorLabel.visible = true;
+            } else {
+                errorLabel.text = "<b><span style='color:#fe8515'>Link expired</span></b>\nPlease refresh the page!";
+                errorLabel.visible = true;
+            }
         }
-        theModel.append({
-                type: 'error',
-                title: data.text
-            });
         busy = false;
         loading.visible = false;
         titleBar.refreshEnabled = ! busy;
     }
+
+    function showSpacer() {
+        if (errorLabel.visible == true || loading.visible == true) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     Page {
         Container {
             HNTitleBar {
+                horizontalAlignment: HorizontalAlignment.Center
+                verticalAlignment: VerticalAlignment.Top
                 id: titleBar
                 text: "Reader|YC - Top Posts"
                 onRefreshPage: {
@@ -94,173 +119,180 @@ NavigationPane {
                     }
                 }
             }
-            //            Label {
-            //                maxHeight: 20.0
-            //                text: appInfo.version
-            //                textStyle.fontSize: FontSize.Small
-            //                textStyle.color: Color.Black
-            //            }
-
-            Label {
-                id: errorLabel
-                text: ""
-                visible: false
-                multiline: true
-                autoSize.maxLineCount: 2
-                textStyle.fontSize: FontSize.Medium
-                textStyle.fontStyle: FontStyle.Italic
-                textStyle.textAlign: TextAlign.Center
+            Container {
+                id: spacer
+                visible: showSpacer()
+                minHeight: 200
+                maxHeight: 200
             }
             Container {
-                visible: loading.visible
-                rightPadding: 220
-                leftPadding: 220
-                topPadding: 80
-                ActivityIndicator {
-                    id: loading
-                    minHeight: 300
-                    minWidth: 300
-                    running: true
-                    visible: true
+                visible: errorLabel.visible
+                horizontalAlignment: HorizontalAlignment.Center
+                verticalAlignment: VerticalAlignment.Center
+                Label {
+                    id: errorLabel
+                    text: "<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!"
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.textAlign: TextAlign.Center
+                    textStyle.fontSizeValue: 9
+                    textStyle.color: Color.DarkGray
+                    textFormat: TextFormat.Html
+                    multiline: true
+                    visible: false
                 }
             }
-
-            ListView {
-                id: theList
-                dataModel: ArrayDataModel {
-                    id: theModel
-                }
-                shortcuts: [
-                    Shortcut {
-                        key: "T"
-                        onTriggered: {
-                            theList.scrollToPosition(0, 0x2)
-                        }
-                    },
-                    Shortcut {
-                        key: "B"
-                        onTriggered: {
-                            theList.scrollToPosition(0, 0x2)
-                        }
-                    },
-                    Shortcut {
-                        key: "R"
-                        onTriggered: {
-                            if (! busy)
-                                refreshPage();
-                        }
-                    }
-                ]
-                function itemType(data, indexPath) {
-                    if (data.type != 'error') {
-                        lastItemType = 'item';
-                        return 'item';
-                    } else {
-                        lastItemType = 'error';
-                        return 'error';
+            Container {
+                horizontalAlignment: HorizontalAlignment.Center
+                verticalAlignment: VerticalAlignment.Center
+                Container {
+                    visible: loading.visible
+                    ActivityIndicator {
+                        id: loading
+                        minHeight: 300
+                        minWidth: 300
+                        running: true
+                        visible: true
                     }
                 }
-                listItemComponents: [
-                    ListItemComponent {
-                        type: 'item'
-                        HNPage {
-                            id: hnItem
-                            property string type: ListItemData.type
-                            postComments: ListItemData.commentCount
-                            postTitle: ListItemData.title
-                            postDomain: ListItemData.domain
-                            postUsername: ListItemData.poster
-                            postTime: ListItemData.timePosted + "| " + ListItemData.points
-                            postArticle: ListItemData.articleURL
-                            askPost: ListItemData.isAsk
-                            commentSource: ListItemData.commentsURL
-                            commentID: ListItemData.hnid
-                        }
-                    },
-                    ListItemComponent {
-                        type: 'error'
-                        Label {
-                            id: errorItem
-                            property string type: ListItemData.type
-                            text: ListItemData.title
-                            visible: true
-                            multiline: true
-                            autoSize.maxLineCount: 2
-                            textStyle.fontSize: FontSize.Medium
-                            textStyle.fontStyle: FontStyle.Italic
-                            textStyle.textAlign: TextAlign.Center
-                        }
+            }
+            Container {
+                ListView {
+                    id: theList
+                    dataModel: ArrayDataModel {
+                        id: theModel
                     }
-                ]
-                onTriggered: {
-                    //                    Tart.send('readArticle', {
-                    //                            link: dataModel.data(indexPath).articleURL
-                    //                        });
-                    var selectedItem = dataModel.data(indexPath);
-                    console.log(selectedItem.isAsk);
-                    if (selectedItem.isAsk == "true" && selectedItem.hnid != '-1') {
-                        console.log("Ask post");
-                        var page = commentPage.createObject();
-                        topPage.push(page);
-                        console.log(selectedItem.commentsURL)
-                        page.commentLink = selectedItem.hnid;
-                        page.title = selectedItem.title;
-                        page.titlePoster = selectedItem.poster;
-                        page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
-                        page.isAsk = selectedItem.isAsk;
-                        page.articleLink = selectedItem.articleURL;
-                        Tart.send('requestPage', {
-                                source: selectedItem.hnid,
-                                sentBy: 'commentPage',
-                                askPost: selectedItem.isAsk,
-                                deleteComments: "false"
-                            });
-                    } else {
-                        console.log('Item triggered. ' + selectedItem.articleURL);
-                        var page = webPage.createObject();
-                        topPage.push(page);
-                        page.htmlContent = selectedItem.articleURL;
-                        page.text = selectedItem.title;
-                    }
-                }
-                attachedObjects: [
-                    ListScrollStateHandler {
-                        onAtEndChanged: {
-                            if (atEnd == true && theModel.isEmpty() == false && morePage != "" && busy == false) {
-                                console.log('end reached!')
-                                Tart.send('requestPage', {
-                                        source: morePage,
-                                        sentBy: whichPage
-                                    });
-                                busy = true;
+                    shortcuts: [
+                        Shortcut {
+                            key: "T"
+                            onTriggered: {
+                                theList.scrollToPosition(0, 0x2)
+                            }
+                        },
+                        Shortcut {
+                            key: "B"
+                            onTriggered: {
+                                theList.scrollToPosition(0, 0x2)
+                            }
+                        },
+                        Shortcut {
+                            key: "R"
+                            onTriggered: {
+                                if (! busy)
+                                    refreshPage();
                             }
                         }
+                    ]
+                    function itemType(data, indexPath) {
+                        if (data.type != 'error') {
+                            lastItemType = 'item';
+                            return 'item';
+                        } else {
+                            lastItemType = 'error';
+                            return 'error';
+                        }
                     }
-                ]
-                function pushPage(pageToPush) {
-                    console.log(pageToPush)
-                    var page = eval(pageToPush).createObject();
-                    topPage.push(page);
-                    return page;
+                    listItemComponents: [
+                        ListItemComponent {
+                            type: 'item'
+                            HNPage {
+                                id: hnItem
+                                property string type: ListItemData.type
+                                postComments: ListItemData.commentCount
+                                postTitle: ListItemData.title
+                                postDomain: ListItemData.domain
+                                postUsername: ListItemData.poster
+                                postTime: ListItemData.timePosted + "| " + ListItemData.points
+                                postArticle: ListItemData.articleURL
+                                askPost: ListItemData.isAsk
+                                commentSource: ListItemData.commentsURL
+                                commentID: ListItemData.hnid
+                            }
+                        },
+                        ListItemComponent {
+                            type: 'error'
+                            Container {
+                                layout: DockLayout {
+
+                                }
+                                horizontalAlignment: HorizontalAlignment.Center
+                                verticalAlignment: VerticalAlignment.Center
+                                ErrorItem {
+                                    id: errorItem
+                                }
+                            }
+
+                        }
+                    ]
+                    onTriggered: {
+                        if (dataModel.data(indexPath).type == 'error') {
+                            return;
+                        }
+                        var selectedItem = dataModel.data(indexPath);
+                        console.log(selectedItem.isAsk);
+                        if (selectedItem.isAsk == "true" && selectedItem.hnid != '-1') {
+                            console.log("Ask post");
+                            var page = commentPage.createObject();
+                            topPage.push(page);
+                            console.log(selectedItem.commentsURL)
+                            page.commentLink = selectedItem.hnid;
+                            page.title = selectedItem.title;
+                            page.titlePoster = selectedItem.poster;
+                            page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
+                            page.isAsk = selectedItem.isAsk;
+                            page.articleLink = selectedItem.articleURL;
+                            Tart.send('requestPage', {
+                                    source: selectedItem.hnid,
+                                    sentBy: 'commentPage',
+                                    askPost: selectedItem.isAsk,
+                                    deleteComments: "false"
+                                });
+                        } else {
+                            console.log('Item triggered. ' + selectedItem.articleURL);
+                            var page = webPage.createObject();
+                            topPage.push(page);
+                            page.htmlContent = selectedItem.articleURL;
+                            page.text = selectedItem.title;
+                        }
+                    }
+                    attachedObjects: [
+                        ListScrollStateHandler {
+                            onAtEndChanged: {
+                                if (atEnd == true && theModel.isEmpty() == false && morePage != "" && busy == false) {
+                                    console.log('end reached!')
+                                    Tart.send('requestPage', {
+                                            source: morePage,
+                                            sentBy: whichPage
+                                        });
+                                    busy = true;
+                                }
+                            }
+                        }
+                    ]
+                    function pushPage(pageToPush) {
+                        console.log(pageToPush)
+                        var page = eval(pageToPush).createObject();
+                        topPage.push(page);
+                        return page;
+                    }
                 }
             }
+            attachedObjects: [
+                ApplicationInfo {
+                    id: appInfo
+                },
+                ComponentDefinition {
+                    id: webPage
+                    source: "webArticle.qml"
+                },
+                ComponentDefinition {
+                    id: commentPage
+                    source: "CommentPage.qml"
+                },
+                ComponentDefinition {
+                    id: userPage
+                    source: "UserPage.qml"
+                }
+            ]
         }
-        attachedObjects: [
-            ApplicationInfo {
-                id: appInfo
-            },
-            ComponentDefinition {
-                id: webPage
-                source: "webArticle.qml"
-            },
-            ComponentDefinition {
-                id: commentPage
-                source: "CommentPage.qml"
-            },
-            ComponentDefinition {
-                id: userPage
-                source: "UserPage.qml"
-            }
-        ]
     }
 }

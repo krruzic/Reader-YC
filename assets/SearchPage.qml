@@ -28,6 +28,7 @@ NavigationPane {
     function onAddSearchStories(data) {
         loading.visible = false;
         searchField.enabled = true;
+        errorLabel.visible = false;
         var story = data.story;
         searchModel.append({
                 type: 'item',
@@ -58,31 +59,37 @@ NavigationPane {
                     title: data.text
                 });
         } else {
-            if (data.text == "Error getting news feed, check your connection and try again") {
-                errorLabel.text = "<b><span style='color:#fe8515'>Error getting stories,</span></b>\nCheck your connection and try again!";
+            if (data.text == "<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!") {           
                 errorLabel.visible = true;
             } else {
-                errorLabel.text = "<b><span style='color:#fe8515'>Link expired,</span></b>\nPlease refresh the page!";
                 errorLabel.visible = true;
             }
         }
+        errorLabel.text = data.text
         searchField.visible = true;
         searchField.enabled = true;
         loading.visible = false;
 
     }
+    
+    function showSpacer() {
+        if (errorLabel.visible == true || loading.visible == true){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    
     Page {
         Container {
-            layout: DockLayout {
+            HNTitleBar {
+                horizontalAlignment: HorizontalAlignment.Center
+                verticalAlignment: VerticalAlignment.Top
+                showButton: false
+                id: titleBar
+                text: "Reader|YC - Search HN"
             }
-            touchPropagationMode: TouchPropagationMode.Full
-            //            HNTitleBar {
-            //                horizontalAlignment: HorizontalAlignment.Center
-            //                verticalAlignment: VerticalAlignment.Top
-            //                showButton: false
-            //                id: titleBar
-            //                text: "Reader|YC - Search HN"
-            //            }
             TextField {
                 topPadding: 10
                 leftPadding: 19
@@ -116,6 +123,28 @@ NavigationPane {
             }
 
             Container {
+                id: spacer
+                visible: showSpacer();
+                minHeight: 200
+                maxHeight: 200
+            }
+            Container {
+                visible: errorLabel.visible
+                horizontalAlignment: HorizontalAlignment.Center
+                verticalAlignment: VerticalAlignment.Center
+                Label {
+                    id: errorLabel
+                    text: "<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!"
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.textAlign: TextAlign.Center
+                    textStyle.fontSizeValue: 9
+                    textStyle.color: Color.DarkGray
+                    textFormat: TextFormat.Html
+                    multiline: true
+                    visible: false
+                }
+            }
+            Container {
                 horizontalAlignment: HorizontalAlignment.Center
                 verticalAlignment: VerticalAlignment.Center
                 Container {
@@ -131,9 +160,6 @@ NavigationPane {
             }
             
             Container {
-                horizontalAlignment: HorizontalAlignment.Center
-                verticalAlignment: VerticalAlignment.Center
-                topPadding: 238
                 Container {
                     ListView {
                         id: searchList
@@ -154,9 +180,18 @@ NavigationPane {
                                 }
                             }
                         ]
+                        function itemType(data, indexPath) {
+                            if (data.type != 'error') {
+                                lastItemType = 'item';
+                                return 'item';
+                            } else {
+                                lastItemType = 'error';
+                                return 'error';
+                            }
+                        }
                         listItemComponents: [
                             ListItemComponent {
-                                type: ''
+                                type: 'item'
                                 HNPage {
                                     id: hnItem
                                     property string type: ListItemData.type
@@ -173,16 +208,8 @@ NavigationPane {
                             },
                             ListItemComponent {
                                 type: 'error'
-                                Label {
+                                ErrorItem {
                                     id: errorItem
-                                    property string type: ListItemData.type
-                                    text: ListItemData.title
-                                    visible: true
-                                    multiline: true
-                                    autoSize.maxLineCount: 2
-                                    textStyle.fontSize: FontSize.Medium
-                                    textStyle.fontStyle: FontStyle.Italic
-                                    textStyle.textAlign: TextAlign.Center
                                 }
                             }
                         ]
