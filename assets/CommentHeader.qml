@@ -5,7 +5,7 @@ Container {
     id: headerPane
     leftPadding: 19
     rightPadding: 19
-    property alias title: labelPostTitle.text
+    property alias hTitle: labelPostTitle.text
     property alias poster: labelUsername.text
     property alias domain: labelPostDomain.text
     property alias text: textBox.text
@@ -13,14 +13,10 @@ Container {
     onCreationCompleted: {
         Tart.register(headerPane)
     }
-    function onAddText(data) {
-        console.log(data.text)
-        text = data.text
-    }
+
     Container {
         bottomPadding: 35
         background: itemBackground.imagePaint
-    
         
         attachedObjects: [
             ImagePaintDefinition {

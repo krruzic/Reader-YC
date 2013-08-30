@@ -162,7 +162,7 @@ class HackerNewsCommentAPI:
     def getPage(self, source, isAsk, deleteComments):
         if (source == '-1'):
             tart.send('addText', text='')
-            tart.send('commentError', text="Jobs posting, no comments.")
+            tart.send('commentError', text="<b><span style='color:#fe8515'>Job posting</span></b>\nNo comments")
             return
 
         workingDir = os.getcwd() + '/data/cache/'
@@ -180,6 +180,7 @@ class HackerNewsCommentAPI:
 
             textCache = open(workingDir + '%s.txt' % source, 'r', encoding='utf-8')
             text = textCache.read()
+            print("CACHED TEXT: " + text)
             tart.send('addText', text=text)
             textCache.close()
 
@@ -196,7 +197,7 @@ class HackerNewsCommentAPI:
         comments, text = self.parse_comments(urlSource, isAsk)
         if (comments == None):
             tart.send('addText', text=text)
-            tart.send('commentError', text="No comments! Check back later!", hnid=source)
+            tart.send('commentError', text="<b><span style='color:#fe8515'>No comments</span></b>\nCheck back later!", hnid=source)
             return
         jsonComments = json.dumps(comments)
         comments = json.loads(jsonComments)

@@ -66,11 +66,11 @@ class App(tart.Application):
             postList, moreLink = HS.getPage("https://news.ycombinator.com/" + source)
         except urllib.error.URLError:
             print("error from python: " + "URLError")
-            tart.send('{0}ListError'.format(sentByShort), text="Error getting news feed, check your connection and try again")
+            tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!")
             return
         except IndexError:
             print("error from python: " + "IndexError")
-            tart.send('{0}ListError'.format(sentByShort), text="Expired Link! Unable to load more content...")
+            tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#fe8515'>Link expired</span></b>\Please refresh the page")
             return
 
         stories = []
@@ -87,7 +87,7 @@ class App(tart.Application):
         try:
             HC.getPage(source, askPost, deleteComments)
         except (urllib.error.URLError):
-            tart.send('commentError', text="Error getting comments. Check your connection \nand try again")
+            tart.send('commentError', text="<b><span style='color:#fe8515'>Error getting comments</span></b>\nCheck your connection and try again!")
             tart.send('addText', text='')
 
     def user_routine(self, source):
@@ -100,14 +100,14 @@ class App(tart.Application):
             if (detailList != []):
                 tart.send('userInfoReceived', details=detailList)
         except urllib.error.URLError:
-            tart.send('userError', text="Error getting user page, Check your connection \nand try again")
+            tart.send('userError', text="<b><span style='color:#fe8515'>Error getting User page</span></b>\nCheck your connection and try again!")
 
     def search_routine(self, startIndex, source):
         print("Searching for: " + source)
         try:
             HQ.getResults(startIndex, source)
         except urllib.error.URLError:
-            tart.send('searchError', text="Error getting search results, Check your connection \nand try again")
+            tart.send('searchError', text="<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!")
 
     def onSaveArticle(self, article):
         article = tuple(article)
@@ -136,7 +136,7 @@ class App(tart.Application):
 
         self.conn.commit()
         # Return information to display a 'deleted' toast
-        tart.send('deleteResult', text="Article unfavourited", itemToRemove=selected)
+        tart.send('deleteResult', text="Article removed from favourites", itemToRemove=selected)
 
     def onLoadFavourites(self):
         cursor = self.conn.execute('SELECT * FROM articles')
@@ -165,22 +165,13 @@ class App(tart.Application):
     #         print("Error inserting...")
     #         return
 
-    #     # save data to database
-    #     cursor.commit()
-    #     cursor.close()
-
-
-    # def onCheckReadState(self, link):
-    #     cursor = sqlite3.connect("data/read.db")
     #     sel = cursor.execute("SELECT * FROM readTable WHERE link = ?", (link,))
     #     data = sel.fetchall()
-    #     if (len(data) == 0):
+    #if (len(data) == 0):
     #         tart.send('readState', state="unread")
     #     else:
     #         tart.send('readState', state="read")
     #     cursor.close()
-
-
     def onCopyLink(self, articleLink):
         from tart import clipboard
         c = clipboard.Clipboard()

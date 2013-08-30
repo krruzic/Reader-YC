@@ -31,7 +31,6 @@ Container {
                 }
                 onTriggered: {
                     console.log("Pushing comments page");
-                    console.log(hnPage.selectedItem.title);
                     var page = hnItem.ListItem.view.pushPage('commentPage');
                     page.title = hnPage.selectedItem.title;
                     page.titlePoster = hnPage.selectedItem.poster;

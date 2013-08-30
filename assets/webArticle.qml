@@ -56,6 +56,7 @@ Page {
                 webDisplay.reload();
                 refreshEnabled = false
             }
+            showButton: true
         }
         Container {
             layout: DockLayout {
