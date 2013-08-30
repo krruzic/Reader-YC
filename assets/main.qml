@@ -185,8 +185,6 @@ TabbedPane {
     activeTab: topTab
 
     function onThumbnailed() {
-        console.log("VISIBLE!!!");
-        console.log("FIRED, stories: " + Global.stories[0]);
         if (Global.stories[0] != undefined) {
             if (currStory < numOfStories - 1) {
                 currStory ++;
@@ -250,7 +248,6 @@ TabbedPane {
             id: switchTimer
             interval: 30000 // 30 second interval
             onTimeout: {
-                console.log("FIRED, stories: " + Global.stories[0]);
                 if (Global.stories[0] != undefined) {
                     console.log(currStory + "   " + numOfStories);
                     coverTitle = Global.stories[currStory][1];

@@ -63,7 +63,8 @@ Container {
                     maxWidth: 500.0
                     text: "http://www.dailymail.com/"
                     multiline: false
-                    textStyle.fontSize: FontSize.Small
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 7
                     textStyle.color: Color.create("#ff69696c")
                     textStyle.fontStyle: FontStyle.Italic
                 }
@@ -81,7 +82,8 @@ Container {
                         }
                         text: "username"
                         multiline: false
-                        textStyle.fontSize: FontSize.Small
+                        textStyle.fontSize: FontSize.PointValue
+                        textStyle.fontSizeValue: 7
                         textStyle.color: Color.create("#fe8515")
                         horizontalAlignment: HorizontalAlignment.Left
                         textStyle.textAlign: TextAlign.Left
@@ -94,7 +96,8 @@ Container {
                         }
                         text: "some time ago | some points"
                         multiline: false
-                        textStyle.fontSize: FontSize.Small
+                        textStyle.fontSize: FontSize.PointValue
+                        textStyle.fontSizeValue: 7
                         textStyle.color: Color.Gray
                         horizontalAlignment: HorizontalAlignment.Right
                         textStyle.textAlign: TextAlign.Right
@@ -120,6 +123,8 @@ Container {
                     focusHighlightEnabled: false
                     textFormat: TextFormat.Html
                     textStyle.color: Color.Black
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 7
                 }
             }
         }

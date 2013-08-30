@@ -34,6 +34,7 @@ NavigationPane {
     }
 
     function onAddtopStories(data) {
+        lastItemType = 'item'
         var stories = data.stories;
         morePage = data.moreLink;
         errorLabel.visible = false;
@@ -58,7 +59,6 @@ NavigationPane {
                     isAsk: story[10]
                 });
         }
-        lastItemType = 'item'
         busy = false;
         loading.visible = false;
         titleBar.refreshEnabled = ! busy;
@@ -68,22 +68,17 @@ NavigationPane {
         lastItemType = 'error'
         if (theModel.isEmpty() != true) {
             var lastItem = theModel.size() - 1
-            console.log("LAST ITEM: " + lastItemType);
+            console.log(lastItemType);
             if (lastItemType == 'error') {
                 theModel.removeAt(lastItem)
             }
             theModel.append({
                     type: 'error',
                     title: data.text
-                });
+            });
         } else {
-            if (data.text == "<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!") {
-                errorLabel.text = "<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!";
-                errorLabel.visible = true;
-            } else {
-                errorLabel.text = "<b><span style='color:#fe8515'>Link expired</span></b>\nPlease refresh the page!";
-                errorLabel.visible = true;
-            }
+            errorLabel.text = data.text
+            errorLabel.visible = true;
         }
         busy = false;
         loading.visible = false;

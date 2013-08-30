@@ -72,6 +72,19 @@ Container {
                     data = saveItem.selectedItem.title + "\n" + saveItem.selectedItem.articleURL + "\nShared using Reader|YC "
                 }
             }
+            InvokeActionItem {
+                title: "Open in Browser"
+                imageSource: "asset:///images/icons/ic_open_link.png"
+                ActionBar.placement: ActionBarPlacement.InOverflow
+                id: browserQuery
+                //query.mimeType: "text/plain"
+                query.invokeActionId: "bb.action.OPEN"
+                query.uri: hnPage.selectedItem.articleURL
+                query.invokeTargetId:  "sys.browser"
+                query.onQueryChanged: {
+                    browserQuery.query.updateQuery();
+                }
+            }
             ActionItem {
                 title: "Copy Article Link"
                 imageSource: "asset:///images/icons/ic_copy_link.png"

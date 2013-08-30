@@ -37,10 +37,10 @@ Page {
             imageSource: "asset:///images/icons/ic_open_link.png"
             ActionBar.placement: ActionBarPlacement.InOverflow
             id: browserQuery
-            query.mimeType: "text/plain"
+            //query.mimeType: "text/plain"
             query.invokeActionId: "bb.action.OPEN"
             query.uri: webDisplay.url
-
+            query.invokeTargetId:  "sys.browser"
             query.onQueryChanged: {
                 browserQuery.query.updateQuery();
             }
@@ -57,6 +57,7 @@ Page {
                 refreshEnabled = false
             }
             showButton: true
+            refreshEnabled: true
         }
         Container {
             layout: DockLayout {

@@ -15,8 +15,8 @@ class HackerNewsStoryAPI:
         """Returns the HTML source code for a URL.
         """
         print("curling page: " + url)
-        with urllib.request.urlopen(url) as url:
-            source = url.read()
+        response = urllib.request.urlopen(url)
+        source = response.read()
         print("page curled")
         return source
 

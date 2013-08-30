@@ -35,9 +35,14 @@ NavigationPane {
 
     function onAddnewStories(data) {
         lastItemType = 'item'
-        errorLabel.visible = false;
         var stories = data.stories;
         morePage = data.moreLink;
+        errorLabel.visible = false;
+        var lastItem = theModel.size() - 1
+        console.log("LAST ITEM: " + lastItemType);
+        if (lastItemType == 'error') {
+            theModel.removeAt(lastItem)
+        }
         for (var i = 0; i < stories.length; i ++) {
             var story = stories[i];
             theModel.append({
@@ -72,13 +77,8 @@ NavigationPane {
                     title: data.text
                 });
         } else {
-            if (data.text == "<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!") {
-                errorLabel.text = "<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!";
-                errorLabel.visible = true;
-            } else {
-                errorLabel.text = "<b><span style='color:#fe8515'>Link expired</span></b>\nPlease refresh the page!";
-                errorLabel.visible = true;
-            }
+            errorLabel.text = data.text
+            errorLabel.visible = true;
         }
         busy = false;
         loading.visible = false;
@@ -206,7 +206,7 @@ NavigationPane {
                         ListItemComponent {
                             type: 'error'
                             ErrorItem {
-                            	id: errorItem
+                                id: errorItem
                             }
                         }
                     ]
