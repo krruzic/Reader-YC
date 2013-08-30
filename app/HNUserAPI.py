@@ -22,7 +22,7 @@ class HackerNewsUserAPI:
         """
         source = self.getSource(source)
         if (source.decode('ascii') == "No such user."):
-            tart.send('userError', text="That user doesn't exist, \nusernames are case sensitive")
+            tart.send('userError', text="<b><span style='color:#fe8515'>That user doesn't exist</span></b>\nUsernames are case sensitive!")
             return []
         if (source.decode('ascii') == "We've limited requests for this url."):
             tart.send('userError', text="<b><span style='color:#fe8515'>HN has limited user page requests</span></b>\nWait a bit, then try again")

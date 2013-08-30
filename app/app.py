@@ -64,8 +64,8 @@ class App(tart.Application):
 
         try:
             postList, moreLink = HS.getPage("https://news.ycombinator.com/" + source)
-        except urllib.error.URLError:
-            print("error from python: " + "URLError")
+        except IOError as e:
+            print(e.reason)
             tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!")
             return
         except IndexError:
@@ -86,7 +86,7 @@ class App(tart.Application):
         print("source sent:" + source)
         try:
             HC.getPage(source, askPost, deleteComments)
-        except (urllib.error.URLError):
+        except IOError as e:
             tart.send('commentError', text="<b><span style='color:#fe8515'>Error getting comments</span></b>\nCheck your connection and try again!")
             tart.send('addText', text='')
 
@@ -99,14 +99,14 @@ class App(tart.Application):
             detailList = HU.getUserPage("http://news.ycombinator.com/user?id=" + source)
             if (detailList != []):
                 tart.send('userInfoReceived', details=detailList)
-        except urllib.error.URLError:
+        except IOError as e:
             tart.send('userError', text="<b><span style='color:#fe8515'>Error getting User page</span></b>\nCheck your connection and try again!")
 
     def search_routine(self, startIndex, source):
         print("Searching for: " + source)
         try:
             HQ.getResults(startIndex, source)
-        except urllib.error.URLError:
+        except IOError as e:
             tart.send('searchError', text="<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!")
 
     def onSaveArticle(self, article):

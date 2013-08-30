@@ -23,29 +23,30 @@ Page {
 
     function onCommentError(data) {
         if (commentLink == data.hnid) {
-            spacer.visible = false;
             commentList.visible = true;
             busy = false;
             titleBar.refreshEnabled = true;
-            errorLabel.text = data.text;
-            errorLabel.visible = data.text;
+            commentModel.append({
+                    type: 'error',
+                    title: data.text
+                });
         }
     }
 
     function onAddText(data) {
-        commentModel.append({
-                type: 'commentHeader',
-                hTitle: commentPane.title,
-                poster: commentPane.titlePoster,
-                domain: commentPane.titleDomain,
-                articleTime: commentPane.titleTime,
-                text: data.text
-            });
+        if (commentLink == data.hnid) {
+            commentModel.append({
+                    type: 'header',
+                    hTitle: commentPane.title,
+                    poster: commentPane.titlePoster,
+                    domain: commentPane.titleDomain,
+                    articleTime: commentPane.titleTime,
+                    text: data.text
+                });
+        }
     }
 
     function onAddComments(data) {
-        errorLabel.visible = false;
-        spacer.visible = false;
         if (commentLink == data.hnid) {
             commentModel.append({
                     type: 'item',
@@ -90,10 +91,10 @@ Page {
             imageSource: "asset:///images/icons/ic_open_link.png"
             ActionBar.placement: ActionBarPlacement.InOverflow
             id: browserQuery
-            query.mimeType: "text/plain"
+            //query.mimeType: "text/plain"
             query.invokeActionId: "bb.action.OPEN"
             query.uri: "https://news.ycombinator.com/item?id=" + commentPane.commentLink
-
+            query.invokeTargetId:  "sys.browser"
             query.onQueryChanged: {
                 browserQuery.query.updateQuery();
             }
@@ -107,7 +108,6 @@ Page {
             id: titleBar
             text: title
             onRefreshPage: {
-                spacer.visible = true;
                 busy = true;
                 Tart.send('requestPage', {
                         source: commentLink,
@@ -119,14 +119,6 @@ Page {
                 commentModel.clear();
                 titleBar.refreshEnabled = false;
             }
-        }
-        Container {
-            id: spacer
-            horizontalAlignment: HorizontalAlignment.Center
-            verticalAlignment: VerticalAlignment.Center
-            visible: true
-            minHeight: 200
-            maxHeight: 200
         }
 
         Container {
@@ -152,16 +144,7 @@ Page {
                     }
 
                     function itemType(data, indexPath) {
-                        if (data.type == 'commentHeader') {
-                            return 'header';
-                        }
-                        if (data.type != 'error') {
-                            lastItemType = 'item';
-                            return 'item';
-                        } else {
-                            lastItemType = 'error';
-                            return 'error';
-                        }
+                        return data.type
                     }
 
                     listItemComponents: [
@@ -196,6 +179,8 @@ Page {
                         ListItemComponent {
                             type: 'error'
                             ErrorItem {
+                                property string type: ListItemData.type
+                                title: ListItemData.title
                                 id: errorItem
                             }
                         }
@@ -234,22 +219,6 @@ Page {
                         console.log("Comment triggered!")
                     }
                 }
-            }
-        }
-        Container {
-            visible: errorLabel.visible
-            horizontalAlignment: HorizontalAlignment.Center
-            verticalAlignment: VerticalAlignment.Center
-            minHeight: 300
-            Label {
-                id: errorLabel
-                textStyle.fontSize: FontSize.PointValue
-                textStyle.textAlign: TextAlign.Center
-                textStyle.fontSizeValue: 9
-                textStyle.color: Color.DarkGray
-                textFormat: TextFormat.Html
-                multiline: true
-                visible: false
             }
         }
     }

@@ -21,10 +21,11 @@ NavigationPane {
 
         onCreationCompleted: {
             Tart.register(userPane);
+            titleBar.showButton = true;
         }
 
         function onUserInfoReceived(data) {
-            busy = false;
+            loading.visible = false;
             console.log("User info recieved!")
             var results = data.details;
             userDetails.visible = true;
@@ -37,7 +38,7 @@ NavigationPane {
         }
 
         function onUserError(data) {
-            busy = false;
+            loading.visible = false;
             errorLabel.visible = true;
             errorLabel.text = data.text
         }
@@ -47,6 +48,7 @@ NavigationPane {
                 id: titleBar
                 text: "Reader|YC - User"
                 showButton: true
+                refreshEnabled: true
                 buttonImage: "asset:///images/search.png"
                 buttonPressedImage: "asset:///images/search.png"
                 onRefreshPage: {
@@ -82,7 +84,7 @@ NavigationPane {
                     input.onSubmitted: {
                         submitCount += 1;
                         errorLabel.visible = false;
-                        busy = true;
+                        loading.visible = true;
                         userDetails.visible = false;
                         if (throttleTimer.running == false) {
                             Tart.send('requestPage', {
@@ -110,20 +112,34 @@ NavigationPane {
                 }
 
                 Container {
-                    visible: busy
-                    rightPadding: 220
-                    leftPadding: 220
-                    topPadding: 80
-                    ActivityIndicator {
-                        minHeight: 300
-                        minWidth: 300
-                        running: true
-                        visible: busy
+                    horizontalAlignment: HorizontalAlignment.Center
+                    verticalAlignment: VerticalAlignment.Center
+                    Container {
+                        visible: loading.visible
+                        ActivityIndicator {
+                            id: loading
+                            minHeight: 300
+                            minWidth: 300
+                            running: true
+                            visible: false
+                        }
                     }
                 }
-                Label {
-                    id: errorLabel
-                    multiline: true
+                Container {
+                    visible: errorLabel.visible
+                    horizontalAlignment: HorizontalAlignment.Center
+                    verticalAlignment: VerticalAlignment.Center
+                    Label {
+                        id: errorLabel
+                        text: ""
+                        textStyle.fontSize: FontSize.PointValue
+                        textStyle.textAlign: TextAlign.Center
+                        textStyle.fontSizeValue: 9
+                        textStyle.color: Color.DarkGray
+                        textFormat: TextFormat.Html
+                        multiline: true
+                        visible: false
+                    }
                 }
                 Container {
                     id: userDetails

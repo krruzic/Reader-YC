@@ -161,7 +161,7 @@ class HackerNewsCommentAPI:
 
     def getPage(self, source, isAsk, deleteComments):
         if (source == '-1'):
-            tart.send('addText', text='')
+            tart.send('addText', text='', hnid=source)
             tart.send('commentError', text="<b><span style='color:#fe8515'>Job posting</span></b>\nNo comments")
             return
 
@@ -181,7 +181,7 @@ class HackerNewsCommentAPI:
             textCache = open(workingDir + '%s.txt' % source, 'r', encoding='utf-8')
             text = textCache.read()
             print("CACHED TEXT: " + text)
-            tart.send('addText', text=text)
+            tart.send('addText', text=text, hnid=source)
             textCache.close()
 
             for comment in comments:
@@ -191,19 +191,19 @@ class HackerNewsCommentAPI:
         else:
             print("Comments not cached...")
         print("curling page: " + url)
-        with urllib.request.urlopen(url) as url:
-            urlSource = url.read()
+        response = urllib.request.urlopen(url)
+        urlSource = response.read()
         print("page curled")
         comments, text = self.parse_comments(urlSource, isAsk)
         if (comments == None):
-            tart.send('addText', text=text)
+            tart.send('addText', text=text, hnid=source)
             tart.send('commentError', text="<b><span style='color:#fe8515'>No comments</span></b>\nCheck back later!", hnid=source)
             return
         jsonComments = json.dumps(comments)
         comments = json.loads(jsonComments)
 
 
-        tart.send('addText', text=text)
+        tart.send('addText', text=text, hnid=source)
         for comment in comments:
             tart.send('addComments', comment=comment, hnid=source)
         self.cacheComments(source, comments, text)

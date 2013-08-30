@@ -15,7 +15,7 @@ Container {
     property alias postTime: labelTimePosted.text
     property variant selectedItem: hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath)
     //property variant backgroundVar: unreadBackground.imagePaint
-        
+
     onCreationCompleted: {
         Tart.register(hnPage)
     }
@@ -39,12 +39,12 @@ Container {
                     page.commentLink = hnPage.selectedItem.hnid;
                     page.articleLink = hnPage.selectedItem.articleURL;
                     page.isAsk = hnPage.selectedItem.isAsk;
-//                    Tart.send('requestPage', {
-//                            source: hnPage.selectedItem.hnid,
-//                            sentBy: 'commentPage',
-//                            askPost: hnPage.selectedItem.isAsk,
-//                            deleteComments: "False"
-//                        });
+                    //                    Tart.send('requestPage', {
+                    //                            source: hnPage.selectedItem.hnid,
+                    //                            sentBy: 'commentPage',
+                    //                            askPost: hnPage.selectedItem.isAsk,
+                    //                            deleteComments: "False"
+                    //                        });
                 }
             }
             ActionItem {
@@ -70,6 +70,19 @@ Container {
                 }
                 onTriggered: {
                     data = hnPage.selectedItem.title + "\n" + hnPage.selectedItem.articleURL + "\nShared using Reader|YC "
+                }
+            }
+            InvokeActionItem {
+                title: "Open in Browser"
+                imageSource: "asset:///images/icons/ic_open_link.png"
+                ActionBar.placement: ActionBarPlacement.InOverflow
+                id: browserQuery
+                //query.mimeType: "text/plain"
+                query.invokeActionId: "bb.action.OPEN"
+                query.uri: hnPage.selectedItem.articleURL
+                query.invokeTargetId:  "sys.browser"
+                query.onQueryChanged: {
+                    browserQuery.query.updateQuery();
                 }
             }
             ActionItem {
@@ -128,7 +141,7 @@ Container {
     }
 
     function onReadState(data) {
-        if (data.state == "unread") { 	
+        if (data.state == "unread") {
             console.log("UNREAD");
             mainContainer.background = unreadBackground.imagePaint
         } else {

@@ -1,6 +1,8 @@
 import bb.cascades 1.0
 Container {
     property alias title: errorItem.text
+    minWidth: 720
+    preferredWidth: 768
     Container {
         horizontalAlignment: HorizontalAlignment.Center
         verticalAlignment: VerticalAlignment.Center
