@@ -1,9 +1,14 @@
-import urllib.request, threading, sqlite3
+import urllib.request, threading, sqlite3, requests
 from .HNStoryAPI import HackerNewsStoryAPI
 from .HNCommentAPI import HackerNewsCommentAPI
 from .HNUserAPI import HackerNewsUserAPI
 from .HNSearchAPI import HackerNewsSearchAPI
+from requests import session
+from bs4 import BeautifulSoup
+
+
 import tart
+
 
 HS = HackerNewsStoryAPI()
 HC = HackerNewsCommentAPI()
@@ -20,14 +25,14 @@ class App(tart.Application):
     def onUiReady(self):
         print("UI READY!!")
         self.onRequestPage("topPage", "topPage")
-        readCursor = sqlite3.connect("data/read.db")
-        readCursor.execute("CREATE TABLE IF NOT EXISTS readTable (link text PRIMARY KEY)")
-        # favCursor = self.conn.cursor()
-        # favCursor.execute("""CREATE TABLE IF NOT EXISTS articles
-        #                   (title text, articleURL text, saveTime text,
-        #                    poster text, numComments text, isAsk text,
-        #                    domain text, points text, hnid text PRIMARY KEY)
-        #                """)
+        #readCursor = sqlite3.connect("data/read.db")
+        #readCursor.execute("CREATE TABLE IF NOT EXISTS readTable (link text PRIMARY KEY)")
+        favCursor = self.conn.cursor()
+        favCursor.execute("""CREATE TABLE IF NOT EXISTS articles
+                          (title text, articleURL text, saveTime text,
+                           poster text, numComments text, isAsk text,
+                           domain text, points text, hnid text PRIMARY KEY)
+                       """)
         # self.onRequestPage("Ask HN", "askPage")
         # self.onRequestPage("Newest Posts", "newestPage")
 
@@ -63,7 +68,7 @@ class App(tart.Application):
         sentByShort = sentBy[0:3]
 
         try:
-            postList, moreLink = HS.getPage("https://news.ycombinator.com/" + source)
+            stories, moreLink = HS.getPage("https://news.ycombinator.com/" + source)
         except IOError as e:
             print(e.reason)
             tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!")
@@ -73,11 +78,8 @@ class App(tart.Application):
             tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#fe8515'>Link expired</span></b>\Please refresh the page")
             return
 
-        stories = []
-        for item in postList:
-            stories.append(item.getDetails())
-
-        tart.send('add{0}Stories'.format(sentByShort), stories=stories, moreLink=moreLink, sentTo=sentBy)
+        for story in stories:
+            tart.send('add{0}Stories'.format(sentByShort), story=story, moreLink=moreLink, sentTo=sentBy)
         if (source == 'news'):
             tart.send('addCoverStories', stories=stories)
 
@@ -108,6 +110,32 @@ class App(tart.Application):
             HQ.getResults(startIndex, source)
         except IOError as e:
             tart.send('searchError', text="<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!")
+
+    def onRequestLogin(self, username, password):
+
+        HN = "https://news.ycombinator.com/"
+        HN_LOGIN = HN + "newslogin?whence=news"
+        HN_LOGIN_POST = HN + 'y'
+
+        r = requests.get(HN_LOGIN)
+        print("SOUPING")
+        soup = BeautifulSoup(r.content)
+        try:
+            fnid = soup.find('input', attrs=dict(name='fnid'))['value']
+        except:
+            print()
+        print(fnid)
+        payload = {
+            'fnid': fnid,
+            'u': username,
+            'p': password
+        }
+
+        with session() as c:
+            c.post(HN_LOGIN_POST, data=payload)
+            print(c.cookies)
+            request = c.get('https://news.ycombinator.com/saved?id=deft')
+            tart.send('loginResult', text=request.text)
 
     def onSaveArticle(self, article):
         article = tuple(article)

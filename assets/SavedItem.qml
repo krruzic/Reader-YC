@@ -39,6 +39,8 @@ Container {
                     page.commentLink = saveItem.selectedItem.hnid;
                     page.articleLink = saveItem.selectedItem.articleURL;
                     page.isAsk = saveItem.selectedItem.isAsk;
+                    page.titleComments = saveItem.selectedItem.commentCount;
+                    page.titlePoints = saveItem.selectedItem.points;
 //                    Tart.send('requestPage', {
 //                            source: saveItem.selectedItem.hnid,
 //                            sentBy: 'commentPage',
@@ -79,7 +81,7 @@ Container {
                 id: browserQuery
                 //query.mimeType: "text/plain"
                 query.invokeActionId: "bb.action.OPEN"
-                query.uri: hnPage.selectedItem.articleURL
+                query.uri: saveItem.selectedItem.articleURL
                 query.invokeTargetId:  "sys.browser"
                 query.onQueryChanged: {
                     browserQuery.query.updateQuery();
@@ -200,7 +202,8 @@ Container {
                     maxWidth: 440
                     text: "http://www.dailymail.com/"
                     multiline: false
-                    textStyle.fontSize: FontSize.Small
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 7
                     textStyle.color: Color.create("#ff69696c")
                     textStyle.fontStyle: FontStyle.Italic
                 }

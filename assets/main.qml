@@ -17,25 +17,31 @@ TabbedPane {
             ActionItem {
                 imageSource: "asset:///images/icons/ic_info.png"
                 title: "About"
-                enabled: if (root.activePane != aboutPage) {
-                    true
-                }
+
                 onTriggered: {
                     var np = aboutPage.createObject(activeTab.content);
                     activeTab.push(np)
-                    Application.menuEnabled = ! Application.menuEnabled;
+                    Application.menuEnabled = false;
                 }
             },
             ActionItem {
                 imageSource: "asset:///images/icons/ic_help.png"
                 title: "Help"
-                enabled: if (root.activePane != helpPage) {
-                    true
-                }
+
                 onTriggered: {
                     var np = helpPage.createObject(activeTab.content);
                     activeTab.push(np)
-                    Application.menuEnabled = ! Application.menuEnabled;
+                    Application.menuEnabled = false;
+                }
+            },
+            ActionItem {
+                imageSource: "asset:///images/icons/ic_help.png"
+                title: "Login"
+
+                onTriggered: {
+                    var np = loginPage.createObject(activeTab.content);
+                    activeTab.push(np)
+                    Application.menuEnabled = false;
                 }
             }
         ]
@@ -50,6 +56,10 @@ TabbedPane {
             id: top
             onCreationCompleted: {
                 top.whichPage = 'topPage'
+            }
+            onPopTransitionEnded: {
+                page.destroy();
+                Application.menuEnabled = true;
             }
         }
         onTriggered: {
@@ -78,6 +88,10 @@ TabbedPane {
             onCreationCompleted: {
                 ask.whichPage = 'askPage'
             }
+            onPopTransitionEnded: {
+                page.destroy();
+                Application.menuEnabled = true;
+            }
         }
         onTriggered: {
             if (ask.theModel.isEmpty() && ask.busy == false) {
@@ -100,13 +114,14 @@ TabbedPane {
         title: qsTr("Newest")
         imageSource: "asset:///images/icons/ic_new.png"
         id: newTab
-        function test() {
-            console.log("TESTING JS STUFF")
-        }
         NewTab {
             id: newest
             onCreationCompleted: {
                 newest.whichPage = 'newestPage'
+            }
+            onPopTransitionEnded: {
+                page.destroy();
+                Application.menuEnabled = true;
             }
         }
         onTriggered: {
@@ -130,7 +145,12 @@ TabbedPane {
         id: userTab
         NavUserPage {
             id: userPage
+            onPopTransitionEnded: {
+                page.destroy();
+                Application.menuEnabled = true;
+            }
         }
+
         signal push(variant p)
         onPush: {
             userPage.push(p);
@@ -143,6 +163,10 @@ TabbedPane {
         id: searchTab
         SearchPage {
             id: search
+            onPopTransitionEnded: {
+                page.destroy();
+                Application.menuEnabled = true;
+            }
         }
         signal push(variant p)
         onPush: {
@@ -155,6 +179,10 @@ TabbedPane {
         id: favouritesTab
         FavouritesTab {
             id: favourites
+            onPopTransitionEnded: {
+                page.destroy();
+                Application.menuEnabled = true;
+            }
         }
         signal push(variant p)
         onPush: {
@@ -192,11 +220,11 @@ TabbedPane {
                 currStory = 0;
             }
             console.log(currStory + "   " + numOfStories);
-            coverTitle = Global.stories[currStory][1];
-            coverPoints = Global.stories[currStory][3];
-            coverPoster = Global.stories[currStory][4];
-            coverTime = Global.stories[currStory][5];
-            coverComments = Global.stories[currStory][6] + " Comments";
+            coverTitle = Global.stories[currStory]['title'];
+            coverPoints = Global.stories[currStory]['score'];
+            coverPoster = Global.stories[currStory]['author'];
+            coverTime = Global.stories[currStory]['time'];
+            coverComments = Global.stories[currStory]['commentCount'] + " Comments";
         } else {
             coverTitle = "No recent stories...";
         }
@@ -220,13 +248,14 @@ TabbedPane {
     //    }
 
     function onAddCoverStories(data) {
-        Global.stories = data.stories;
         numOfStories = data.stories.length;
-        coverTitle = data.stories[0][1];
-        coverPoints = data.stories[0][3];
-        coverPoster = data.stories[0][4];
-        coverTime = data.stories[0][5];
-        coverComments = data.stories[0][6] + " Comments";
+        Global.stories = data.stories;
+        coverTitle = data.stories[0]['title'];
+        coverPoints = data.stories[0]['score'];
+        coverPoster = data.stories[0]['author'];
+        coverTime = data.stories[0]['time'];
+        coverComments = data.stories[0]['commentCount'] + " Comments";
+
     }
 
     attachedObjects: [
@@ -244,17 +273,22 @@ TabbedPane {
             id: appCover
             source: "asset:///AppCover.qml"
         },
+        ComponentDefinition {
+            id: loginPage
+            LoginPage {
+            }
+        },
         QTimer {
             id: switchTimer
             interval: 30000 // 30 second interval
             onTimeout: {
                 if (Global.stories[0] != undefined) {
                     console.log(currStory + "   " + numOfStories);
-                    coverTitle = Global.stories[currStory][1];
-                    coverPoints = Global.stories[currStory][3];
-                    coverPoster = Global.stories[currStory][4];
-                    coverTime = Global.stories[currStory][5];
-                    coverComments = Global.stories[currStory][6] + " Comments";
+                    coverTitle = Global.stories[currStory]['title'];
+                    coverPoints = Global.stories[currStory]['score'];
+                    coverPoster = Global.stories[currStory]['author'];
+                    coverTime = Global.stories[currStory]['time'];
+                    coverComments = Global.stories[currStory]['commentCount'] + " Comments";
                     if (currStory < numOfStories - 1) {
                         currStory ++;
                     } else {

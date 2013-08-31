@@ -39,6 +39,8 @@ Container {
                     page.commentLink = hnPage.selectedItem.hnid;
                     page.articleLink = hnPage.selectedItem.articleURL;
                     page.isAsk = hnPage.selectedItem.isAsk;
+                    page.titleComments = hnPage.selectedItem.commentCount;
+                    page.titlePoints = hnPage.selectedItem.points;
                     //                    Tart.send('requestPage', {
                     //                            source: hnPage.selectedItem.hnid,
                     //                            sentBy: 'commentPage',
@@ -209,7 +211,8 @@ Container {
                     maxWidth: 440
                     text: "http://www.dailymail.com/"
                     multiline: false
-                    textStyle.fontSize: FontSize.Small
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 7
                     textStyle.color: Color.create("#ff69696c")
                     textStyle.fontStyle: FontStyle.Italic
                 }

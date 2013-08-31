@@ -83,7 +83,7 @@ Container {
                         text: "username"
                         multiline: false
                         textStyle.fontSize: FontSize.PointValue
-                        textStyle.fontSizeValue: 7
+                        textStyle.fontSizeValue: 6
                         textStyle.color: Color.create("#fe8515")
                         horizontalAlignment: HorizontalAlignment.Left
                         textStyle.textAlign: TextAlign.Left
@@ -97,7 +97,7 @@ Container {
                         text: "some time ago | some points"
                         multiline: false
                         textStyle.fontSize: FontSize.PointValue
-                        textStyle.fontSizeValue: 7
+                        textStyle.fontSizeValue: 6
                         textStyle.color: Color.Gray
                         horizontalAlignment: HorizontalAlignment.Right
                         textStyle.textAlign: TextAlign.Right
@@ -124,7 +124,7 @@ Container {
                     textFormat: TextFormat.Html
                     textStyle.color: Color.Black
                     textStyle.fontSize: FontSize.PointValue
-                    textStyle.fontSizeValue: 7
+                    textStyle.fontSizeValue: 6
                 }
             }
         }
