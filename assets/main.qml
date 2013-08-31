@@ -283,7 +283,7 @@ TabbedPane {
             interval: 30000 // 30 second interval
             onTimeout: {
                 if (Global.stories[0] != undefined) {
-                    console.log(currStory + "   " + numOfStories);
+                    //console.log(currStory + "   " + numOfStories);
                     coverTitle = Global.stories[currStory]['title'];
                     coverPoints = Global.stories[currStory]['score'];
                     coverPoster = Global.stories[currStory]['author'];
