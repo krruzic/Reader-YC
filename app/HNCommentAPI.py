@@ -162,7 +162,7 @@ class HackerNewsCommentAPI:
     def getPage(self, source, isAsk, deleteComments):
         if (source == '-1'):
             tart.send('addText', text='', hnid=source)
-            tart.send('commentError', text="<b><span style='color:#fe8515'>Job posting</span></b>\nNo comments")
+            tart.send('commentError', text="<b><span style='color:#fe8515'>Job posting</span></b>\nNo comments", hnid=source)
             return
 
         workingDir = os.getcwd() + '/data/cache/'

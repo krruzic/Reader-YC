@@ -43,22 +43,19 @@ NavigationPane {
         if (lastItemType == 'error') {
             theModel.removeAt(lastItem)
         }
-        for (var i = 0; i < stories.length; i ++) {
-            var story = stories[i];
-            theModel.append({
-                    type: 'item',
-                    title: story[1],
-                    domain: story[2],
-                    points: story[3],
-                    poster: story[4],
-                    timePosted: story[5],
-                    commentCount: story[6],
-                    articleURL: story[7],
-                    commentsURL: story[8],
-                    hnid: story[9],
-                    isAsk: story[10]
-                });
-        }
+        theModel.append({
+                type: 'item',
+                title: data.story['title'],
+                domain: data.story['domain'],
+                points: data.story['score'],
+                poster: data.story['author'],
+                timePosted: data.story['time'],
+                commentCount: data.story['commentCount'],
+                articleURL: data.story['link'],
+                commentsURL: data.story['commentURL'],
+                hnid: data.story['hnid'],
+                isAsk: data.story['askPost']
+        });
         busy = false;
         loading.visible = false;
         titleBar.refreshEnabled = ! busy;
@@ -235,6 +232,8 @@ NavigationPane {
                             page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
                             page.isAsk = selectedItem.isAsk;
                             page.articleLink = selectedItem.articleURL;
+                            page.titleComments = selectedItem.commentCount;
+                            page.titlePoints = selectedItem.points
                             Tart.send('requestPage', {
                                     source: selectedItem.hnid,
                                     sentBy: 'commentPage',

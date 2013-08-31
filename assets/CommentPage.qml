@@ -15,6 +15,8 @@ Page {
     property string titleDomain: ""
     property string titleTime: ""
     property string titleText: ""
+    property string titleComments: ""
+    property string titlePoints: ""
 
     onCreationCompleted: {
         busy = true;
@@ -34,7 +36,7 @@ Page {
     }
 
     function onAddText(data) {
-        if (commentLink == data.hnid) {
+        if (commentLink == data.hnid && commentModel.isEmpty() == true) {
             commentModel.append({
                     type: 'header',
                     hTitle: commentPane.title,
@@ -97,6 +99,21 @@ Page {
             query.invokeTargetId:  "sys.browser"
             query.onQueryChanged: {
                 browserQuery.query.updateQuery();
+            }
+        },
+        ActionItem {
+            title: "Favourite Article"
+            imageSource: "asset:///images/icons/ic_star_add.png"
+            onTriggered: {
+                var date = new Date();
+                var formattedDate = Qt.formatDateTime(date, "dd-MM-yyyy"); //to format date
+                var articleDetails = [ commentPane.title, commentPane.articleLink, String(formattedDate),
+                    commentPane.titlePoster, commentPane.titleComments, commentPane.isAsk,
+                    commentPane.titleDomain, commentPane.titlePoints, commentPane.commentLink ];
+                
+                Tart.send('saveArticle', {
+                        article: articleDetails
+                });
             }
         }
     ]
