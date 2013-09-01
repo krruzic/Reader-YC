@@ -35,9 +35,9 @@ TabbedPane {
                 }
             },
             ActionItem {
-                imageSource: "asset:///images/icons/ic_help.png"
+                imageSource: "asset:///images/icons/ic_profile.png"
                 title: "Login"
-
+                enabled: false
                 onTriggered: {
                     var np = loginPage.createObject(activeTab.content);
                     activeTab.push(np)

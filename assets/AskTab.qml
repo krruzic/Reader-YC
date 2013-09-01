@@ -226,12 +226,12 @@ NavigationPane {
                             page.articleLink = selectedItem.articleURL;
                             page.titleComments = selectedItem.commentCount;
                             page.titlePoints = selectedItem.points
-                            Tart.send('requestPage', {
-                                    source: selectedItem.hnid,
-                                    sentBy: 'commentPage',
-                                    askPost: selectedItem.isAsk,
-                                    deleteComments: "false"
-                                });
+//                            Tart.send('requestPage', {
+//                                    source: selectedItem.hnid,
+//                                    sentBy: 'commentPage',
+//                                    askPost: selectedItem.isAsk,
+//                                    deleteComments: "false"
+//                                });
                         } else {
                             console.log('Item triggered. ' + selectedItem.articleURL);
                             var page = webPage.createObject();
