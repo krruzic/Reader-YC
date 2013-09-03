@@ -22,8 +22,8 @@ SceneCover {
             bottomMargin: 20
             layout: DockLayout {
             }
-            minHeight: 60
-            maxHeight: 60
+            minHeight: 62
+            maxHeight: 62
             background: background.imagePaint
             Container {
                 topPadding: 10
@@ -60,8 +60,6 @@ SceneCover {
             Label {
                 id: titleLabel
                 text: root.coverTitle
-                verticalAlignment: VerticalAlignment.Top
-                horizontalAlignment: HorizontalAlignment.Center
                 textStyle.fontSize: FontSize.PointValue
                 textStyle.textAlign: TextAlign.Center
                 textStyle.color: Color.DarkGray
@@ -69,7 +67,7 @@ SceneCover {
                 textStyle.fontStyle: FontStyle.Italic
                 multiline: true
                 textStyle.fontSizeValue: 7.0
-                autoSize.maxLineCount: 2
+                autoSize.maxLineCount: 3
             }
             Divider {
                 maxWidth: 320

@@ -61,8 +61,14 @@ class HackerNewsSearchAPI:
         """
         print("STARTING: " + str(startIndex))
         url = 'http://api.thriftdb.com/api.hnsearch.com/items/_search?filter[fields][title]={0}&start={1}&limit=30&sortby=create_ts+desc'.format(quote(source), startIndex)  # requests the search from the api
+        print(url)
         response = urllib.request.urlopen(url).read() # reads the returned data
+        print("Page curled")
         items = json.loads(response.decode('ascii'))
+        if items['hits'] == 0:
+            tart.send('searchError', text="<b><span style='color:#fe8515'>No stories were found</span></b>\nSorry about that")
+            return
+
         incomplete_iso_8601_format = '%Y-%m-%dT%H:%M:%SZ' # The time is returned in this format
         res = []
         results = items['results']

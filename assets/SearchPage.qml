@@ -43,7 +43,7 @@ NavigationPane {
                 commentsURL: story[8],
                 isAsk: story[9]
             });
-        console.log(story[9])
+        start = start + 1;
         searchField.visible = true;
     }
 
@@ -58,12 +58,6 @@ NavigationPane {
                     type: 'error',
                     title: data.text
                 });
-        } else {
-            if (data.text == "<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!") {           
-                errorLabel.visible = true;
-            } else {
-                errorLabel.visible = true;
-            }
         }
         errorLabel.text = data.text
         searchField.visible = true;
@@ -91,9 +85,10 @@ NavigationPane {
                 text: "Reader|YC - Search HN"
             }
             TextField {
-                topPadding: 10
-                leftPadding: 19
-                rightPadding: 19
+                horizontalAlignment: HorizontalAlignment.Center
+                preferredWidth: 740
+                minWidth: 700
+                maxWidth: 740
                 visible: true
                 objectName: "searchField"
                 enabled: true
@@ -132,16 +127,20 @@ NavigationPane {
                 visible: errorLabel.visible
                 horizontalAlignment: HorizontalAlignment.Center
                 verticalAlignment: VerticalAlignment.Center
+                Container {
+                    minHeight: 50
+                    maxHeight: 50
+                }
                 Label {
                     id: errorLabel
-                    text: "<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!"
+                    text: "<b><span style='color:#fe8515'>Try searching for a post!</span></b>"
                     textStyle.fontSize: FontSize.PointValue
                     textStyle.textAlign: TextAlign.Center
                     textStyle.fontSizeValue: 9
                     textStyle.color: Color.DarkGray
                     textFormat: TextFormat.Html
                     multiline: true
-                    visible: false
+                    visible: true
                 }
             }
             Container {
@@ -250,7 +249,7 @@ NavigationPane {
                         attachedObjects: [
                             ListScrollStateHandler {
                                 onAtEndChanged: {
-                                    if (atEnd == true && searchModel.isEmpty() == false && busy == false) {
+                                    if (atEnd == true && searchModel.isEmpty() == false && busy == false && (searchModel.size() % 30) == 0) {
                                         console.log('end reached!')
                                         Tart.send('requestPage', {
                                                 source: search,
@@ -258,7 +257,6 @@ NavigationPane {
                                                 startIndex: start
                                             });
                                         loading.visible = false;
-                                        start = start + 30;
                                         searchField.enabled = false;
                                     }
                                 }

@@ -7,8 +7,8 @@ Container {
         horizontalAlignment: HorizontalAlignment.Center
         verticalAlignment: VerticalAlignment.Center
         Container {
-            minHeight: 30
-            maxHeight: 30
+            minHeight: 10
+            maxHeight: 10
         }
         Label {
             id: errorItem

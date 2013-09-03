@@ -6,7 +6,6 @@ Page {
 
     onCreationCompleted: {
         Tart.register(userPane);
-        titleBar.showButton = true;
     }
     property alias searchVisible: searchField.visible
     property string username: ""
@@ -15,7 +14,6 @@ Page {
     property string about: ""
     property string submitted: ""
     property string comments: ""
-    property int submitCount: 0
     property bool busy: false
 
     function onUserInfoReceived(data) {
@@ -76,24 +74,13 @@ Page {
                 hintText: qsTr("Search users (case sensitive)")
                 id: searchField
                 input.onSubmitted: {
-                    submitCount += 1;
                     errorLabel.visible = false;
                     loading.visible = true;
                     userDetails.visible = false;
-                    if (throttleTimer.running == false) {
-                        Tart.send('requestPage', {
-                                source: text,
-                                sentBy: 'userPage'
-                            });
-                    } else if (throttleTimer.running == true) {
-                        busy = false
-                        errorLabel.visible = true;
-                        errorLabel.text = "You're doing that too often, try again in " + (timerStart);
-                    }
-                    if (submitCount >= 25) {
-                        throttleTimer.start();
-                        throttleTimer.running = true;
-                    }
+                    Tart.send('requestPage', {
+                            source: text,
+                            sentBy: 'userPage'
+                        });
                 }
                 animations: [
                     TranslateTransition {
@@ -207,17 +194,6 @@ Page {
                     ImagePaintDefinition {
                         id: aboutImage
                         imageSource: "asset:///images/text.amd"
-                    },
-                    QTimer {
-                        id: throttleTimer
-                        property bool running: false
-                        interval: 600000 // 5 minute interval
-                        onTimeout: {
-                            throttleTimer.stop();
-                            timerStart = 0;
-                            throttleTimer.running = false;
-                            submitCount = 0;
-                        }
                     }
                 ]
             }

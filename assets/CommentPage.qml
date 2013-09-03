@@ -36,6 +36,9 @@ Page {
     }
 
     function onAddText(data) {
+        commentList.visible = true;
+        busy = false;
+        titleBar.refreshEnabled = true;
         if (commentLink == data.hnid && commentModel.isEmpty() == true) {
             commentModel.append({
                     type: 'header',
@@ -58,9 +61,6 @@ Page {
                     text: data.comment["text"],
                     link: "https://news.ycombinator.com/item?id=" + data.comment["link"]
                 });
-            commentList.visible = true;
-            busy = false;
-            titleBar.refreshEnabled = true;
         }
     }
 
@@ -142,6 +142,10 @@ Page {
             visible: busy
             horizontalAlignment: HorizontalAlignment.Center
             verticalAlignment: VerticalAlignment.Center
+            Container {
+                minHeight: 200
+                maxHeight: 200
+            }
             ActivityIndicator {
                 id: loading
                 minHeight: 300

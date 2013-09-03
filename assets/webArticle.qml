@@ -9,6 +9,7 @@ Page {
             ActionBar.placement: ActionBarPlacement.OnBar
             imageSource: "asset:///images/icons/ic_previous.png"
             title: "Go Back"
+            enabled: webDisplay.canGoBack;
             onTriggered: {
                 webDisplay.goBack();
             }
@@ -28,6 +29,7 @@ Page {
             ActionBar.placement: ActionBarPlacement.OnBar
             imageSource: "asset:///images/icons/ic_next.png"
             title: "Go Forward"
+            enabled: webDisplay.canGoForward;
             onTriggered: {
                 webDisplay.goForward();
             }
