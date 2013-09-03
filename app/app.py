@@ -1,12 +1,12 @@
-import urllib.request, threading, sqlite3, requests
+import urllib.request, threading, sqlite3
 from .HNStoryAPI import HackerNewsStoryAPI
 from .HNCommentAPI import HackerNewsCommentAPI
 from .HNUserAPI import HackerNewsUserAPI
 from .HNSearchAPI import HackerNewsSearchAPI
-from requests import session
+#from requests import session
 from bs4 import BeautifulSoup
 
-
+#import requests
 import tart
 
 
@@ -27,12 +27,6 @@ class App(tart.Application):
         self.onRequestPage("topPage", "topPage")
         #readCursor = sqlite3.connect("data/read.db")
         #readCursor.execute("CREATE TABLE IF NOT EXISTS readTable (link text PRIMARY KEY)")
-        favCursor = self.conn.cursor()
-        favCursor.execute("""CREATE TABLE IF NOT EXISTS articles
-                          (title text, articleURL text, saveTime text,
-                           poster text, numComments text, isAsk text,
-                           domain text, points text, hnid text PRIMARY KEY)
-                       """)
         # self.onRequestPage("Ask HN", "askPage")
         # self.onRequestPage("Newest Posts", "newestPage")
 
@@ -67,15 +61,17 @@ class App(tart.Application):
 
         sentByShort = sentBy[0:3]
 
+        if source[0] == '/':
+            source = source[1:]
         try:
             stories, moreLink = HS.getPage("https://news.ycombinator.com/" + source)
         except IOError as e:
             print(e.reason)
             tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!")
             return
-        except IndexError:
-            print("error from python: " + "IndexError")
-            tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#fe8515'>Link expired</span></b>\Please refresh the page")
+        except IndexError as e:
+            print("Expired link?")
+            tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#fe8515'>Link expired</span></b>\nPlease refresh the page")
             return
 
         for story in stories:
@@ -140,6 +136,11 @@ class App(tart.Application):
     def onSaveArticle(self, article):
         article = tuple(article)
         cursor = self.conn.cursor()
+        cursor.execute("""CREATE TABLE IF NOT EXISTS articles
+                          (title text, articleURL text, saveTime text,
+                           poster text, numComments text, isAsk text,
+                           domain text, points text, hnid text PRIMARY KEY)
+                       """)
 
 
         # insert to table
@@ -167,7 +168,14 @@ class App(tart.Application):
         tart.send('deleteResult', text="Article removed from favourites", itemToRemove=selected)
 
     def onLoadFavourites(self):
-        cursor = self.conn.execute('SELECT * FROM articles')
+        cursor = self.conn.cursor()
+        cursor.execute("""CREATE TABLE IF NOT EXISTS articles
+                  (title text, articleURL text, saveTime text,
+                   poster text, numComments text, isAsk text,
+                   domain text, points text, hnid text PRIMARY KEY)
+               """)
+
+        cursor.execute('SELECT * FROM articles')
         tart.send('fillList', list=self.get_rowdicts(cursor))
 
 

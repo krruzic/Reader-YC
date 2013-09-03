@@ -210,6 +210,7 @@ NavigationPane {
                                 verticalAlignment: VerticalAlignment.Center
                                 ErrorItem {
                                     id: errorItem
+                                    title: ListItemData.title
                                 }
                             }
 

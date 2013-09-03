@@ -49,6 +49,6 @@ class HackerNewsUserAPI:
             else: # The other two are links to the user's comments and submissions
                 start = str(item).find('="') + 2
                 end = str(item).find('><u', start) - 1
-                result = "http://news.ycombinator.com/" +  str(item)[start:end]
+                result = "<a href='http://news.ycombinator.com/{0}'</a>".format(str(item)[start:end])
                 results.append(result)
         return results

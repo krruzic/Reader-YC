@@ -17,8 +17,8 @@ SceneCover {
             bottomMargin: 20
             layout: DockLayout {
             }
-            minHeight: 60
-            maxHeight: 60
+            minHeight: 56
+            maxHeight: 56
             background: background.imagePaint
             Container {
                 topPadding: 10

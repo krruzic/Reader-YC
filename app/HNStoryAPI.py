@@ -37,7 +37,7 @@ class HackerNewsStoryAPI:
         totalTime = 0
 
         for i, m in zip(head, metadata):
-            story ={'title': None, 'domain': None, 'score': None, 'author': None, 'time': None, 'commentCount': None, 'link': None, 'commentURL': 'https://news.ycombinator.com/item?id=-1', 'hnid': '-1', 'askPost': 'false'}
+            story ={'title': None, 'domain': None, 'score': None, 'author': None, 'time': None, 'commentCount': None, 'link': None, 'commentURL': 'news.ycombinator.com/item?id=-1', 'hnid': '-1', 'askPost': 'false'}
             startTime = time.time()
             story['title'] = i.find_all('a')[0].text
             story['link'] = i.find("a")["href"]
@@ -48,7 +48,7 @@ class HackerNewsStoryAPI:
                 story['domain'] = i.find_all("span")[0].text
                 story['domain'] = re.search(r'\(([^)]*)\)', story['domain']).group(1) # Remove brackets from domain
             except:
-                story['domain'] = "https://news.ycombinator.com"
+                story['domain'] = "news.ycombinator.com"
 
             if 'point' in m.text:
                 story_time = re.search(r'by \S+ (\d+.*?)\s+\|', m.text).group(1) + ' '

@@ -84,6 +84,10 @@ class HackerNewsCommentAPI:
             textEnd = body[0].find('</font>')
             if (comment['text'] == None):
                 comment['text'] = body[0][textStart:textEnd]
+                comment['text'] = comment['text'].replace('rel="nofollow"', '')
+                comment['text'] = comment['text'].replace('<p>', '\n') # Replace unclosed <p>'s with new lines
+                comment['text'] = comment['text'].replace('</p>', '') # Remove the crap BS4 adds
+
             comments.append(comment)
             endTime = time.time()
             print("Time to parse 1 comment: ", endTime - startTime)

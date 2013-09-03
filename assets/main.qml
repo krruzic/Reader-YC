@@ -191,6 +191,7 @@ TabbedPane {
     }
     onActiveTabChanged: {
         userPage.searchVisible = false;
+        userPage.playAnim();
         if (activeTab == favouritesTab) {
             console.log("Loading favourites")
             Tart.send('loadFavourites', {

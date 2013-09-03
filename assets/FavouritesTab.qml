@@ -30,7 +30,6 @@ NavigationPane {
         var stories = data.list
         for (var i = 0; i < stories.length; i ++) {
             var story = stories[i];
-            console.log(story);
             favouritesModel.append({
                     type: 'item',
                     title: story[0],
@@ -82,7 +81,7 @@ NavigationPane {
 
                 }
                 Label {
-                    text: "<b><span style='color:#fe8515'>Nothing to see here,</span></b>\nTry favouriting a story!"
+                    text: "<b><span style='color:#fe8515'>Nothing to see here</span></b>\nTry favouriting a story!"
                     textStyle.fontSize: FontSize.PointValue
                     textStyle.textAlign: TextAlign.Center
                     textStyle.fontSizeValue: 9
