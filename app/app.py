@@ -66,7 +66,6 @@ class App(tart.Application):
         try:
             stories, moreLink = HS.getPage("https://news.ycombinator.com/" + source)
         except IOError as e:
-            print(e.reason)
             tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!")
             return
         except IndexError as e:
@@ -94,7 +93,8 @@ class App(tart.Application):
         source = source.strip() # strips leading and trailing whitespaces
         source = source.split(' ', 1)[0] # Takes just the first word passed
         try:
-            detailList = HU.getUserPage("http://news.ycombinator.com/user?id=" + source)
+            detailList = HU.getUserPage(source)
+            print(detailList)
             if (detailList != []):
                 tart.send('userInfoReceived', details=detailList)
         except IOError as e:

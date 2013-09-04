@@ -33,17 +33,17 @@ TabbedPane {
                     activeTab.push(np)
                     Application.menuEnabled = false;
                 }
-            },
-            ActionItem {
-                imageSource: "asset:///images/icons/ic_profile.png"
-                title: "Login"
-                enabled: false
-                onTriggered: {
-                    var np = loginPage.createObject(activeTab.content);
-                    activeTab.push(np)
-                    Application.menuEnabled = false;
-                }
             }
+//            ActionItem {
+//                imageSource: "asset:///images/icons/ic_profile.png"
+//                title: "Login"
+//                enabled: false
+//                onTriggered: {
+//                    var np = loginPage.createObject(activeTab.content);
+//                    activeTab.push(np)
+//                    Application.menuEnabled = false;
+//                }
+//            }
         ]
     }
 

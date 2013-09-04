@@ -4,67 +4,45 @@ import "tart.js" as Tart
 SceneCover {
     attachedObjects: [
         ImagePaintDefinition {
-            id: background
+            id: header
             imageSource: "asset:///images/titlebar.png"
+        },
+        ImagePaintDefinition {
+            id: background
+            imageSource: "asset:///images/coverBackgroundSmall.png"
         }
     ]
 
     id: cover
 
     content: Container {
-        Container {
-            topMargin: 20
-            bottomMargin: 20
-            layout: DockLayout {
-            }
-            minHeight: 56
-            maxHeight: 56
-            background: background.imagePaint
-            Container {
-                topPadding: 10
-                leftPadding: 10
-                rightPadding: 20
-                layout: StackLayout {
-                    orientation: LayoutOrientation.LeftToRight
-                }
-                Container {
-                    layoutProperties: StackLayoutProperties {
-                        spaceQuota: 5
-                    }
-                    horizontalAlignment: horizontalAlignment.Left
-                    Label {
-                        id: pageTitle
-                        text: "Reader|YC"
-                        textStyle.fontSize: FontSize.PointValue
-                        textStyle.textAlign: TextAlign.Left
-                        textStyle.color: Color.White
-                        textFormat: TextFormat.Plain
-                        enabled: false
-                        textStyle.fontSizeValue: 6.0
-                    }
-                }
-            }
+        background: background.imagePaint
+        minHeight: 211
+        minWidth: 310
+        maxHeight: 211
+        maxWidth: 310
+        layout: StackLayout {
+
         }
         Container {
-            topMargin: 10
-            bottomMargin: 10
             leftPadding: 10
             rightPadding: 10
-            verticalAlignment: VerticalAlignment.Center
-            horizontalAlignment: HorizontalAlignment.Center
+            topPadding: 20
+            minWidth: 314
+            horizontalAlignment: horizontalAlignment.Center
+            verticalAlignment: verticalAlignment.Center
             Label {
                 id: titleLabel
+                minWidth: 290
                 text: root.coverTitle
-                verticalAlignment: VerticalAlignment.Top
-                horizontalAlignment: HorizontalAlignment.Center
                 textStyle.fontSize: FontSize.PointValue
-                textStyle.textAlign: TextAlign.Center
-                textStyle.color: Color.DarkGray
+                textStyle.textAlign: TextAlign.Left
+                textStyle.color: Color.White
                 textFormat: TextFormat.Plain
                 textStyle.fontStyle: FontStyle.Italic
                 multiline: true
-                textStyle.fontSizeValue: 7.0
-                autoSize.maxLineCount: 2
+                textStyle.fontSizeValue: 6.0
+                autoSize.maxLineCount: 3
             }
         }
     }

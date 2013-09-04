@@ -57,11 +57,11 @@ NOTE: The bars will be placed in the bin directory after being built.
 * icons, ICONS EVERYWHERE
 * View about/help pages, email the dev (me)
 * Comment Caching, YAY!
+* Active frame showing recent stories
+* Basic login
 
 
 ###Current Issues:
-* Commment page looks a little stupid...
-* You can push the swipedown pages infinitely
 
 
 ###Coming Feature roadmap (dates are really guesses):
@@ -76,7 +76,7 @@ NOTE: The bars will be placed in the bin directory after being built.
     Collapsable comments, Searching for posts and comments ETA: End of Summer
 
 * Logging in and upvoting/commenting V2.0
-	ETA: Probably never, but I do hope to add this
+	ETA: Probably never, but I do hope to add this EDIT: IT'S ALMOST DONE!!
 
 ###Thanks:
     Huge thanks to all the developers of The BBPY project (Peter Hansen, Xitij Ritesh Patel, etc.) and special thanks to  Jerónimo Barraco for helping with the comment API.

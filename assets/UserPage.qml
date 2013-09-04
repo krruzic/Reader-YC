@@ -43,18 +43,14 @@ Page {
             refreshEnabled: true
             buttonImage: "asset:///images/search.png"
             buttonPressedImage: "asset:///images/search.png"
-            onRefreshPage: {
-                searchField.visible = true;
-                slideSearch.play();
-            }
         }
         Container {
             topPadding: 10
             leftPadding: 19
             rightPadding: 19
             TextField {
-                visible: false
-                objectName: "searchField"
+                visible: true
+                id: searchField
                 textStyle.color: Color.create("#262626")
                 textStyle.fontSize: FontSize.Medium
                 horizontalAlignment: HorizontalAlignment.Fill
@@ -72,7 +68,6 @@ Page {
 
                 }
                 hintText: qsTr("Search users (case sensitive)")
-                id: searchField
                 input.onSubmitted: {
                     errorLabel.visible = false;
                     loading.visible = true;
@@ -82,14 +77,6 @@ Page {
                             sentBy: 'userPage'
                         });
                 }
-                animations: [
-                    TranslateTransition {
-                        id: slideSearch
-                        target: searchField
-                        fromX: -600.0
-                        toX: 0.0
-                    }
-                ]
             }
 
             Container {
@@ -102,7 +89,7 @@ Page {
                         minHeight: 300
                         minWidth: 300
                         running: true
-                        visible: false
+                        visible: true
                     }
                 }
             }
@@ -178,12 +165,14 @@ Page {
                     }
                 }
                 Container {
-                    Label {
+                    TextArea {
+                        editable: false
                         textFormat: textFormat.Html
                         text: " Submitted: " + submitted
                         textStyle.fontSize: FontSize.XSmall
                     }
-                    Label {
+                    TextArea {
+                        editable: false
                         textFormat: textFormat.Html
                         text: " Comments: " + comments
                         textStyle.fontSize: FontSize.XSmall
