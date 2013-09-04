@@ -20,7 +20,7 @@ class HackerNewsUserAPI:
         """Looks through the user page source,
            and returns the account details
         """
-        source = self.getSource(source)
+        source = self.getSource("http://news.ycombinator.com/user?id=" + source)
         if (source.decode('ascii') == "No such user."):
             tart.send('userError', text="<b><span style='color:#fe8515'>That user doesn't exist</span></b>\nUsernames are case sensitive!")
             return []
@@ -49,6 +49,6 @@ class HackerNewsUserAPI:
             else: # The other two are links to the user's comments and submissions
                 start = str(item).find('="') + 2
                 end = str(item).find('><u', start) - 1
-                result = "<a href='http://news.ycombinator.com/{0}'</a>".format(str(item)[start:end])
+                result = 'https://news.ycombinator.com/{0}'.format(str(item)[start:end])
                 results.append(result)
         return results

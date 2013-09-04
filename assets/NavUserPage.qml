@@ -187,16 +187,18 @@ NavigationPane {
                         }
                     }
                     Container {
-                        Label {
+                        TextArea {
+                            editable: false
                             textFormat: textFormat.Html
                             text: " Submitted: " + submitted
                             textStyle.fontSize: FontSize.XSmall
                         }
-                        Label {
+                        TextArea {
+                            editable: false
                             textFormat: textFormat.Html
                             text: " Comments: " + comments
                             textStyle.fontSize: FontSize.XSmall
-
+                        
                         }
                     }
                     attachedObjects: [
