@@ -33,8 +33,8 @@ class HackerNewsCommentAPI:
         textEnd = source.find('</font', textStart)
         text = source[textStart:textEnd]
 
-        # for i in range(len(linksFound)):
-        #     text = re.sub('<[^<]+?>.*<[^<]+?>', linksFound[i], text) # replaces href tags with the full links
+        for i in range(len(linksFound)):
+            text = re.sub('<[^<]+?>.*<[^<]+?>', linksFound[i], text) # replaces href tags with the full links
         if text == '">[deleted]</span': # deleted comment signature
             text = '[deleted]'
         return text

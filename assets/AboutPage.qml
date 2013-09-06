@@ -6,9 +6,6 @@ Page {
             id: aboutTitleBar
             text: "Reader|YC - About"
             showButton: false
-            onRefreshPage: {
-                aboutSheet.close();
-            }
         }
         ScrollView {
 

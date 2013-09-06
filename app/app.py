@@ -20,7 +20,16 @@ class App(tart.Application):
     """
     bbm = False
     conn = sqlite3.connect("data/favourites.db")
+    SETTINGS_FILE = 'data/settings.state'
 
+
+    def __init__(self):
+        super().__init__(debug=True)   # set True for some extra debug output
+        self.settings = {
+            'openInBrowser': "false"
+        }
+        self.restore_data(self.settings, self.SETTINGS_FILE)
+        print("restored: ", self.settings)
 
     def onUiReady(self):
         print("UI READY!!")
@@ -29,6 +38,10 @@ class App(tart.Application):
         #readCursor.execute("CREATE TABLE IF NOT EXISTS readTable (link text PRIMARY KEY)")
         # self.onRequestPage("Ask HN", "askPage")
         # self.onRequestPage("Newest Posts", "newestPage")
+
+    def onChangeSetting(self, setting):
+        self.settings.update(setting)
+        self.save_data(self.settings, self.SETTINGS_FILE)
 
     def onRequestPage(self, source, sentBy, askPost="false", deleteComments="false", startIndex=0):
         t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost, deleteComments))
@@ -65,10 +78,10 @@ class App(tart.Application):
             source = source[1:]
         try:
             stories, moreLink = HS.getPage("https://news.ycombinator.com/" + source)
-        except IOError as e:
+        except IOError:
             tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!")
             return
-        except IndexError as e:
+        except IndexError:
             print("Expired link?")
             tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#fe8515'>Link expired</span></b>\nPlease refresh the page")
             return
@@ -83,9 +96,11 @@ class App(tart.Application):
         print("source sent:" + source)
         try:
             HC.getPage(source, askPost, deleteComments)
-        except IOError as e:
-            tart.send('commentError', text="<b><span style='color:#fe8515'>Error getting comments</span></b>\nCheck your connection and try again!")
-            tart.send('addText', text='')
+        except IOError:
+            print("ERROR GETTING COMMENTS")
+            tart.send('addText', text='', hnid=source)
+            tart.send('commentError', text="<b><span style='color:#fe8515'>Error getting comments</span></b>\nCheck your connection and try again!", hnid=source)
+
 
     def user_routine(self, source):
         print("source sent: " + source)
@@ -97,14 +112,14 @@ class App(tart.Application):
             print(detailList)
             if (detailList != []):
                 tart.send('userInfoReceived', details=detailList)
-        except IOError as e:
+        except IOError:
             tart.send('userError', text="<b><span style='color:#fe8515'>Error getting User page</span></b>\nCheck your connection and try again!")
 
     def search_routine(self, startIndex, source):
         print("Searching for: " + source)
         try:
             HQ.getResults(startIndex, source)
-        except IOError as e:
+        except IOError:
             tart.send('searchError', text="<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!")
 
     def onRequestLogin(self, username, password):

@@ -19,8 +19,8 @@ TabbedPane {
                 title: "About"
 
                 onTriggered: {
-                    var np = aboutPage.createObject(activeTab.content);
-                    activeTab.push(np)
+                    var page = aboutPage.createObject(activeTab.content);
+                    activeTab.push(page)
                     Application.menuEnabled = false;
                 }
             },
@@ -29,21 +29,20 @@ TabbedPane {
                 title: "Help"
 
                 onTriggered: {
-                    var np = helpPage.createObject(activeTab.content);
-                    activeTab.push(np)
+                    var page = helpPage.createObject(activeTab.content);
+                    activeTab.push(page)
+                    Application.menuEnabled = false;
+                }
+            },
+            ActionItem {
+                title: "Settings"
+
+                onTriggered: {
+                    var page = settingsPage.createObject(activeTab.content);
+                    activeTab.push(page)
                     Application.menuEnabled = false;
                 }
             }
-//            ActionItem {
-//                imageSource: "asset:///images/icons/ic_profile.png"
-//                title: "Login"
-//                enabled: false
-//                onTriggered: {
-//                    var np = loginPage.createObject(activeTab.content);
-//                    activeTab.push(np)
-//                    Application.menuEnabled = false;
-//                }
-//            }
         ]
     }
 
@@ -262,22 +261,19 @@ TabbedPane {
     attachedObjects: [
         ComponentDefinition {
             id: aboutPage
-            AboutPage {
-            }
+            source: "asset:///AboutPage.qml"
         },
         ComponentDefinition {
             id: helpPage
-            HelpPage {
-            }
+            source: "asset:///HelpPage.qml"
         },
         ComponentDefinition {
             id: appCover
             source: "asset:///AppCover.qml"
         },
         ComponentDefinition {
-            id: loginPage
-            LoginPage {
-            }
+            id: settingsPage
+            source: "asset:///SettingsPage.qml"
         },
         QTimer {
             id: switchTimer

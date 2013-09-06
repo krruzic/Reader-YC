@@ -30,6 +30,7 @@ NavigationPane {
         searchField.enabled = true;
         errorLabel.visible = false;
         var story = data.story;
+        console.log(story[7]);
         searchModel.append({
                 type: 'item',
                 title: story[0],
