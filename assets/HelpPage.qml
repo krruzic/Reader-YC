@@ -3,12 +3,9 @@ import bb.cascades 1.0
 Page {
     Container {
         HNTitleBar {
-            id: aboutTitleBar
+            id: helpTitleBar
             text: "Reader|YC - Help"
             showButton: false
-            onRefreshPage: {
-                aboutSheet.close();
-            }
         }
         Container {
             layout: StackLayout {
