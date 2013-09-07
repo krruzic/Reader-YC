@@ -245,6 +245,8 @@ NavigationPane {
                         var selectedItem = dataModel.data(indexPath);
                         if (settings.openInBrowser == true) {
                             // will auto-invoke after re-arming
+                            console.log("OPENING IN BROWSER");
+                            linkInvocation.query.uri = "";
                             linkInvocation.query.uri = selectedItem.articleURL;
                             return;
                         }
@@ -294,7 +296,9 @@ NavigationPane {
                         uri: "http://peterhansen.ca"
 
                         onUriChanged: {
-                            linkInvocation.query.updateQuery();
+                            if (uri != "") {
+                                linkInvocation.query.updateQuery();
+                            }
                         }
                     }
 
