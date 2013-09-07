@@ -106,7 +106,6 @@ NavigationPane {
                         ListItemComponent {
                             type: ''
                             SavedItem {
-                                id: hnItem
                                 property string type: ListItemData.type
                                 postComments: ListItemData.commentCount
                                 postTitle: ListItemData.title
@@ -118,10 +117,35 @@ NavigationPane {
                                 commentSource: ListItemData.commentsURL
                                 commentID: ListItemData.hnid
                             }
+                            function openComments(ListItemData) {
+                                var page = commentPage.createObject();
+                                console.log(ListItemData.commentsURL)
+                                page.commentLink = ListItemData.hnid;
+                                page.title = ListItemData.title;
+                                page.titlePoster = ListItemData.poster;
+                                page.titleTime = ListItemData.timePosted + "| " + ListItemData.points
+                                page.isAsk = ListItemData.isAsk;
+                                page.articleLink = ListItemData.articleURL;
+                                page.titleComments = ListItemData.commentCount;
+                                page.titlePoints = ListItemData.points
+                                favouritesPage.push(page);
+                            }
+                            function openArticle(ListItemData) {
+                                var page = webPage.createObject();
+                                page.htmlContent = selectedItem.articleURL;
+                                page.text = selectedItem.title;
+                                favouritesPage.push(page);
+                            }
+
                         }
                     ]
                     onTriggered: {
                         var selectedItem = dataModel.data(indexPath);
+                        if (settings.openInBrowser == true) {
+                            browserInvocation.query.uri = selectedItem.articleURL;
+                            browserInvocation.trigger(browserInvocation.query.invokeActionId);
+                            return;
+                        }
                         console.log(selectedItem.isAsk);
                         if (selectedItem.isAsk == "true" && selectedItem.hnid != '-1') {
                             console.log("Ask post");
@@ -147,16 +171,20 @@ NavigationPane {
                             page.text = selectedItem.title;
                         }
                     }
-                    function pushPage(pageToPush) {
-                        console.log(pageToPush)
-                        var page = eval(pageToPush).createObject();
-                        favouritesPage.push(page);
-                        return page;
-                    }
                 }
             }
         }
         attachedObjects: [
+            Invocation {
+                id: browserInvocation
+                query.mimeType: "text/plain"
+                query.invokeTargetId: "sys.browser"
+                query.invokeActionId: "bb.action.OPEN"
+                query.uri: ""
+                query.onQueryChanged: {
+                    browserInvocation.query.updateQuery();
+                }
+            },
             ComponentDefinition {
                 id: webPage
                 source: "webArticle.qml"

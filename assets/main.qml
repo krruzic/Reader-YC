@@ -12,6 +12,8 @@ TabbedPane {
     property string coverTime: ""
     property int currStory: 0
 
+    signal settingsChanged()
+
     Menu.definition: MenuDefinition {
         actions: [
             ActionItem {
@@ -258,6 +260,22 @@ TabbedPane {
 
     }
 
+    function onRestoreSettings(data) {
+        settings.restore(data);
+    }
+    
+    onSettingsChanged: {
+        var data = {
+            openInBrowser: settings.openInBrowser
+        };
+
+        Tart.send('saveSettings', {
+                settings: data
+            });
+    }
+    
+    
+
     attachedObjects: [
         ComponentDefinition {
             id: aboutPage
@@ -293,6 +311,23 @@ TabbedPane {
                     }
                 } else {
                     coverTitle = "No recent stories...";
+                }
+            }
+        },
+        QtObject {
+            id: settings
+
+            property bool openInBrowser: false
+
+            onOpenInBrowserChanged: {
+                settingsChanged();
+            }
+
+            function restore(data) {
+                print('restoring', Object.keys(data));
+                if (data.openInBrowser != null) {
+                    print('openInBrowser =', data.openInBrowser);
+                    openInBrowser = data.openInBrowser;
                 }
             }
         }
