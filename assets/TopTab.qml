@@ -39,7 +39,7 @@ NavigationPane {
         morePage = data.moreLink;
         errorLabel.visible = false;
         var lastItem = theModel.size() - 1
-        console.log("LAST ITEM: " + lastItemType);
+        //console.log("LAST ITEM: " + lastItemType);
         if (lastItemType == 'error') {
             theModel.removeAt(lastItem)
         }
@@ -55,7 +55,7 @@ NavigationPane {
                 commentsURL: data.story['commentURL'],
                 hnid: data.story['hnid'],
                 isAsk: data.story['askPost']
-        });
+            });
         busy = false;
         loading.visible = false;
         titleBar.refreshEnabled = ! busy;
@@ -65,14 +65,14 @@ NavigationPane {
         lastItemType = 'error'
         if (theModel.isEmpty() != true) {
             var lastItem = theModel.size() - 1
-            console.log(lastItemType);
+            //console.log(lastItemType);
             if (lastItemType == 'error') {
                 theModel.removeAt(lastItem)
             }
             theModel.append({
                     type: 'error',
                     title: data.text
-            });
+                });
         } else {
             errorLabel.text = data.text
             errorLabel.visible = true;
@@ -199,6 +199,27 @@ NavigationPane {
                                 commentSource: ListItemData.commentsURL
                                 commentID: ListItemData.hnid
                             }
+                            function openComments(ListItemData) {
+                                var page = commentPage.createObject();
+                                //console.log(ListItemData.commentsURL)
+                                page.commentLink = ListItemData.hnid;
+                                page.title = ListItemData.title;
+                                page.titlePoster = ListItemData.poster;
+                                page.titleTime = ListItemData.timePosted + "| " + ListItemData.points;
+                                page.titleDomain = ListItemData.domain;
+                                page.isAsk = ListItemData.isAsk;
+                                page.articleLink = ListItemData.articleURL;
+                                page.titleComments = ListItemData.commentCount;
+                                page.titlePoints = ListItemData.points;
+                                topPage.push(page);
+                            }
+                            function openArticle(ListItemData) {
+                                var page = webPage.createObject();
+                                page.htmlContent = selectedItem.articleURL;
+                                page.text = selectedItem.title;
+                                topPage.push(page);
+                            }
+
                         },
                         ListItemComponent {
                             type: 'error'
@@ -220,7 +241,13 @@ NavigationPane {
                         if (dataModel.data(indexPath).type == 'error') {
                             return;
                         }
+
                         var selectedItem = dataModel.data(indexPath);
+                        if (settings.openInBrowser == true) {
+                            // will auto-invoke after re-arming
+                            linkInvocation.query.uri = selectedItem.articleURL;
+                            return;
+                        }
                         console.log(selectedItem.isAsk);
                         if (selectedItem.isAsk == "true" && selectedItem.hnid != '-1') {
                             console.log("Ask post");
@@ -235,18 +262,12 @@ NavigationPane {
                             page.articleLink = selectedItem.articleURL;
                             page.titleComments = selectedItem.commentCount;
                             page.titlePoints = selectedItem.points
-//                            Tart.send('requestPage', {
-//                                    source: selectedItem.hnid,
-//                                    sentBy: 'commentPage',
-//                                    askPost: selectedItem.isAsk,
-//                                    deleteComments: "false"
-//                                });
                         } else {
                             console.log('Item triggered. ' + selectedItem.articleURL);
                             var page = webPage.createObject();
-                            topPage.push(page);
                             page.htmlContent = selectedItem.articleURL;
                             page.text = selectedItem.title;
+                            topPage.push(page);
                         }
                     }
                     attachedObjects: [
@@ -263,18 +284,30 @@ NavigationPane {
                             }
                         }
                     ]
-                    function pushPage(pageToPush) {
-                        console.log(pageToPush)
-                        var page = eval(pageToPush).createObject();
-                        topPage.push(page);
-                        return page;
-                    }
                 }
             }
             attachedObjects: [
-                ApplicationInfo {
-                    id: appInfo
+                Invocation {
+                    id: linkInvocation
+                    property bool auto_trigger: false
+                    query {
+                        uri: "http://peterhansen.ca"
+
+                        onUriChanged: {
+                            linkInvocation.query.updateQuery();
+                        }
+                    }
+
+                    onArmed: {
+                        // don't auto-trigger on initial setup
+                        if (auto_trigger)
+                            trigger("bb.action.OPEN");
+                        auto_trigger = true; // allow re-arming to auto-trigger
+                    }
                 },
+                //                ApplicationInfo {
+                //                    id: appInfo
+                //                },
                 ComponentDefinition {
                     id: webPage
                     source: "webArticle.qml"

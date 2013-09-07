@@ -13,7 +13,6 @@ Container {
     property alias postDomain: labelPostDomain.text
     property alias postUsername: labelUsername.text
     property alias postTime: labelTimePosted.text
-    property variant selectedItem: hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath)
     //property variant backgroundVar: unreadBackground.imagePaint
 
     onCreationCompleted: {
@@ -26,41 +25,23 @@ Container {
             ActionItem {
                 imageSource: "asset:///images/icons/ic_comments.png"
                 title: "Open Comments"
-                enabled: if (hnPage.selectedItem.hnid != '-1') {
+                enabled: if (ListItemData.hnid != '-1') {
                     true
                 }
                 onTriggered: {
                     console.log("Pushing comments page");
-                    var page = hnItem.ListItem.view.pushPage('commentPage');
-                    page.title = hnPage.selectedItem.title;
-                    page.titlePoster = hnPage.selectedItem.poster;
-                    page.titleTime = hnPage.selectedItem.timePosted + "| " + hnPage.selectedItem.points;
-                    page.titleDomain = hnPage.selectedItem.domain;
-                    page.commentLink = hnPage.selectedItem.hnid;
-                    page.articleLink = hnPage.selectedItem.articleURL;
-                    page.isAsk = hnPage.selectedItem.isAsk;
-                    page.titleComments = hnPage.selectedItem.commentCount;
-                    page.titlePoints = hnPage.selectedItem.points;
-                    //                    Tart.send('requestPage', {
-                    //                            source: hnPage.selectedItem.hnid,
-                    //                            sentBy: 'commentPage',
-                    //                            askPost: hnPage.selectedItem.isAsk,
-                    //                            deleteComments: "False"
-                    //                        });
+                    hnPage.ListItem.component.openComments(ListItemData);
                 }
             }
             ActionItem {
                 title: "View Article"
                 imageSource: "asset:///images/icons/ic_article.png"
-                enabled: if (hnPage.selectedItem.articleURL != '') {
+                enabled: if (ListItemData.articleURL != '') {
                     true
                 }
                 onTriggered: {
                     console.log("Pushing Article page");
-                    console.log(selectedItem.title);
-                    var page = hnItem.ListItem.view.pushPage('webPage');
-                    page.text = hnPage.selectedItem.title;
-                    page.htmlContent = selectedItem.articleURL;
+                    hnPage.ListItem.component.openArticle(ListItemData);
                 }
             }
             InvokeActionItem {
@@ -71,7 +52,7 @@ Container {
                     invokeActionId: "bb.action.SHARE"
                 }
                 onTriggered: {
-                    data = hnPage.selectedItem.title + "\n" + hnPage.selectedItem.articleURL + "\nShared using Reader|YC "
+                    data = ListItemData.title + "\n" + ListItemData.articleURL + "\nShared using Reader|YC "
                 }
             }
             InvokeActionItem {
@@ -81,7 +62,7 @@ Container {
                 id: browserQuery
                 //query.mimeType: "text/plain"
                 query.invokeActionId: "bb.action.OPEN"
-                query.uri: hnPage.selectedItem.articleURL
+                query.uri: ListItemData.articleURL
                 query.invokeTargetId:  "sys.browser"
                 query.onQueryChanged: {
                     browserQuery.query.updateQuery();
@@ -93,9 +74,9 @@ Container {
                 onTriggered: {
                     var date = new Date();
                     var formattedDate = Qt.formatDateTime(date, "dd-MM-yyyy"); //to format date
-                    var articleDetails = [ hnPage.selectedItem.title, hnPage.selectedItem.articleURL, String(formattedDate),
-                        hnPage.selectedItem.poster, hnPage.selectedItem.commentCount, hnPage.selectedItem.isAsk,
-                        hnPage.selectedItem.domain, hnPage.selectedItem.points, hnPage.selectedItem.hnid ];
+                    var articleDetails = [ ListItemData.title, ListItemData.articleURL, String(formattedDate),
+                        ListItemData.poster, ListItemData.commentCount, ListItemData.isAsk,
+                        ListItemData.domain, ListItemData.points, ListItemData.hnid ];
 
                     Tart.send('saveArticle', {
                             article: articleDetails
@@ -107,7 +88,7 @@ Container {
                 imageSource: "asset:///images/icons/ic_copy_link.png"
                 onTriggered: {
                     Tart.send('copyLink', {
-                            articleLink: hnPage.selectedItem.articleURL
+                            articleLink: ListItemData.articleURL
                         });
                 }
             }

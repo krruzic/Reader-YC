@@ -38,7 +38,7 @@ NavigationPane {
         morePage = data.moreLink;
         errorLabel.visible = false;
         var lastItem = theModel.size() - 1
-        console.log("LAST ITEM: " + lastItemType);
+        //console.log("LAST ITEM: " + lastItemType);
         if (lastItemType == 'error') {
             theModel.removeAt(lastItem)
         }
@@ -64,7 +64,7 @@ NavigationPane {
         lastItemType = 'error'
         if (theModel.isEmpty() != true) {
             var lastItem = theModel.size() - 1
-            console.log(lastItemType);
+            //console.log(lastItemType);
             if (lastItemType == 'error') {
                 theModel.removeAt(lastItem)
             }
@@ -186,7 +186,6 @@ NavigationPane {
                         ListItemComponent {
                             type: 'item'
                             HNPage {
-                                id: hnItem
                                 property string type: ListItemData.type
                                 postComments: ListItemData.commentCount
                                 postTitle: ListItemData.title
@@ -198,6 +197,26 @@ NavigationPane {
                                 commentSource: ListItemData.commentsURL
                                 commentID: ListItemData.hnid
                             }
+                            function openComments(ListItemData) {
+                                var page = commentPage.createObject();
+                                console.log(ListItemData.commentsURL)
+                                page.commentLink = ListItemData.hnid;
+                                page.title = ListItemData.title;
+                                page.titlePoster = ListItemData.poster;
+                                page.titleTime = ListItemData.timePosted + "| " + ListItemData.points
+                                page.isAsk = ListItemData.isAsk;
+                                page.articleLink = ListItemData.articleURL;
+                                page.titleComments = ListItemData.commentCount;
+                                page.titlePoints = ListItemData.points
+                                newPage.push(page);
+                            }
+                            function openArticle(ListItemData) {
+                                var page = webPage.createObject();
+                                page.htmlContent = selectedItem.articleURL;
+                                page.text = selectedItem.title;
+                                newPage.push(page);
+                            }
+
                         },
                         ListItemComponent {
                             type: 'error'
@@ -211,11 +230,15 @@ NavigationPane {
                             return;
                         }
                         var selectedItem = dataModel.data(indexPath);
+                        if (settings.openInBrowser == true) {
+                            browserInvocation.query.uri = selectedItem.articleURL;
+                            browserInvocation.trigger(browserInvocation.query.invokeActionId);
+                            return;
+                        }
                         console.log(selectedItem.isAsk);
                         if (selectedItem.isAsk == "true") {
                             console.log("Ask post");
                             var page = commentPage.createObject();
-                            newPage.push(page);
                             console.log(selectedItem.commentsURL)
                             page.commentLink = selectedItem.hnid;
                             page.title = selectedItem.title;
@@ -225,6 +248,7 @@ NavigationPane {
                             page.articleLink = selectedItem.articleURL;
                             page.titleComments = selectedItem.commentCount;
                             page.titlePoints = selectedItem.points
+                            newPage.push(page);
 //                            Tart.send('requestPage', {
 //                                    source: selectedItem.hnid,
 //                                    sentBy: 'commentPage',
@@ -234,9 +258,9 @@ NavigationPane {
                         } else {
                             console.log('Item triggered. ' + selectedItem.articleURL);
                             var page = webPage.createObject();
-                            newPage.push(page);
                             page.htmlContent = selectedItem.articleURL;
                             page.text = selectedItem.title;
+                            newPage.push(page);
                         }
                     }
                     attachedObjects: [
@@ -253,20 +277,21 @@ NavigationPane {
                             }
                         }
                     ]
-                    function pushPage(pageToPush) {
-                        console.log(pageToPush)
-                        var page = eval(pageToPush).createObject();
-                        //                    page.title = details[0];
-                        //                    page.titlePoster = details[1];
-                        //                    page.titleTime = details[2];
-                        newPage.push(page);
-                        return page;
-                    }
                 }
             }
         }
 
         attachedObjects: [
+            Invocation {
+                id: browserInvocation
+                query.mimeType: "text/plain"
+                query.invokeTargetId: "sys.browser"
+                query.invokeActionId: "bb.action.OPEN"
+                query.uri: "https://github.com/krruzic/Reader-YC/"
+                query.onQueryChanged: {
+                    browserInvocation.query.updateQuery();
+                }
+            },
             ApplicationInfo {
                 id: appInfo
             },

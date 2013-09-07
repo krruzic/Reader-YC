@@ -1,8 +1,8 @@
 import urllib.request, threading, sqlite3
-from .HNStoryAPI import HackerNewsStoryAPI
-from .HNCommentAPI import HackerNewsCommentAPI
-from .HNUserAPI import HackerNewsUserAPI
-from .HNSearchAPI import HackerNewsSearchAPI
+from .HNStoryAPI import getStoryPage
+from .HNCommentAPI import getCommentPage
+from .HNUserAPI import getUserPage
+from .HNSearchAPI import getSearchResults
 #from requests import session
 from bs4 import BeautifulSoup
 
@@ -10,10 +10,10 @@ from bs4 import BeautifulSoup
 import tart
 
 
-HS = HackerNewsStoryAPI()
-HC = HackerNewsCommentAPI()
-HU = HackerNewsUserAPI()
-HQ = HackerNewsSearchAPI()
+#HS = HackerNewsStoryAPI()
+#HC = HackerNewsCommentAPI()
+#HU = HackerNewsUserAPI()
+#HQ = HackerNewsSearchAPI()
 
 class App(tart.Application):
     """ The class that directly communicates with Tart and Cascades
@@ -24,23 +24,24 @@ class App(tart.Application):
 
 
     def __init__(self):
-        super().__init__(debug=True)   # set True for some extra debug output
+        super().__init__(debug=False)   # set True for some extra debug output
         self.settings = {
-            'openInBrowser': "false"
+            'openInBrowser': 'false'
         }
         self.restore_data(self.settings, self.SETTINGS_FILE)
         print("restored: ", self.settings)
 
     def onUiReady(self):
         print("UI READY!!")
+        tart.send('restoreSettings', **self.settings)
         self.onRequestPage("topPage", "topPage")
         #readCursor = sqlite3.connect("data/read.db")
         #readCursor.execute("CREATE TABLE IF NOT EXISTS readTable (link text PRIMARY KEY)")
         # self.onRequestPage("Ask HN", "askPage")
         # self.onRequestPage("Newest Posts", "newestPage")
 
-    def onChangeSetting(self, setting):
-        self.settings.update(setting)
+    def onSaveSettings(self, settings):
+        self.settings.update(settings)
         self.save_data(self.settings, self.SETTINGS_FILE)
 
     def onRequestPage(self, source, sentBy, askPost="false", deleteComments="false", startIndex=0):
@@ -77,7 +78,7 @@ class App(tart.Application):
         if source[0] == '/':
             source = source[1:]
         try:
-            stories, moreLink = HS.getPage("https://news.ycombinator.com/" + source)
+            stories, moreLink = getStoryPage("https://news.ycombinator.com/" + source)
         except IOError:
             tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!")
             return
@@ -95,7 +96,7 @@ class App(tart.Application):
     def comments_routine(self, source, askPost, deleteComments):
         print("source sent:" + source)
         try:
-            HC.getPage(source, askPost, deleteComments)
+            getCommentPage(source, askPost, deleteComments)
         except IOError:
             print("ERROR GETTING COMMENTS")
             tart.send('addText', text='', hnid=source)
@@ -108,7 +109,7 @@ class App(tart.Application):
         source = source.strip() # strips leading and trailing whitespaces
         source = source.split(' ', 1)[0] # Takes just the first word passed
         try:
-            detailList = HU.getUserPage(source)
+            detailList = getUserPage(source)
             print(detailList)
             if (detailList != []):
                 tart.send('userInfoReceived', details=detailList)
@@ -118,7 +119,7 @@ class App(tart.Application):
     def search_routine(self, startIndex, source):
         print("Searching for: " + source)
         try:
-            HQ.getResults(startIndex, source)
+            getSearchResults(startIndex, source)
         except IOError:
             tart.send('searchError', text="<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!")
 

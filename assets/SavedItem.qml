@@ -13,7 +13,6 @@ Container {
     property alias postDomain: labelPostDomain.text
     property alias postUsername: labelUsername.text
     property alias postTime: labelTimePosted.text
-    property variant selectedItem: hnItem.ListItem.view.dataModel.data(hnItem.ListItem.indexPath)
 
     onCreationCompleted: {
         Tart.register(saveItem)
@@ -30,23 +29,7 @@ Container {
                 }
                 onTriggered: {
                     console.log("Pushing comments page");
-                    console.log(saveItem.selectedItem.title);
-                    var page = hnItem.ListItem.view.pushPage('commentPage');
-                    page.title = saveItem.selectedItem.title;
-                    page.titlePoster = saveItem.selectedItem.poster;
-                    page.titleTime = "Saved on: " + saveItem.selectedItem.timePosted
-                    page.titleDomain = saveItem.selectedItem.domain;
-                    page.commentLink = saveItem.selectedItem.hnid;
-                    page.articleLink = saveItem.selectedItem.articleURL;
-                    page.isAsk = saveItem.selectedItem.isAsk;
-                    page.titleComments = saveItem.selectedItem.commentCount;
-                    page.titlePoints = saveItem.selectedItem.points;
-//                    Tart.send('requestPage', {
-//                            source: saveItem.selectedItem.hnid,
-//                            sentBy: 'commentPage',
-//                            askPost: saveItem.selectedItem.isAsk,
-//                            deleteComments: "False"
-//                        });
+                    saveItem.ListItem.component.openComments(ListItemData);
                 }
             }
             ActionItem {
@@ -57,10 +40,7 @@ Container {
                 }
                 onTriggered: {
                     console.log("Pushing Article page");
-                    console.log(selectedItem.title);
-                    var page = hnItem.ListItem.view.pushPage('webPage');
-                    page.text = saveItem.selectedItem.title;
-                    page.htmlContent = selectedItem.articleURL;
+                    saveItem.ListItem.component.openArticle(ListItemData);
                 }
             }
             InvokeActionItem {
@@ -82,7 +62,7 @@ Container {
                 //query.mimeType: "text/plain"
                 query.invokeActionId: "bb.action.OPEN"
                 query.uri: saveItem.selectedItem.articleURL
-                query.invokeTargetId:  "sys.browser"
+                query.invokeTargetId: "sys.browser"
                 query.onQueryChanged: {
                     browserQuery.query.updateQuery();
                 }

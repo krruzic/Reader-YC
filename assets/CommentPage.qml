@@ -24,14 +24,20 @@ Page {
     }
 
     function onCommentError(data) {
-        if (commentLink == data.hnid) {
+        if (commentLink == data.hnid && commentModel.size() <= 1) {
             commentList.visible = true;
             busy = false;
             titleBar.refreshEnabled = true;
+            var lastItem = commentModel.size() - 1
+            console.log(lastItemType);
+            if (lastItemType == 'error') {
+                commentModel.removeAt(lastItem)
+            }
             commentModel.append({
                     type: 'error',
                     title: data.text
                 });
+            lastItemType = 'error';
         }
     }
 
@@ -48,6 +54,7 @@ Page {
                     articleTime: commentPane.titleTime,
                     text: data.text
                 });
+            lastItemType = 'header';
         }
     }
 
@@ -61,6 +68,7 @@ Page {
                     text: data.comment["text"],
                     link: "https://news.ycombinator.com/item?id=" + data.comment["link"]
                 });
+            lastItemType = 'item';
         }
     }
 
@@ -83,9 +91,9 @@ Page {
             onTriggered: {
                 console.log(articleLink);
                 var page = webPage.createObject();
-                root.activePane.push(page);
                 page.htmlContent = articleLink;
                 page.text = commentPane.title;
+                root.activePane.push(page);
             }
         },
         InvokeActionItem {
@@ -96,7 +104,7 @@ Page {
             //query.mimeType: "text/plain"
             query.invokeActionId: "bb.action.OPEN"
             query.uri: "https://news.ycombinator.com/item?id=" + commentPane.commentLink
-            query.invokeTargetId:  "sys.browser"
+            query.invokeTargetId: "sys.browser"
             query.onQueryChanged: {
                 browserQuery.query.updateQuery();
             }
@@ -107,13 +115,13 @@ Page {
             onTriggered: {
                 var date = new Date();
                 var formattedDate = Qt.formatDateTime(date, "dd-MM-yyyy"); //to format date
-                var articleDetails = [ commentPane.title, commentPane.articleLink, String(formattedDate),
-                    commentPane.titlePoster, commentPane.titleComments, commentPane.isAsk,
-                    commentPane.titleDomain, commentPane.titlePoints, commentPane.commentLink ];
-                
+                var articleDetails = [ commentPane.title, commentPane.articleLink, String(formattedDate), commentPane.titlePoster,
+                    commentPane.titleComments, commentPane.isAsk, commentPane.titleDomain, commentPane.titlePoints,
+                    commentPane.commentLink ];
+
                 Tart.send('saveArticle', {
                         article: articleDetails
-                });
+                    });
             }
         }
     ]

@@ -193,7 +193,6 @@ NavigationPane {
                             ListItemComponent {
                                 type: 'item'
                                 HNPage {
-                                    id: hnItem
                                     property string type: ListItemData.type
                                     postComments: ListItemData.commentCount
                                     postTitle: ListItemData.title
@@ -205,6 +204,25 @@ NavigationPane {
                                     commentSource: ListItemData.commentsURL
                                     commentID: ListItemData.hnid
                                 }
+                                function openComments(ListItemData) {
+                                    var page = commentPage.createObject();
+                                    console.log(ListItemData.commentsURL)
+                                    page.commentLink = ListItemData.hnid;
+                                    page.title = ListItemData.title;
+                                    page.titlePoster = ListItemData.poster;
+                                    page.titleTime = ListItemData.timePosted + "| " + ListItemData.points
+                                    page.isAsk = ListItemData.isAsk;
+                                    page.articleLink = ListItemData.articleURL;
+                                    page.titleComments = ListItemData.commentCount;
+                                    page.titlePoints = ListItemData.points
+                                    searchPage.push(page);
+                                }
+                                function openArticle(ListItemData) {
+                                    var page = webPage.createObject();
+                                    page.htmlContent = selectedItem.articleURL;
+                                    page.text = selectedItem.title;
+                                    searchPage.push(page);
+                                }
                             },
                             ListItemComponent {
                                 type: 'error'
@@ -215,11 +233,15 @@ NavigationPane {
                         ]
                         onTriggered: {
                             var selectedItem = dataModel.data(indexPath);
+                            if (settings.openInBrowser == true) {
+                                browserInvocation.query.uri = selectedItem.articleURL;
+                                browserInvocation.trigger(browserInvocation.query.invokeActionId);
+                                return;
+                            }
                             console.log(selectedItem.isAsk);
                             if (selectedItem.isAsk == "true") {
                                 console.log("Ask post");
                                 var page = commentPage.createObject();
-                                searchPage.push(page);
                                 console.log(selectedItem.commentsURL)
                                 page.commentLink = selectedItem.hnid;
                                 page.title = selectedItem.title;
@@ -227,6 +249,7 @@ NavigationPane {
                                 page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
                                 page.titleDomain = selectedItem.domain
                                 page.isAsk = selectedItem.isAsk;
+                                searchPage.push(page);
                                 Tart.send('requestPage', {
                                         source: selectedItem.hnid,
                                         sentBy: 'commentPage',
@@ -236,16 +259,10 @@ NavigationPane {
                             } else {
                                 console.log('Item triggered. ' + selectedItem.articleURL);
                                 var page = webPage.createObject();
-                                searchPage.push(page);
                                 page.htmlContent = selectedItem.articleURL;
                                 page.text = selectedItem.title;
+                                searchPage.push(page);
                             }
-                        }
-                        function pushPage(pageToPush) {
-                            console.log(pageToPush)
-                            var page = eval(pageToPush).createObject();
-                            searchPage.push(page);
-                            return page;
                         }
                         attachedObjects: [
                             ListScrollStateHandler {
@@ -271,6 +288,16 @@ NavigationPane {
             Tart.register(searchPage)
         }
         attachedObjects: [
+            Invocation {
+                id: browserInvocation
+                query.mimeType: "text/plain"
+                query.invokeTargetId: "sys.browser"
+                query.invokeActionId: "bb.action.OPEN"
+                query.uri: "https://github.com/krruzic/Reader-YC/"
+                query.onQueryChanged: {
+                    browserInvocation.query.updateQuery();
+                }
+            },
             ComponentDefinition {
                 id: webPage
                 source: "webArticle.qml"

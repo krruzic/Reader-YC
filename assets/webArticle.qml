@@ -5,13 +5,28 @@ Page {
     property alias htmlContent: webDisplay.url
     property alias text: titleBar.text
     actions: [
-        ActionItem {
-            ActionBar.placement: ActionBarPlacement.OnBar
-            imageSource: "asset:///images/icons/ic_previous.png"
-            title: "Go Back"
-            enabled: webDisplay.canGoBack;
-            onTriggered: {
-                webDisplay.goBack();
+//        ActionItem {
+//            ActionBar.placement: ActionBarPlacement.OnBar
+//            imageSource: "asset:///images/icons/ic_comments.png"
+//            title: "View Comments"
+//            onTriggered: {
+//                var page = commentPage.createObject();
+//                page.htmlContent = articleLink;
+//                page.text = commentPane.title;
+//                root.activePane.push(page);
+//            }
+//        },
+        InvokeActionItem {
+            title: "Open in Browser"
+            imageSource: "asset:///images/icons/ic_open_link.png"
+            ActionBar.placement: ActionBarPlacement.InOverflow
+            id: browserQuery
+            //query.mimeType: "text/plain"
+            query.invokeActionId: "bb.action.OPEN"
+            query.uri: webDisplay.url
+            query.invokeTargetId: "sys.browser"
+            query.onQueryChanged: {
+                browserQuery.query.updateQuery();
             }
         },
         InvokeActionItem {
@@ -26,25 +41,21 @@ Page {
             }
         },
         ActionItem {
-            ActionBar.placement: ActionBarPlacement.OnBar
-            imageSource: "asset:///images/icons/ic_next.png"
-            title: "Go Forward"
-            enabled: webDisplay.canGoForward;
+            ActionBar.placement: ActionBarPlacement.InOverflow
+            imageSource: "asset:///images/icons/ic_previous.png"
+            title: "Go Back"
+            enabled: webDisplay.canGoBack
             onTriggered: {
-                webDisplay.goForward();
+                webDisplay.goBack();
             }
         },
-        InvokeActionItem {
-            title: "Open in Browser"
-            imageSource: "asset:///images/icons/ic_open_link.png"
+        ActionItem {
             ActionBar.placement: ActionBarPlacement.InOverflow
-            id: browserQuery
-            //query.mimeType: "text/plain"
-            query.invokeActionId: "bb.action.OPEN"
-            query.uri: webDisplay.url
-            query.invokeTargetId:  "sys.browser"
-            query.onQueryChanged: {
-                browserQuery.query.updateQuery();
+            imageSource: "asset:///images/icons/ic_next.png"
+            title: "Go Forward"
+            enabled: webDisplay.canGoForward
+            onTriggered: {
+                webDisplay.goForward();
             }
         }
 
