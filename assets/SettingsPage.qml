@@ -1,44 +1,62 @@
 import bb.cascades 1.0
+import bb.system 1.0
+import "tart.js" as Tart
 
 Page {
-    Container {
-        HNTitleBar {
-            id: helpTitleBar
-            text: "Reader|YC - Settings"
-            showButton: false
+    id: settingsPage
+    onCreationCompleted: {
+        Tart.register(settingsPage);
+        precheckBrowser(settings.openInBrowser ? true : false);
+    }
+    titleBar: HNTitleBar {
+        refreshEnabled: false
+        id: titleBar
+        text: "Reader|YC - Settings"
+
+    }
+    ScrollView {
+        preferredWidth: 768
+        scrollViewProperties {
+            scrollMode: ScrollMode.Vertical
         }
+
         Container {
-            layout: StackLayout {
-            }
+            preferredWidth: 768
             topPadding: 10
             leftPadding: 10
-            rightPadding: 20
+            rightPadding: 10
             Container {
-                layout: StackLayout {
-                    orientation: LayoutOrientation.LeftToRight
+                layout: DockLayout {
+                }
+                horizontalAlignment: HorizontalAlignment.Fill // Make full width
+                Label {
+                    horizontalAlignment: horizontalAlignment.Left
+                    verticalAlignment: VerticalAlignment.Top
+                    text: "<b>Article Click Behaviour</b>"
+                    textFormat: TextFormat.Html
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 7
+                    textStyle.color: Color.create("#434344")
                 }
                 Container {
-                    layoutProperties: StackLayoutProperties {
-                        spaceQuota: 6
-                    }
-                    Label {
-                        text: "<b>Article click Behaviour</b>"
-                        textFormat: TextFormat.Html
-                        textStyle.color: Color.create("#434344")
-                    }
-                    Label {
-                        text: "Always open in browser"
-                        textStyle.fontSize: FontSize.PointValue
-                        textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#fe8a3e")
-                    }
+                    maxHeight: 60
+                    minHeight: 60
+                    horizontalAlignment: horizontalAlignment.Left
+                    verticalAlignment: VerticalAlignment.Center
                 }
+                Label {
+                    horizontalAlignment: horizontalAlignment.Left
+                    verticalAlignment: VerticalAlignment.Bottom
+                    text: "Always open in browser"
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 6
+                    textStyle.color: Color.create("#fe8a3e")
+                }
+
                 ToggleButton {
+                    horizontalAlignment: HorizontalAlignment.Right
+
                     id: browserToggle
-                    translationY: 10
-                    layoutProperties: StackLayoutProperties {
-                        spaceQuota: 1
-                    }
                     onCheckedChanged: {
                         if (checked == true) {
                             settings.openInBrowser = true;
@@ -48,50 +66,48 @@ Page {
                             console.log("Open in app")
                         }
                     }
-
                 }
             }
             Divider {
 
             }
-            Container {
-                //horizontalAlignment: horizontalAlignment.Center
+            Button {
+                verticalAlignment: verticalAlignment.Top
+                horizontalAlignment: HorizontalAlignment.Center
 
-                Container {
-                    horizontalAlignment: horizontalAlignment.Center
-                    Button {
-                        horizontalAlignment: horizontalAlignment.Center
-                        text: "Clear cache"
-                        onClicked: {
-                            console.log("Clear Cache!")
-                        }
-                    }
-                    Label {
-                        text: "This will delete cached comments and all favourited articles"
-                        textFormat: TextFormat.Html
-                        textStyle.color: Color.create("#434344")
-                        multiline: true
-                        textStyle.fontSize: FontSize.PointValue
-                        textStyle.fontSizeValue: 5
-                        horizontalAlignment: horizontalAlignment.Center
-                        textStyle.textAlign: TextAlign.Center
-                    }
-                }
-                Divider {
-
-                }
-                Label {
-                    text: "Reader|YC - Copyright © 2013 Surge Co."
-                    textStyle.fontSize: FontSize.PointValue
-                    textStyle.fontSizeValue: 5
-                    preferredWidth: 768
-                    layoutProperties: StackLayoutProperties {
-                    }
-                    horizontalAlignment: horizontalAlignment.Center
-                    textStyle.textAlign: TextAlign.Center
+                id: cacheButton
+                text: "Clear cache"
+                onClicked: {
+                    cacheButton.enabled = false;
+                    Tart.send('deleteCache');
                 }
             }
+            Label {
+                horizontalAlignment: horizontalAlignment.Center
+                text: "This will delete all cached comments and favourited articles"
+                textStyle.fontSize: FontSize.PointValue
+                textStyle.fontSizeValue: 6
+                textStyle.textAlign: TextAlign.Center
+                preferredWidth: 768
+            }
+            Divider {
+
+            }
+            Label {
+                text: "Reader|YC - Copyright © 2013 Surge Co."
+                textStyle.fontSize: FontSize.PointValue
+                textStyle.fontSizeValue: 5
+                preferredWidth: 768
+                horizontalAlignment: horizontalAlignment.Center
+                textStyle.textAlign: TextAlign.Center
+            }
         }
+    }
+    function onCacheDeleted(data) {
+        cacheButton.enabled = true;
+        cacheDeleteToast.body = data.text;
+        cacheDeleteToast.cancel();
+        cacheDeleteToast.show();
     }
     function precheckBrowser(value) {
         print("CURR VALUE: " + browserToggle.checked);
@@ -99,10 +115,13 @@ Page {
         if (browserToggle.checked == value) // skip if already selected
             return;
         else
-        	browserToggle.checked = !browserToggle.checked;
+            browserToggle.checked = ! browserToggle.checked;
     }
 
-    onCreationCompleted: {
-        precheckBrowser(settings.openInBrowser ? true : false);
-    }
+    attachedObjects: [
+        SystemToast {
+            id: cacheDeleteToast
+            body: ""
+        }
+    ]
 }

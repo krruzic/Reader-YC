@@ -64,14 +64,15 @@ NavigationPane {
 
     Page {
         id: favourites
+        titleBar: HNTitleBar {
+            refreshEnabled: false
+            id: titleBar
+            listName: favouritesList
+            text: "Reader|YC - Favourites"
+
+        }
         Container {
             layout: DockLayout {
-            }
-
-            HNTitleBar {
-                text: "Reader|YC - Favourites"
-                horizontalAlignment: HorizontalAlignment.Center
-                verticalAlignment: VerticalAlignment.Top
             }
             Container {
                 id: emptyContainer
@@ -123,7 +124,8 @@ NavigationPane {
                                 page.commentLink = ListItemData.hnid;
                                 page.title = ListItemData.title;
                                 page.titlePoster = ListItemData.poster;
-                                page.titleTime = ListItemData.timePosted + "| " + ListItemData.points
+                                page.titleTime = ListItemData.timePosted + "| " + ListItemData.points;
+                                page.titleDomain = ListItemData.domain;
                                 page.isAsk = ListItemData.isAsk;
                                 page.articleLink = ListItemData.articleURL;
                                 page.titleComments = ListItemData.commentCount;
@@ -142,8 +144,10 @@ NavigationPane {
                     onTriggered: {
                         var selectedItem = dataModel.data(indexPath);
                         if (settings.openInBrowser == true) {
-                            browserInvocation.query.uri = selectedItem.articleURL;
-                            browserInvocation.trigger(browserInvocation.query.invokeActionId);
+                            // will auto-invoke after re-arming
+                            console.log("OPENING IN BROWSER");
+                            linkInvocation.query.uri = "";
+                            linkInvocation.query.uri = selectedItem.articleURL;
                             return;
                         }
                         console.log(selectedItem.isAsk);
@@ -176,13 +180,23 @@ NavigationPane {
         }
         attachedObjects: [
             Invocation {
-                id: browserInvocation
-                query.mimeType: "text/plain"
-                query.invokeTargetId: "sys.browser"
-                query.invokeActionId: "bb.action.OPEN"
-                query.uri: ""
-                query.onQueryChanged: {
-                    browserInvocation.query.updateQuery();
+                id: linkInvocation
+                property bool auto_trigger: false
+                query {
+                    uri: "http://peterhansen.ca"
+                    
+                    onUriChanged: {
+                        if (uri != "") {
+                            linkInvocation.query.updateQuery();
+                        }
+                    }
+                }
+                
+                onArmed: {
+                    // don't auto-trigger on initial setup
+                    if (auto_trigger)
+                        trigger("bb.action.OPEN");
+                    auto_trigger = true; // allow re-arming to auto-trigger
                 }
             },
             ComponentDefinition {

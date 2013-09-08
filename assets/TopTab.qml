@@ -14,7 +14,8 @@ NavigationPane {
     property bool busy: true
 
     onCreationCompleted: {
-        Tart.register(topPage)
+        Tart.register(topPage);
+        titleBar.refreshEnabled = false;
     }
 
     onPopTransitionEnded: {
@@ -91,26 +92,27 @@ NavigationPane {
     }
 
     Page {
-        Container {
-            HNTitleBar {
-                horizontalAlignment: HorizontalAlignment.Center
-                verticalAlignment: VerticalAlignment.Top
-                id: titleBar
-                text: "Reader|YC - Top Posts"
-                onRefreshPage: {
-                    if (busy != true) {
-                        busy = true;
-                        Tart.send('requestPage', {
-                                source: whichPage,
-                                sentBy: whichPage
-                            });
-                        console.log("pressed")
-                        theModel.clear();
-                        refreshEnabled = ! busy;
-                        loading.visible = true;
-                    }
+        titleBar: HNTitleBar {
+            
+            id: titleBar
+            text: "Reader|YC - Top Posts"
+            listName: theList
+            onRefreshPage: {
+                console.log("We are busy: " + busy)
+                if (busy != true) {
+                    busy = true;
+                    Tart.send('requestPage', {
+                            source: 'topPage',
+                            sentBy: 'topPage'
+                    });
+                console.log("pressed")
+                theModel.clear();
+                refreshEnabled = ! busy;
+                loading.visible = true;
                 }
             }
+        }
+        Container {
             Container {
                 id: spacer
                 visible: showSpacer()
@@ -153,27 +155,6 @@ NavigationPane {
                     dataModel: ArrayDataModel {
                         id: theModel
                     }
-                    shortcuts: [
-                        Shortcut {
-                            key: "T"
-                            onTriggered: {
-                                theList.scrollToPosition(0, 0x2)
-                            }
-                        },
-                        Shortcut {
-                            key: "B"
-                            onTriggered: {
-                                theList.scrollToPosition(0, 0x2)
-                            }
-                        },
-                        Shortcut {
-                            key: "R"
-                            onTriggered: {
-                                if (! busy)
-                                    refreshPage();
-                            }
-                        }
-                    ]
                     function itemType(data, indexPath) {
                         if (data.type != 'error') {
                             lastItemType = 'item';
@@ -215,8 +196,8 @@ NavigationPane {
                             }
                             function openArticle(ListItemData) {
                                 var page = webPage.createObject();
-                                page.htmlContent = selectedItem.articleURL;
-                                page.text = selectedItem.title;
+                                page.htmlContent = ListItemData.articleURL;
+                                page.text = ListItemData.title;
                                 topPage.push(page);
                             }
 

@@ -1,4 +1,4 @@
-import urllib.request, threading, sqlite3
+import urllib.request, threading, sqlite3, os
 from .HNStoryAPI import getStoryPage
 from .HNCommentAPI import getCommentPage
 from .HNUserAPI import getUserPage
@@ -45,6 +45,7 @@ class App(tart.Application):
         self.save_data(self.settings, self.SETTINGS_FILE)
 
     def onRequestPage(self, source, sentBy, askPost="false", deleteComments="false", startIndex=0):
+
         t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost, deleteComments))
         t.daemon = True
         t.start()
@@ -189,7 +190,7 @@ class App(tart.Application):
                   (title text, articleURL text, saveTime text,
                    poster text, numComments text, isAsk text,
                    domain text, points text, hnid text PRIMARY KEY)
-               """)
+                """)
 
         cursor.execute('SELECT * FROM articles')
         tart.send('fillList', list=self.get_rowdicts(cursor))
@@ -197,6 +198,26 @@ class App(tart.Application):
 
     def get_rowdicts(self, cursor):
         return list(cursor)
+
+
+    def onDeleteCache(self):
+        print("PYTHON DELETING CACHE")
+        workingDir = os.getcwd() + '/data/cache/'
+        cursor = self.conn.cursor()
+
+        for the_file in os.listdir(workingDir):
+            file_path = os.path.join(workingDir, the_file)
+        if os.path.isfile(file_path):
+            os.unlink(file_path)
+        print("Dropping favourites table")
+        cursor.execute("""DROP TABLE IF EXISTS articles""")
+        cursor.execute("""CREATE TABLE IF NOT EXISTS articles
+                (title text, articleURL text, saveTime text,
+                poster text, numComments text, isAsk text,
+                domain text, points text, hnid text PRIMARY KEY)
+            """)
+        tart.send('cacheDeleted', text="Cache cleared!")
+
 
     # def onReadArticle(self, link):
     #     cursor = sqlite3.connect("data/read.db")

@@ -3,7 +3,13 @@ import "tart.js" as Tart
 
 Page {
     id: userPane
-
+    titleBar: HNTitleBar {
+        id: titleBar
+        text: "Reader|YC - User"
+        refreshEnabled: true
+        buttonImage: "asset:///images/search.png"
+        buttonPressedImage: "asset:///images/search.png"
+    }
     onCreationCompleted: {
         Tart.register(userPane);
     }
@@ -36,14 +42,6 @@ Page {
     }
 
     Container {
-        HNTitleBar {
-            id: titleBar
-            text: "Reader|YC - User"
-            showButton: true
-            refreshEnabled: true
-            buttonImage: "asset:///images/search.png"
-            buttonPressedImage: "asset:///images/search.png"
-        }
         Container {
             topPadding: 10
             leftPadding: 19

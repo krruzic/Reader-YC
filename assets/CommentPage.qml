@@ -21,6 +21,7 @@ Page {
     onCreationCompleted: {
         busy = true;
         Tart.register(commentPane);
+        titleBar.refreshEnabled = false;
     }
 
     function onCommentError(data) {
@@ -125,27 +126,24 @@ Page {
             }
         }
     ]
-
-    Container {
-        HNTitleBar {
-            horizontalAlignment: HorizontalAlignment.Center
-            verticalAlignment: VerticalAlignment.Top
-            id: titleBar
-            text: title
-            onRefreshPage: {
-                busy = true;
-                Tart.send('requestPage', {
-                        source: commentLink,
-                        sentBy: 'commentPage',
-                        askPost: isAsk,
-                        deleteComments: "True"
-                    });
-                console.log("pressed");
-                commentModel.clear();
-                titleBar.refreshEnabled = false;
-            }
+    titleBar: HNTitleBar {
+        id: titleBar
+        text: commentPane.title
+        listName: commentList
+        onRefreshPage: {
+            busy = true;
+            Tart.send('requestPage', {
+                    source: commentLink,
+                    sentBy: 'commentPage',
+                    askPost: isAsk,
+                    deleteComments: "True"
+                });
+            console.log("pressed");
+            commentModel.clear();
+            titleBar.refreshEnabled = false;
         }
-
+    }
+    Container {
         Container {
             visible: busy
             horizontalAlignment: HorizontalAlignment.Center

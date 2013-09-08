@@ -14,7 +14,8 @@ NavigationPane {
     property bool busy: false
 
     onCreationCompleted: {
-        Tart.register(askPage)
+        Tart.register(askPage);
+        titleBar.refreshEnabled = false;
     }
 
     onPopTransitionEnded: {
@@ -43,18 +44,18 @@ NavigationPane {
             theModel.removeAt(lastItem)
         }
         theModel.append({
-                    type: 'item',
-                    title: data.story['title'],
-                    domain: data.story['domain'],
-                    points: data.story['score'],
-                    poster: data.story['author'],
-                    timePosted: data.story['time'],
-                    commentCount: data.story['commentCount'],
-                    articleURL: data.story['link'],
-                    commentsURL: data.story['commentURL'],
-                    hnid: data.story['hnid'],
-                    isAsk: data.story['askPost']
-                });
+                type: 'item',
+                title: data.story['title'],
+                domain: data.story['domain'],
+                points: data.story['score'],
+                poster: data.story['author'],
+                timePosted: data.story['time'],
+                commentCount: data.story['commentCount'],
+                articleURL: data.story['link'],
+                commentsURL: data.story['commentURL'],
+                hnid: data.story['hnid'],
+                isAsk: data.story['askPost']
+            });
         busy = false;
         loading.visible = false;
         titleBar.refreshEnabled = ! busy;
@@ -71,7 +72,7 @@ NavigationPane {
             theModel.append({
                     type: 'error',
                     title: data.text
-            });
+                });
         } else {
             errorLabel.text = data.text
             errorLabel.visible = true;
@@ -80,7 +81,7 @@ NavigationPane {
         loading.visible = false;
         titleBar.refreshEnabled = ! busy;
     }
-    
+
     function showSpacer() {
         if (errorLabel.visible == true || loading.visible == true) {
             return true;
@@ -88,28 +89,28 @@ NavigationPane {
             return false;
         }
     }
-    
+
     Page {
-        Container {
-            HNTitleBar {
-                id: titleBar
-                text: "Reader|YC - Ask HN"
-                onRefreshPage: {
-                    console.log("We are busy: " + busy)
-                    if (busy != true) {
-                        busy = true;
-                        Tart.send('requestPage', {
-                                source: 'askPage',
-                                sentBy: 'askPage'
-                            });
-                        console.log("pressed")
-                        theModel.clear();
-                        refreshEnabled = ! busy;
-                        loading.visible = true;
-                    }
+        titleBar: HNTitleBar {
+            id: titleBar
+            text: "Reader|YC - Ask HN"
+            listName: theList
+            onRefreshPage: {
+                console.log("We are busy: " + busy)
+                if (busy != true) {
+                    busy = true;
+                    Tart.send('requestPage', {
+                            source: 'askPage',
+                            sentBy: 'askPage'
+                        });
+                    console.log("pressed")
+                    theModel.clear();
+                    refreshEnabled = ! busy;
+                    loading.visible = true;
                 }
             }
-
+        }
+        Container {
             Container {
                 id: spacer
                 visible: showSpacer()
@@ -153,27 +154,6 @@ NavigationPane {
                     dataModel: ArrayDataModel {
                         id: theModel
                     }
-                    shortcuts: [
-                        Shortcut {
-                            key: "T"
-                            onTriggered: {
-                                theList.scrollToPosition(0, 0x2)
-                            }
-                        },
-                        Shortcut {
-                            key: "B"
-                            onTriggered: {
-                                theList.scrollToPosition(0, 0x2)
-                            }
-                        },
-                        Shortcut {
-                            key: "R"
-                            onTriggered: {
-                                if (! busy)
-                                    refreshPage();
-                            }
-                        }
-                    ]
                     function itemType(data, indexPath) {
                         if (data.type != 'error') {
                             lastItemType = 'item';
@@ -232,8 +212,10 @@ NavigationPane {
                         }
                         var selectedItem = dataModel.data(indexPath);
                         if (settings.openInBrowser == true) {
-                            browserInvocation.query.uri = selectedItem.articleURL;
-                            browserInvocation.trigger(browserInvocation.query.invokeActionId);
+                            // will auto-invoke after re-arming
+                            console.log("OPENING IN BROWSER");
+                            linkInvocation.query.uri = "";
+                            linkInvocation.query.uri = selectedItem.articleURL;
                             return;
                         }
                         console.log(selectedItem.isAsk);
@@ -245,7 +227,8 @@ NavigationPane {
                             page.commentLink = selectedItem.hnid;
                             page.title = selectedItem.title;
                             page.titlePoster = selectedItem.poster;
-                            page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
+                            page.titleTime = selectedItem.timePosted + "| " + selectedItem.points;
+                            page.titleDomain = ListItemData.domain;
                             page.isAsk = selectedItem.isAsk;
                             page.articleLink = selectedItem.articleURL;
                             page.titleComments = selectedItem.commentCount;
@@ -276,17 +259,24 @@ NavigationPane {
             }
             attachedObjects: [
                 Invocation {
-                    id: browserInvocation
-                    query.mimeType: "text/plain"
-                    query.invokeTargetId: "sys.browser"
-                    query.invokeActionId: "bb.action.OPEN"
-                    query.uri: "https://github.com/krruzic/Reader-YC/"
-                    query.onQueryChanged: {
-                        browserInvocation.query.updateQuery();
+                    id: linkInvocation
+                    property bool auto_trigger: false
+                    query {
+                        uri: "http://peterhansen.ca"
+
+                        onUriChanged: {
+                            if (uri != "") {
+                                linkInvocation.query.updateQuery();
+                            }
+                        }
                     }
-                },
-                ApplicationInfo {
-                    id: appInfo
+
+                    onArmed: {
+                        // don't auto-trigger on initial setup
+                        if (auto_trigger)
+                            trigger("bb.action.OPEN");
+                        auto_trigger = true; // allow re-arming to auto-trigger
+                    }
                 },
                 ComponentDefinition {
                     id: webPage
