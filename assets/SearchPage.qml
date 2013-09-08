@@ -66,25 +66,24 @@ NavigationPane {
         loading.visible = false;
 
     }
-    
+
     function showSpacer() {
-        if (errorLabel.visible == true || loading.visible == true){
+        if (errorLabel.visible == true || loading.visible == true) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
-    
+
     Page {
+        titleBar: HNTitleBar {
+            refreshEnabled: false
+            id: titleBar
+            listName: searchList
+            text: "Reader|YC - Search HN"
+        }
         Container {
-            HNTitleBar {
-                horizontalAlignment: HorizontalAlignment.Center
-                verticalAlignment: VerticalAlignment.Top
-                showButton: false
-                id: titleBar
-                text: "Reader|YC - Search HN"
-            }
+            topPadding: 10
             TextField {
                 horizontalAlignment: HorizontalAlignment.Center
                 preferredWidth: 740
@@ -120,7 +119,7 @@ NavigationPane {
 
             Container {
                 id: spacer
-                visible: showSpacer();
+                visible: showSpacer()
                 minHeight: 200
                 maxHeight: 200
             }
@@ -158,7 +157,7 @@ NavigationPane {
                     }
                 }
             }
-            
+
             Container {
                 Container {
                     ListView {
@@ -166,20 +165,6 @@ NavigationPane {
                         dataModel: ArrayDataModel {
                             id: searchModel
                         }
-                        shortcuts: [
-                            Shortcut {
-                                key: "T"
-                                onTriggered: {
-                                    theList.scrollToPosition(0, 0x2)
-                                }
-                            },
-                            Shortcut {
-                                key: "B"
-                                onTriggered: {
-                                    theList.scrollToPosition(0, 0x2)
-                                }
-                            }
-                        ]
                         function itemType(data, indexPath) {
                             if (data.type != 'error') {
                                 lastItemType = 'item';
@@ -208,9 +193,10 @@ NavigationPane {
                                     var page = commentPage.createObject();
                                     console.log(ListItemData.commentsURL)
                                     page.commentLink = ListItemData.hnid;
+                                    page.titleDomain = ListItemData.domain;
                                     page.title = ListItemData.title;
                                     page.titlePoster = ListItemData.poster;
-                                    page.titleTime = ListItemData.timePosted + "| " + ListItemData.points
+                                    page.titleTime = ListItemData.timePosted + "| " + ListItemData.points;
                                     page.isAsk = ListItemData.isAsk;
                                     page.articleLink = ListItemData.articleURL;
                                     page.titleComments = ListItemData.commentCount;
@@ -234,8 +220,10 @@ NavigationPane {
                         onTriggered: {
                             var selectedItem = dataModel.data(indexPath);
                             if (settings.openInBrowser == true) {
-                                browserInvocation.query.uri = selectedItem.articleURL;
-                                browserInvocation.trigger(browserInvocation.query.invokeActionId);
+                                // will auto-invoke after re-arming
+                                console.log("OPENING IN BROWSER");
+                                linkInvocation.query.uri = "";
+                                linkInvocation.query.uri = selectedItem.articleURL;
                                 return;
                             }
                             console.log(selectedItem.isAsk);
@@ -289,13 +277,23 @@ NavigationPane {
         }
         attachedObjects: [
             Invocation {
-                id: browserInvocation
-                query.mimeType: "text/plain"
-                query.invokeTargetId: "sys.browser"
-                query.invokeActionId: "bb.action.OPEN"
-                query.uri: "https://github.com/krruzic/Reader-YC/"
-                query.onQueryChanged: {
-                    browserInvocation.query.updateQuery();
+                id: linkInvocation
+                property bool auto_trigger: false
+                query {
+                    uri: "http://peterhansen.ca"
+
+                    onUriChanged: {
+                        if (uri != "") {
+                            linkInvocation.query.updateQuery();
+                        }
+                    }
+                }
+
+                onArmed: {
+                    // don't auto-trigger on initial setup
+                    if (auto_trigger)
+                        trigger("bb.action.OPEN");
+                    auto_trigger = true; // allow re-arming to auto-trigger
                 }
             },
             ComponentDefinition {

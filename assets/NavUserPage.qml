@@ -22,7 +22,18 @@ NavigationPane {
 
     Page {
         id: userPane
-
+        titleBar: HNTitleBar {
+            id: titleBar
+            text: "Reader|YC - User"
+            showButton: true
+            refreshEnabled: true
+            buttonImage: "asset:///images/search.png"
+            buttonPressedImage: "asset:///images/search.png"
+            onRefreshPage: {
+                searchField.visible = true;
+                slideSearch.play();
+            }
+        }
         onCreationCompleted: {
             Tart.register(userPane);
         }
@@ -47,18 +58,6 @@ NavigationPane {
         }
 
         Container {
-            HNTitleBar {
-                id: titleBar
-                text: "Reader|YC - User"
-                showButton: true
-                refreshEnabled: true
-                buttonImage: "asset:///images/search.png"
-                buttonPressedImage: "asset:///images/search.png"
-                onRefreshPage: {
-                    searchField.visible = true;
-                    slideSearch.play();
-                }
-            }
             Container {
                 topPadding: 10
                 leftPadding: 19
@@ -198,7 +197,7 @@ NavigationPane {
                             textFormat: textFormat.Html
                             text: " Comments: " + comments
                             textStyle.fontSize: FontSize.XSmall
-                        
+
                         }
                     }
                     attachedObjects: [

@@ -1,12 +1,12 @@
 import bb.cascades 1.0
 
 Page {
+    titleBar: HNTitleBar {
+        id: aboutTitleBar
+        text: "Reader|YC - About"
+        refreshEnabled: false
+    }
     Container {
-        HNTitleBar {
-            id: aboutTitleBar
-            text: "Reader|YC - About"
-            showButton: false
-        }
         ScrollView {
 
             Container {
@@ -26,7 +26,7 @@ Page {
                         Label {
                             topMargin: 0
                             bottomMargin: 0
-                            text: "<b>What is Hacker News?</b>" 
+                            text: "<b>What is Hacker News?</b>"
                             textFormat: TextFormat.Html
                             textStyle.color: Color.create("#434344")
                         }

@@ -1,12 +1,13 @@
 import bb.cascades 1.0
 
 Page {
+    titleBar: HNTitleBar {
+        id: helpTitleBar
+        text: "Reader|YC - Help"
+        refreshEnabled: false
+    }
     Container {
-        HNTitleBar {
-            id: helpTitleBar
-            text: "Reader|YC - Help"
-            showButton: false
-        }
+
         Container {
             layout: StackLayout {
             }
@@ -165,40 +166,40 @@ Page {
             Divider {
 
             }
-//            Container {
-//                layout: StackLayout {
-//                    orientation: LayoutOrientation.LeftToRight
-//                }
-//                Container {
-//                    layoutProperties: StackLayoutProperties {
-//                        spaceQuota: 6
-//                    }
-//                    Label {
-//                        text: "<b>Share the App</b>"
-//                        textFormat: TextFormat.Html
-//                        textStyle.color: Color.create("#434344")
-//                    }
-//                    Label {
-//                        text: "Invite BBM Friends to download!"
-//                        textStyle.fontSize: FontSize.PointValue
-//                        textStyle.fontSizeValue: 6
-//                        textStyle.color: Color.create("#fe8a3e")
-//                    }
-//                }
-//                Button {
-//                    layoutProperties: StackLayoutProperties {
-//                        spaceQuota: 1
-//                    }
-//                    imageSource: "asset:///images/BBM.png"
-//
-//                    onClicked: {
-//                        console.log("Invoke BBM Invite HERE")
-//                    }
-//                }
-//            }
-//            Divider {
-//
-//            }
+            //            Container {
+            //                layout: StackLayout {
+            //                    orientation: LayoutOrientation.LeftToRight
+            //                }
+            //                Container {
+            //                    layoutProperties: StackLayoutProperties {
+            //                        spaceQuota: 6
+            //                    }
+            //                    Label {
+            //                        text: "<b>Share the App</b>"
+            //                        textFormat: TextFormat.Html
+            //                        textStyle.color: Color.create("#434344")
+            //                    }
+            //                    Label {
+            //                        text: "Invite BBM Friends to download!"
+            //                        textStyle.fontSize: FontSize.PointValue
+            //                        textStyle.fontSizeValue: 6
+            //                        textStyle.color: Color.create("#fe8a3e")
+            //                    }
+            //                }
+            //                Button {
+            //                    layoutProperties: StackLayoutProperties {
+            //                        spaceQuota: 1
+            //                    }
+            //                    imageSource: "asset:///images/BBM.png"
+            //
+            //                    onClicked: {
+            //                        console.log("Invoke BBM Invite HERE")
+            //                    }
+            //                }
+            //            }
+            //            Divider {
+            //
+            //            }
         }
         Label {
             text: "Reader|YC - Copyright © 2013 Surge Co."

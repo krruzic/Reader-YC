@@ -5,17 +5,17 @@ Page {
     property alias htmlContent: webDisplay.url
     property alias text: titleBar.text
     actions: [
-//        ActionItem {
-//            ActionBar.placement: ActionBarPlacement.OnBar
-//            imageSource: "asset:///images/icons/ic_comments.png"
-//            title: "View Comments"
-//            onTriggered: {
-//                var page = commentPage.createObject();
-//                page.htmlContent = articleLink;
-//                page.text = commentPane.title;
-//                root.activePane.push(page);
-//            }
-//        },
+        //        ActionItem {
+        //            ActionBar.placement: ActionBarPlacement.OnBar
+        //            imageSource: "asset:///images/icons/ic_comments.png"
+        //            title: "View Comments"
+        //            onTriggered: {
+        //                var page = commentPage.createObject();
+        //                page.htmlContent = articleLink;
+        //                page.text = commentPane.title;
+        //                root.activePane.push(page);
+        //            }
+        //        },
         InvokeActionItem {
             title: "Open in Browser"
             imageSource: "asset:///images/icons/ic_open_link.png"
@@ -60,18 +60,17 @@ Page {
         }
 
     ]
+    titleBar: HNTitleBar {
+        id: titleBar
+        onRefreshPage: {
+            webDisplay.reload();
+            refreshEnabled = false
+        }
+        showButton: true
+        refreshEnabled: true
+    }
     Container {
-        layout: StackLayout {
-        }
-        HNTitleBar {
-            id: titleBar
-            onRefreshPage: {
-                webDisplay.reload();
-                refreshEnabled = false
-            }
-            showButton: true
-            refreshEnabled: true
-        }
+
         Container {
             layout: DockLayout {
 

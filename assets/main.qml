@@ -21,7 +21,7 @@ TabbedPane {
                 title: "About"
 
                 onTriggered: {
-                    var page = aboutPage.createObject(activeTab.content);
+                    var page = aboutDef.createObject(activeTab.content);
                     activeTab.push(page)
                     Application.menuEnabled = false;
                 }
@@ -31,7 +31,7 @@ TabbedPane {
                 title: "Help"
 
                 onTriggered: {
-                    var page = helpPage.createObject(activeTab.content);
+                    var page = helpDef.createObject(activeTab.content);
                     activeTab.push(page)
                     Application.menuEnabled = false;
                 }
@@ -40,7 +40,7 @@ TabbedPane {
                 title: "Settings"
 
                 onTriggered: {
-                    var page = settingsPage.createObject(activeTab.content);
+                    var page = settingsDef.createObject(activeTab.content);
                     activeTab.push(page)
                     Application.menuEnabled = false;
                 }
@@ -206,10 +206,12 @@ TabbedPane {
         //Application.awake.connect(onVisible);
 
         top.busy = true;
+        //Tart.debug = true;
         Tart.init(_tart, Application);
 
         Tart.register(root);
         Tart.send('uiReady');
+        
     }
     showTabsOnActionBar: true
     activeTab: topTab
@@ -278,20 +280,20 @@ TabbedPane {
 
     attachedObjects: [
         ComponentDefinition {
-            id: aboutPage
-            source: "asset:///AboutPage.qml"
+            id: aboutDef;
+            source: "AboutPage.qml"
         },
         ComponentDefinition {
-            id: helpPage
-            source: "asset:///HelpPage.qml"
+            id: helpDef;
+            source: "HelpPage.qml"
         },
         ComponentDefinition {
-            id: appCover
-            source: "asset:///AppCover.qml"
+            id: appCover;
+            source: "AppCover.qml"
         },
         ComponentDefinition {
-            id: settingsPage
-            source: "asset:///SettingsPage.qml"
+            id: settingsDef;
+            source: "SettingsPage.qml"
         },
         QTimer {
             id: switchTimer
