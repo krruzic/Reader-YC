@@ -211,7 +211,7 @@ NavigationPane {
                         if (dataModel.data(indexPath).type != 'item') {
                             return;
                         }
-                        
+
                         var selectedItem = dataModel.data(indexPath);
                         if (settings.openInBrowser == true) {
                             // will auto-invoke after re-arming
@@ -226,7 +226,7 @@ NavigationPane {
                             var page = webPage.createObject();
                             page.htmlContent = selectedItem.articleURL;
                             page.text = selectedItem.title;
-                            newPAge.push(page);
+                            newPage.push(page);
                             return;
                         }
                         console.log(selectedItem.isAsk);
@@ -244,12 +244,6 @@ NavigationPane {
                             page.titleComments = selectedItem.commentCount;
                             page.titlePoints = selectedItem.points
                             newPage.push(page);
-                            //                            Tart.send('requestPage', {
-                            //                                    source: selectedItem.hnid,
-                            //                                    sentBy: 'commentPage',
-                            //                                    askPost: selectedItem.isAsk,
-                            //                                    deleteComments: "false"
-                            //                                });
                         } else {
                             console.log('Item triggered. ' + selectedItem.articleURL);
                             var page = webPage.createObject();
@@ -262,12 +256,19 @@ NavigationPane {
                         ListScrollStateHandler {
                             onAtEndChanged: {
                                 if (atEnd == true && theModel.isEmpty() == false && morePage != "" && busy == false) {
-                                    console.log('end reached!')
-                                    lastItemType = 'load'
+                                    console.log('end reached!');
+                                    var lastItem = theModel.size() - 1;
+                                    if (lastItemType == 'load') {
+                                        return;
+                                    }
+                                    if (lastItemType == 'error') { // Remove an error item
+                                        theModel.removeAt(lastItem);
+                                    }
                                     theModel.append({
                                             type: 'load'
                                         });
-                                    theList.scrollToPosition(ScrollPosition.End, ScrollAnimation.Smooth)
+                                    //theList.scrollToPosition(ScrollPosition.End, ScrollAnimation.Smooth);
+                                    lastItemType = 'load';
                                     Tart.send('requestPage', {
                                             source: morePage,
                                             sentBy: whichPage

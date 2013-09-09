@@ -24,6 +24,7 @@ TitleBar {
                     onDoubleTapped: {
                         if (listName) {
                             listName.scrollToPosition(ScrollPosition.Beginning, ScrollAnimation.Smooth);
+                            console.log("GESTURE TRIGGERED!");
                         } else {
                             return;
                         }

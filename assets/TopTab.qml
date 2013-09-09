@@ -173,7 +173,6 @@ NavigationPane {
                             }
                             function openComments(ListItemData) {
                                 var page = commentPage.createObject();
-                                //console.log(ListItemData.commentsURL)
                                 page.commentLink = ListItemData.hnid;
                                 page.title = ListItemData.title;
                                 page.titlePoster = ListItemData.poster;
@@ -245,7 +244,6 @@ NavigationPane {
                         if (selectedItem.isAsk == "true" && selectedItem.hnid != '-1') {
                             console.log("Ask post");
                             var page = commentPage.createObject();
-                            topPage.push(page);
                             console.log(selectedItem.commentsURL)
                             page.commentLink = selectedItem.hnid;
                             page.title = selectedItem.title;
@@ -256,6 +254,7 @@ NavigationPane {
                             page.articleLink = selectedItem.articleURL;
                             page.titleComments = selectedItem.commentCount;
                             page.titlePoints = selectedItem.points
+                            topPage.push(page);
                         } else {
                             console.log('Item triggered. ' + selectedItem.articleURL);
                             var page = webPage.createObject();
@@ -268,12 +267,20 @@ NavigationPane {
                         ListScrollStateHandler {
                             onAtEndChanged: {
                                 if (atEnd == true && theModel.isEmpty() == false && morePage != "" && busy == false) {
-                                    console.log('end reached!')
-                                    lastItemType = 'load'
+                                    console.log('end reached!');
+                                    var lastItem = theModel.size() - 1;
+                                    if (lastItemType == 'load') {
+                                        console.log("GLITCHING");
+                                        return;
+                                    }
+                                    if (lastItemType == 'error') { // Remove an error item
+                                        theModel.removeAt(lastItem);
+                                    }
                                     theModel.append({
                                             type: 'load'
                                         });
-                                    theList.scrollToPosition(ScrollPosition.End ,ScrollAnimation.Smooth)
+                                    //theList.scrollToItem('load', ScrollAnimation..Smooth);
+                                    lastItemType = 'load';
                                     Tart.send('requestPage', {
                                             source: morePage,
                                             sentBy: whichPage
@@ -306,9 +313,6 @@ NavigationPane {
                         auto_trigger = true; // allow re-arming to auto-trigger
                     }
                 },
-                //                ApplicationInfo {
-                //                    id: appInfo
-                //                },
                 ComponentDefinition {
                     id: webPage
                     source: "webArticle.qml"
