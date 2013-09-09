@@ -1,10 +1,11 @@
-import urllib.request, threading, sqlite3, os
+import urllib.request, threading, sqlite3, os, glob
 from .HNStoryAPI import getStoryPage
 from .HNCommentAPI import getCommentPage
 from .HNUserAPI import getUserPage
 from .HNSearchAPI import getSearchResults
 #from requests import session
 from bs4 import BeautifulSoup
+from datetime import datetime, timedelta
 
 #import requests
 import tart
@@ -21,12 +22,14 @@ class App(tart.Application):
     bbm = False
     conn = sqlite3.connect("data/favourites.db")
     SETTINGS_FILE = 'data/settings.state'
-
+    readerToken = '5613db57aaedcafdff67fb12844f5b39a0d47a93' # this is supposed to be a secret, DO NOT USE IT, get your own from http://www.readability.com/developers/api/parser
+    cache = [] #{'ident': None} # Keep track of current request
 
     def __init__(self):
         super().__init__(debug=False)   # set True for some extra debug output
         self.settings = {
-            'openInBrowser': 'false'
+            'openInBrowser': 'false',
+            'readerMode': 'false'
         }
         self.restore_data(self.settings, self.SETTINGS_FILE)
         print("restored: ", self.settings)
@@ -35,20 +38,59 @@ class App(tart.Application):
         print("UI READY!!")
         tart.send('restoreSettings', **self.settings)
         self.onRequestPage("topPage", "topPage")
-        #readCursor = sqlite3.connect("data/read.db")
-        #readCursor.execute("CREATE TABLE IF NOT EXISTS readTable (link text PRIMARY KEY)")
-        # self.onRequestPage("Ask HN", "askPage")
-        # self.onRequestPage("Newest Posts", "newestPage")
 
     def onSaveSettings(self, settings):
         self.settings.update(settings)
         self.save_data(self.settings, self.SETTINGS_FILE)
 
     def onRequestPage(self, source, sentBy, askPost="false", deleteComments="false", startIndex=0):
+        """ This is really ugly, but it handles all url requests with threading, it also prevents the same request from being made twice
+        """
+        entryExists = False
+        position = 0
+        currReq = {'ident': (datetime.now(), source)}
+        src = ""
+        for i in self.cache:
+            position = position + 1
+            src = i['ident'][1]
+            if src == source:
+                print("Request in progress!!")
+                entryExists = True
+                ts = i['ident'][0]
+                if datetime.now() - ts > timedelta(minutes=5): # If the request is old, make the new one anyway
+                    break
+                return # Otherwise quit
 
-        t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost, deleteComments))
+        print("Requests pending: ", len(self.cache))
+        if len(self.cache) == 0:
+            self.cache.append(currReq)
+            entryExists = True
+
+        if entryExists != True:
+            print("Request doesn't exist")
+            if len(self.cache) > 5: # If we have 5 reqs going, remove the first one before adding
+                self.cache.pop(0)
+            self.cache.append(currReq)
+            t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost, deleteComments))
+
+        else: # If the request does exist
+            if len(self.cache) == 1: # If it is the only one we make the request (first request added)
+                print("Only request?")
+                #self.cache.append(currReq) # Append it to cache
+                t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost, deleteComments))
+            else: # If there are multiple requests
+                print("Checking request")
+                #ts, src = self.cache[position]['ident'] # Check the time the request was made
+                if src == source: # If the cache source is the same as current request
+                    print("Request is the same!")
+                    if datetime.now() - ts > timedelta(minutes=5): # Check if cache was made 5 mins ago
+                        print("Old enough, request OK")
+                        t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost, deleteComments))
+                    else:
+                        return
         t.daemon = True
         t.start()
+
 
     def parseRequest(self, source, sentBy, startIndex, askPost, deleteComments):
         print("Parsing request for: " + sentBy)
@@ -63,6 +105,9 @@ class App(tart.Application):
         else:
             print("Error getting page...")
             return
+        print("request complete! Removing...")
+        self.cache.pop(-1)
+
 
     def story_routine(self, source, sentBy):
         print("source sent:" + source)
@@ -204,11 +249,17 @@ class App(tart.Application):
         print("PYTHON DELETING CACHE")
         workingDir = os.getcwd() + '/data/cache/'
         cursor = self.conn.cursor()
-
-        for the_file in os.listdir(workingDir):
-            file_path = os.path.join(workingDir, the_file)
-        if os.path.isfile(file_path):
-            os.unlink(file_path)
+        os.chdir(workingDir)
+        files=glob.glob('*.json')
+        print("deleting comments")
+        for filename in files:
+            os.unlink(filename)
+        files=glob.glob('*.txt')
+        print("deleting text stories")
+        for filename in files:
+            os.unlink(filename)
+        os.chdir('../../')
+        print(os.getcwd())
         print("Dropping favourites table")
         cursor.execute("""DROP TABLE IF EXISTS articles""")
         cursor.execute("""CREATE TABLE IF NOT EXISTS articles

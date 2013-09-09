@@ -1,9 +1,14 @@
 import bb.cascades 1.0
-
+//import "tart.js" as Tart
 Page {
     id: webPane
     property alias htmlContent: webDisplay.url
+    property alias html: webDisplay.html
     property alias text: titleBar.text
+//    onCreationCompleted: {
+//        Tart.register(webPane);
+//    }
+    
     actions: [
         //        ActionItem {
         //            ActionBar.placement: ActionBarPlacement.OnBar
@@ -40,6 +45,15 @@ Page {
                 data = text + "\n" + htmlContent + "\n" + " Shared using Reader|YC ";
             }
         },
+//        ActionItem {
+//            ActionBar.placement: ActionBarPlacement.OnBar
+//            title: "Reader Mode"
+//            onTriggered: {
+//                Tart.send('webviewRequest', {
+//                        url: webDisplay.url
+//                });
+//            }
+//        },
         ActionItem {
             ActionBar.placement: ActionBarPlacement.InOverflow
             imageSource: "asset:///images/icons/ic_previous.png"
@@ -58,8 +72,11 @@ Page {
                 webDisplay.goForward();
             }
         }
-
     ]
+    
+//    function onReaderData(data) {
+//        webDisplay.html = data.html;
+//    }
     titleBar: HNTitleBar {
         id: titleBar
         onRefreshPage: {
@@ -70,7 +87,6 @@ Page {
         refreshEnabled: true
     }
     Container {
-
         Container {
             layout: DockLayout {
 

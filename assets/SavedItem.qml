@@ -80,8 +80,8 @@ Container {
                 title: "Remove from Favourites"
                 onTriggered: {
                     Tart.send('deleteArticle', {
-                            hnid: saveItem.selectedItem.hnid,
-                            selected: hnItem.ListItem.indexInSection
+                            hnid: ListItemData.hnid,
+                            selected: saveItem.ListItem.indexInSection
                         });
                 }
             }

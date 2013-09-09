@@ -38,6 +38,7 @@ Container {
                     console.log(selectedItem.poster);
                     var page = commentItem.ListItem.view.pushPage('userPage');
                     page.username = selectedItem.poster;
+                    page.searchText = selectedItem.poster;
                     page.busy = true;
                     Tart.send('requestPage', {
                             source: selectedItem.poster,

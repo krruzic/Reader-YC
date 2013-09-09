@@ -17,6 +17,7 @@ Page {
     property string titleText: ""
     property string titleComments: ""
     property string titlePoints: ""
+    property string readerURL: "http://www.readability.com/m?url="
 
     onCreationCompleted: {
         busy = true;
@@ -90,9 +91,10 @@ Page {
             title: "View Article"
             imageSource: "asset:///images/icons/ic_article.png"
             onTriggered: {
-                console.log(articleLink);
                 var page = webPage.createObject();
                 page.htmlContent = articleLink;
+                if (settings.readerMode == true && isAsk != "true")
+                    page.htmlContent = readerURL + ListItemData.articleURL;
                 page.text = commentPane.title;
                 root.activePane.push(page);
             }
@@ -144,14 +146,12 @@ Page {
         }
     }
     Container {
+        layout: DockLayout {
+        }
         Container {
             visible: busy
             horizontalAlignment: HorizontalAlignment.Center
             verticalAlignment: VerticalAlignment.Center
-            Container {
-                minHeight: 200
-                maxHeight: 200
-            }
             ActivityIndicator {
                 id: loading
                 minHeight: 300
@@ -163,88 +163,86 @@ Page {
         Container {
             horizontalAlignment: HorizontalAlignment.Center
             verticalAlignment: VerticalAlignment.Center
-            Container {
-                ListView {
-                    id: commentList
-                    dataModel: ArrayDataModel {
-                        id: commentModel
-                    }
+            ListView {
+                id: commentList
+                dataModel: ArrayDataModel {
+                    id: commentModel
+                }
 
-                    function itemType(data, indexPath) {
-                        return data.type
-                    }
+                function itemType(data, indexPath) {
+                    return data.type
+                }
 
-                    listItemComponents: [
-                        ListItemComponent {
-                            type: 'header'
-                            CommentHeader {
-                                id: commentHeader
-                                topPadding: 10
-                                leftPadding: 19
-                                rightPadding: 19
-                                property string type: ListItemData.type
-                                hTitle: ListItemData.hTitle
-                                poster: ListItemData.poster
-                                domain: ListItemData.domain
-                                articleTime: ListItemData.articleTime
-                                text: ListItemData.text
-                            }
-                        },
-                        ListItemComponent {
-                            type: 'item'
-                            Comment {
-                                id: commentItem
-                                leftPadding: 19
-                                rightPadding: 19
-                                property string type: ListItemData.type
-                                poster: ListItemData.poster
-                                time: ListItemData.timePosted
-                                indent: ListItemData.indent
-                                text: ListItemData.text
-                            }
-                        },
-                        ListItemComponent {
-                            type: 'error'
-                            ErrorItem {
-                                property string type: ListItemData.type
-                                title: ListItemData.title
-                                id: errorItem
-                            }
+                listItemComponents: [
+                    ListItemComponent {
+                        type: 'header'
+                        CommentHeader {
+                            id: commentHeader
+                            topPadding: 10
+                            leftPadding: 19
+                            rightPadding: 19
+                            property string type: ListItemData.type
+                            hTitle: ListItemData.hTitle
+                            poster: ListItemData.poster
+                            domain: ListItemData.domain
+                            articleTime: ListItemData.articleTime
+                            text: ListItemData.text
                         }
-                    ]
-                    function hideChildren(index) {
-                        for (var i = index + 1; i < commentModel.size() - 1; i ++) {
-                            var sentItem = commentModel.value(index)
-                            var currentItem = commentModel.value(i)
-                            console.log(currentItem.indent)
-                            if (currentItem.indent > sentItem.indent) {
-                                currentItem.commentContainer.visible = false;
-                            } else {
-                                break;
-                            }
+                    },
+                    ListItemComponent {
+                        type: 'item'
+                        Comment {
+                            id: commentItem
+                            leftPadding: 19
+                            rightPadding: 19
+                            property string type: ListItemData.type
+                            poster: ListItemData.poster
+                            time: ListItemData.timePosted
+                            indent: ListItemData.indent
+                            text: ListItemData.text
+                        }
+                    },
+                    ListItemComponent {
+                        type: 'error'
+                        ErrorItem {
+                            property string type: ListItemData.type
+                            title: ListItemData.title
+                            id: errorItem
                         }
                     }
-                    function showChildren(index) {
-                        for (var i = index + 1; i < commentModel.size() - 1; i ++) {
-                            var sentItem = commentModel.value(index)
-                            var currentItem = commentModel.value(i)
-                            console.log(currentItem.indent)
-                            if (currentItem.indent > sentItem.indent) {
-                                currentItem.commentContatiner.visible = true;
-                            } else {
-                                break;
-                            }
+                ]
+                function hideChildren(index) {
+                    for (var i = index + 1; i < commentModel.size() - 1; i ++) {
+                        var sentItem = commentModel.value(index)
+                        var currentItem = commentModel.value(i)
+                        console.log(currentItem.indent)
+                        if (currentItem.indent > sentItem.indent) {
+                            currentItem.commentContainer.visible = false;
+                        } else {
+                            break;
                         }
                     }
-                    function pushPage(pageToPush) {
-                        console.log(pageToPush)
-                        var page = eval(pageToPush).createObject();
-                        root.activePane.push(page);
-                        return page;
+                }
+                function showChildren(index) {
+                    for (var i = index + 1; i < commentModel.size() - 1; i ++) {
+                        var sentItem = commentModel.value(index)
+                        var currentItem = commentModel.value(i)
+                        console.log(currentItem.indent)
+                        if (currentItem.indent > sentItem.indent) {
+                            currentItem.commentContatiner.visible = true;
+                        } else {
+                            break;
+                        }
                     }
-                    onTriggered: {
-                        console.log("Comment triggered!")
-                    }
+                }
+                function pushPage(pageToPush) {
+                    console.log(pageToPush)
+                    var page = eval(pageToPush).createObject();
+                    root.activePane.push(page);
+                    return page;
+                }
+                onTriggered: {
+                    console.log("Comment triggered!")
                 }
             }
         }

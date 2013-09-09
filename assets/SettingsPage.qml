@@ -7,6 +7,8 @@ Page {
     onCreationCompleted: {
         Tart.register(settingsPage);
         precheckBrowser(settings.openInBrowser ? true : false);
+        precheckReader(settings.readerMode ? true : false);
+
     }
     titleBar: HNTitleBar {
         refreshEnabled: false
@@ -71,6 +73,52 @@ Page {
             Divider {
 
             }
+            Container {
+                layout: DockLayout {
+                }
+                horizontalAlignment: HorizontalAlignment.Fill // Make full width
+                Label {
+                    horizontalAlignment: horizontalAlignment.Left
+                    verticalAlignment: VerticalAlignment.Top
+                    text: "<b>Reader Mode</b>"
+                    textFormat: TextFormat.Html
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 7
+                    textStyle.color: Color.create("#434344")
+                }
+                Container {
+                    maxHeight: 60
+                    minHeight: 60
+                    horizontalAlignment: horizontalAlignment.Left
+                    verticalAlignment: VerticalAlignment.Center
+                }
+                Label {
+                    horizontalAlignment: horizontalAlignment.Left
+                    verticalAlignment: VerticalAlignment.Bottom
+                    text: "Display URLs using Readability"
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 6
+                    textStyle.color: Color.create("#fe8a3e")
+                }
+                
+                ToggleButton {
+                    horizontalAlignment: HorizontalAlignment.Right
+                    
+                    id: readerToggle
+                    onCheckedChanged: {
+                        if (checked == true) {
+                            settings.readerMode = true;
+                            console.log("Reader mode on..")
+                        } else {
+                            settings.readerMode = false;
+                            console.log("Reader mode off")
+                        }
+                    }
+                }
+            }
+            Divider {
+            
+            }
             Button {
                 verticalAlignment: verticalAlignment.Top
                 horizontalAlignment: HorizontalAlignment.Center
@@ -110,12 +158,21 @@ Page {
         cacheDeleteToast.show();
     }
     function precheckBrowser(value) {
-        print("CURR VALUE: " + browserToggle.checked);
+        print("CURR BROWSER: " + browserToggle.checked);
         print(value);
         if (browserToggle.checked == value) // skip if already selected
             return;
         else
             browserToggle.checked = ! browserToggle.checked;
+    }
+    
+    function precheckReader(value) {
+        print("CURR READER: " + readerToggle.checked);
+        print(value);
+        if (readerToggle.checked == value) // skip if already selected
+            return;
+        else
+            readerToggle.checked = ! readerToggle.checked;
     }
 
     attachedObjects: [
