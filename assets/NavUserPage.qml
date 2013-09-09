@@ -2,6 +2,7 @@ import bb.cascades 1.0
 import "tart.js" as Tart
 NavigationPane {
     property alias searchVisible: searchField.visible
+    property alias searchText: searchField.text
     property string username: ""
     property string created: ""
     property string karma: ""

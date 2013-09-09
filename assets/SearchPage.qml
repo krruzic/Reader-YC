@@ -6,6 +6,7 @@ NavigationPane {
     property string search: ""
     property string errorText: ""
     property string lastItemType: ""
+    property string readerURL: "http://www.readability.com/m?url="
     property bool busy: false
     property int start: 0
 
@@ -30,7 +31,10 @@ NavigationPane {
         searchField.enabled = true;
         errorLabel.visible = false;
         var story = data.story;
-        console.log(story[7]);
+        var lastItem = searchModel.size() - 1
+        if (lastItemType == 'error' || lastItemType == 'load') {
+            searchModel.removeAt(lastItem)
+        }
         searchModel.append({
                 type: 'item',
                 title: story[0],
@@ -44,6 +48,7 @@ NavigationPane {
                 commentsURL: story[8],
                 isAsk: story[9]
             });
+        lastItemType = 'item'
         start = start + 1;
         searchField.visible = true;
     }
@@ -51,28 +56,23 @@ NavigationPane {
     function onSearchError(data) {
         if (searchModel.isEmpty() != true) {
             var lastItem = searchModel.size() - 1
-            console.log(lastItemType);
-            if (lastItemType == 'error') {
+            if (lastItemType == 'error' || lastItemType == 'load') {
                 searchModel.removeAt(lastItem)
             }
             searchModel.append({
                     type: 'error',
                     title: data.text
                 });
+        } else {
+            errorLabel.text = data.text
+            errorLabel.visible = true;
         }
+        lastItemType = 'error'
         errorLabel.text = data.text
         searchField.visible = true;
         searchField.enabled = true;
         loading.visible = false;
 
-    }
-
-    function showSpacer() {
-        if (errorLabel.visible == true || loading.visible == true) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     Page {
@@ -83,54 +83,60 @@ NavigationPane {
             text: "Reader|YC - Search HN"
         }
         Container {
-            topPadding: 10
-            TextField {
+            Container {
+                topPadding: 10
+                leftPadding: 19
+                rightPadding: 19
+                TextField {
+                    horizontalAlignment: HorizontalAlignment.Center
+                    verticalAlignment: verticalAlignment.Top
+                    visible: true
+                    objectName: "searchField"
+                    enabled: true
+                    textStyle.color: Color.create("#262626")
+                    textStyle.fontSize: FontSize.Medium
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 1
+                    }
+                    input {
+                        flags: TextInputFlag.AutoCapitalizationOff | TextInputFlag.SpellCheckOff
+                    }
+                    hintText: qsTr("Search Posts on HN")
+                    id: searchField
+                    input.onSubmitted: {
+                        start = 0;
+                        search = searchField.text;
+                        searchModel.clear();
+                        Tart.send('requestPage', {
+                                source: searchField.text,
+                                sentBy: 'searchPage',
+                                startIndex: start
+                            });
+                        start = start + 30;
+                        errorLabel.visible = false;
+                        loading.visible = true;
+                        searchField.visible = false;
+                    }
+                }
+            }
+            Container {
+                topPadding: 100
+                visible: loading.visible
                 horizontalAlignment: HorizontalAlignment.Center
-                preferredWidth: 740
-                minWidth: 700
-                maxWidth: 740
-                visible: true
-                objectName: "searchField"
-                enabled: true
-                textStyle.color: Color.create("#262626")
-                textStyle.fontSize: FontSize.Medium
-                layoutProperties: StackLayoutProperties {
-                    spaceQuota: 1
-                }
-                input {
-                    flags: TextInputFlag.AutoCapitalizationOff | TextInputFlag.SpellCheckOff
-                }
-                hintText: qsTr("Search Posts on HN")
-                id: searchField
-                input.onSubmitted: {
-                    start = 0;
-                    search = searchField.text;
-                    searchModel.clear();
-                    Tart.send('requestPage', {
-                            source: searchField.text,
-                            sentBy: 'searchPage',
-                            startIndex: start
-                        });
-                    start = start + 30;
-                    loading.visible = true;
-                    searchField.visible = false;
+                verticalAlignment: VerticalAlignment.Center
+                ActivityIndicator {
+                    id: loading
+                    minHeight: 300
+                    minWidth: 300
+                    running: true
+                    visible: false
                 }
             }
-
             Container {
-                id: spacer
-                visible: showSpacer()
-                minHeight: 200
-                maxHeight: 200
-            }
-            Container {
+                topPadding: 100
                 visible: errorLabel.visible
                 horizontalAlignment: HorizontalAlignment.Center
                 verticalAlignment: VerticalAlignment.Center
-                Container {
-                    minHeight: 50
-                    maxHeight: 50
-                }
                 Label {
                     id: errorLabel
                     text: "<b><span style='color:#fe8515'>Try searching for a post!</span></b>"
@@ -143,171 +149,182 @@ NavigationPane {
                     visible: true
                 }
             }
+
             Container {
                 horizontalAlignment: HorizontalAlignment.Center
                 verticalAlignment: VerticalAlignment.Center
-                Container {
-                    visible: loading.visible
-                    ActivityIndicator {
-                        id: loading
-                        minHeight: 300
-                        minWidth: 300
-                        running: true
-                        visible: false
+                ListView {
+                    id: searchList
+                    dataModel: ArrayDataModel {
+                        id: searchModel
                     }
-                }
-            }
-
-            Container {
-                Container {
-                    ListView {
-                        id: searchList
-                        dataModel: ArrayDataModel {
-                            id: searchModel
-                        }
-                        function itemType(data, indexPath) {
-                            if (data.type != 'error') {
-                                lastItemType = 'item';
-                                return 'item';
-                            } else {
-                                lastItemType = 'error';
-                                return 'error';
+                    function itemType(data, indexPath) {
+                        return data.type;
+                    }
+                    listItemComponents: [
+                        ListItemComponent {
+                            type: 'item'
+                            HNPage {
+                                property string type: ListItemData.type
+                                postComments: ListItemData.commentCount
+                                postTitle: ListItemData.title
+                                postDomain: ListItemData.domain
+                                postUsername: ListItemData.poster
+                                postTime: ListItemData.timePosted + "| " + ListItemData.points
+                                postArticle: ListItemData.articleURL
+                                askPost: ListItemData.isAsk
+                                commentSource: ListItemData.commentsURL
+                                commentID: ListItemData.hnid
                             }
-                        }
-                        listItemComponents: [
-                            ListItemComponent {
-                                type: 'item'
-                                HNPage {
-                                    property string type: ListItemData.type
-                                    postComments: ListItemData.commentCount
-                                    postTitle: ListItemData.title
-                                    postDomain: ListItemData.domain
-                                    postUsername: ListItemData.poster
-                                    postTime: ListItemData.timePosted + "| " + ListItemData.points
-                                    postArticle: ListItemData.articleURL
-                                    askPost: ListItemData.isAsk
-                                    commentSource: ListItemData.commentsURL
-                                    commentID: ListItemData.hnid
-                                }
-                                function openComments(ListItemData) {
-                                    var page = commentPage.createObject();
-                                    console.log(ListItemData.commentsURL)
-                                    page.commentLink = ListItemData.hnid;
-                                    page.titleDomain = ListItemData.domain;
-                                    page.title = ListItemData.title;
-                                    page.titlePoster = ListItemData.poster;
-                                    page.titleTime = ListItemData.timePosted + "| " + ListItemData.points;
-                                    page.isAsk = ListItemData.isAsk;
-                                    page.articleLink = ListItemData.articleURL;
-                                    page.titleComments = ListItemData.commentCount;
-                                    page.titlePoints = ListItemData.points
-                                    searchPage.push(page);
-                                }
-                                function openArticle(ListItemData) {
-                                    var page = webPage.createObject();
-                                    page.htmlContent = selectedItem.articleURL;
-                                    page.text = selectedItem.title;
-                                    searchPage.push(page);
-                                }
-                            },
-                            ListItemComponent {
-                                type: 'error'
-                                ErrorItem {
-                                    id: errorItem
-                                }
-                            }
-                        ]
-                        onTriggered: {
-                            var selectedItem = dataModel.data(indexPath);
-                            if (settings.openInBrowser == true) {
-                                // will auto-invoke after re-arming
-                                console.log("OPENING IN BROWSER");
-                                linkInvocation.query.uri = "";
-                                linkInvocation.query.uri = selectedItem.articleURL;
-                                return;
-                            }
-                            console.log(selectedItem.isAsk);
-                            if (selectedItem.isAsk == "true") {
-                                console.log("Ask post");
+                            function openComments(ListItemData) {
                                 var page = commentPage.createObject();
-                                console.log(selectedItem.commentsURL)
-                                page.commentLink = selectedItem.hnid;
-                                page.title = selectedItem.title;
-                                page.titlePoster = selectedItem.poster;
-                                page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
-                                page.titleDomain = selectedItem.domain
-                                page.isAsk = selectedItem.isAsk;
-                                searchPage.push(page);
-                                Tart.send('requestPage', {
-                                        source: selectedItem.hnid,
-                                        sentBy: 'commentPage',
-                                        askPost: selectedItem.isAsk,
-                                        deleteComments: "false"
-                                    });
-                            } else {
-                                console.log('Item triggered. ' + selectedItem.articleURL);
-                                var page = webPage.createObject();
-                                page.htmlContent = selectedItem.articleURL;
-                                page.text = selectedItem.title;
+                                console.log(ListItemData.commentsURL)
+                                page.commentLink = ListItemData.hnid;
+                                page.titleDomain = ListItemData.domain;
+                                page.title = ListItemData.title;
+                                page.titlePoster = ListItemData.poster;
+                                page.titleTime = ListItemData.timePosted + "| " + ListItemData.points;
+                                page.titleDomain = ListItemData.domain;
+                                page.isAsk = ListItemData.isAsk;
+                                page.articleLink = ListItemData.articleURL;
+                                page.titleComments = ListItemData.commentCount;
+                                page.titlePoints = ListItemData.points
                                 searchPage.push(page);
                             }
+                            function openArticle(ListItemData) {
+                                var page = webPage.createObject();
+                                page.htmlContent = ListItemData.articleURL;
+                                if (settings.readerMode == true && ListItemData.isAsk != "true")
+                                    page.htmlContent = readerURL + ListItemData.articleURL;
+                                page.text = ListItemData.title;
+                                searchPage.push(page);
+                            }
+                        },
+                        ListItemComponent {
+                            type: 'error'
+                            ErrorItem {
+                                id: errorItem
+                            }
+                        },
+                        ListItemComponent {
+                            type: 'load'
+                            LoadItem {
+                                id: loadItem
+                                horizontalAlignment: HorizontalAlignment.Center
+                                verticalAlignment: VerticalAlignment.Center
+                                property string type: ListItemData.type
+                            }
                         }
-                        attachedObjects: [
-                            ListScrollStateHandler {
-                                onAtEndChanged: {
-                                    if (atEnd == true && searchModel.isEmpty() == false && busy == false && (searchModel.size() % 30) == 0) {
-                                        console.log('end reached!')
-                                        Tart.send('requestPage', {
-                                                source: search,
-                                                sentBy: 'searchPage',
-                                                startIndex: start
-                                            });
-                                        loading.visible = false;
-                                        searchField.enabled = false;
-                                    }
+                    ]
+                    onTriggered: {
+                        var selectedItem = dataModel.data(indexPath);
+                        if (dataModel.data(indexPath).type != 'item') {
+                            return;
+                        }
+
+                        if (settings.openInBrowser == true) {
+                            // will auto-invoke after re-arming
+                            console.log("OPENING IN BROWSER");
+                            linkInvocation.query.uri = "";
+                            linkInvocation.query.uri = selectedItem.articleURL;
+                            return;
+                        }
+                        if (settings.readerMode == true && selectedItem.isAsk != "true") {
+                            selectedItem.articleURL = readerURL + selectedItem.articleURL;
+                            console.log('Item triggered. ' + selectedItem.articleURL);
+                            var page = webPage.createObject();
+                            page.htmlContent = selectedItem.articleURL;
+                            page.text = selectedItem.title;
+                            searchPage.push(page);
+                            return;
+                        }
+                        console.log(selectedItem.isAsk);
+                        if (selectedItem.isAsk == "true") {
+                            console.log("Ask post");
+                            var page = commentPage.createObject();
+                            console.log(selectedItem.commentsURL)
+                            page.commentLink = selectedItem.hnid;
+                            page.title = selectedItem.title;
+                            page.titlePoster = selectedItem.poster;
+                            page.titleTime = selectedItem.timePosted + "| " + selectedItem.points;
+                            page.titleDomain = selectedItem.domain;
+                            page.isAsk = selectedItem.isAsk;
+                            searchPage.push(page);
+                            Tart.send('requestPage', {
+                                    source: selectedItem.hnid,
+                                    sentBy: 'commentPage',
+                                    askPost: selectedItem.isAsk,
+                                    deleteComments: "false"
+                                });
+                        } else {
+                            console.log('Item triggered. ' + selectedItem.articleURL);
+                            var page = webPage.createObject();
+                            page.htmlContent = selectedItem.articleURL;
+                            page.text = selectedItem.title;
+                            searchPage.push(page);
+                        }
+                    }
+                    attachedObjects: [
+                        ListScrollStateHandler {
+                            onAtEndChanged: {
+                                if (atEnd == true && searchModel.isEmpty() == false && busy == false && (searchModel.size() % 30) == 0) {
+                                    console.log('end reached!')
+                                    lastItemType = 'load'
+                                    searchModel.append({
+                                            type: 'load'
+                                        });
+                                    searchList.scrollToPosition(ScrollPosition.End ,ScrollAnimation.Smooth)
+                                    Tart.send('requestPage', {
+                                            source: search,
+                                            sentBy: 'searchPage',
+                                            startIndex: start
+                                        });
+                                    loading.visible = false;
+                                    searchField.enabled = false;
                                 }
                             }
-                        ]
-                    }
-                }
-            }
-        }
-        onCreationCompleted: {
-            Tart.register(searchPage)
-        }
-        attachedObjects: [
-            Invocation {
-                id: linkInvocation
-                property bool auto_trigger: false
-                query {
-                    uri: "http://peterhansen.ca"
-
-                    onUriChanged: {
-                        if (uri != "") {
-                            linkInvocation.query.updateQuery();
                         }
+                    ]
+                }
+            }
+        }
+    }
+    onCreationCompleted: {
+        Tart.register(searchPage)
+    }
+    attachedObjects: [
+        Invocation {
+            id: linkInvocation
+            property bool auto_trigger: false
+            query {
+                uri: "http://peterhansen.ca"
+                invokeTargetId: "sys.browser"
+
+                onUriChanged: {
+                    if (uri != "") {
+                        linkInvocation.query.updateQuery();
                     }
                 }
-
-                onArmed: {
-                    // don't auto-trigger on initial setup
-                    if (auto_trigger)
-                        trigger("bb.action.OPEN");
-                    auto_trigger = true; // allow re-arming to auto-trigger
-                }
-            },
-            ComponentDefinition {
-                id: webPage
-                source: "webArticle.qml"
-            },
-            ComponentDefinition {
-                id: commentPage
-                source: "CommentPage.qml"
-            },
-            ComponentDefinition {
-                id: userPage
-                source: "UserPage.qml"
             }
-        ]
-    }
+
+            onArmed: {
+                // don't auto-trigger on initial setup
+                if (auto_trigger)
+                    trigger("bb.action.OPEN");
+                auto_trigger = true; // allow re-arming to auto-trigger
+            }
+        },
+        ComponentDefinition {
+            id: webPage
+            source: "webArticle.qml"
+        },
+        ComponentDefinition {
+            id: commentPage
+            source: "CommentPage.qml"
+        },
+        ComponentDefinition {
+            id: userPage
+            source: "UserPage.qml"
+        }
+    ]
 }

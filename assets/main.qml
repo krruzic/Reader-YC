@@ -268,7 +268,8 @@ TabbedPane {
     
     onSettingsChanged: {
         var data = {
-            openInBrowser: settings.openInBrowser
+            openInBrowser: settings.openInBrowser,
+            readerMode: settings.readerMode
         };
 
         Tart.send('saveSettings', {
@@ -320,16 +321,22 @@ TabbedPane {
             id: settings
 
             property bool openInBrowser: false
+            property bool readerMode: false
 
             onOpenInBrowserChanged: {
                 settingsChanged();
             }
-
+            onReaderModeChanged: {
+                settingsChanged();
+            }
+            
             function restore(data) {
                 print('restoring', Object.keys(data));
                 if (data.openInBrowser != null) {
                     print('openInBrowser =', data.openInBrowser);
                     openInBrowser = data.openInBrowser;
+                    print('readerMode =', data.readerMode);
+                    readerMode = data.readerMode;
                 }
             }
         }

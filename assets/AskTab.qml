@@ -11,6 +11,7 @@ NavigationPane {
     property string morePage: ""
     property string errorText: ""
     property string lastItemType: ""
+    property string readerURL: "http://www.readability.com/m?url="
     property bool busy: false
 
     onCreationCompleted: {
@@ -35,12 +36,11 @@ NavigationPane {
     }
 
     function onAddaskStories(data) {
-        lastItemType = 'item'
         morePage = data.moreLink;
         errorLabel.visible = false;
         var lastItem = theModel.size() - 1
         //console.log("LAST ITEM: " + lastItemType);
-        if (lastItemType == 'error') {
+        if (lastItemType == 'error' || lastItemType == 'load') {
             theModel.removeAt(lastItem)
         }
         theModel.append({
@@ -56,17 +56,17 @@ NavigationPane {
                 hnid: data.story['hnid'],
                 isAsk: data.story['askPost']
             });
+        lastItemType = 'item'
         busy = false;
         loading.visible = false;
         titleBar.refreshEnabled = ! busy;
     }
 
     function onAskListError(data) {
-        lastItemType = 'error'
         if (theModel.isEmpty() != true) {
             var lastItem = theModel.size() - 1
             //console.log(lastItemType);
-            if (lastItemType == 'error') {
+            if (lastItemType == 'error' || lastItemType == 'load') {
                 theModel.removeAt(lastItem)
             }
             theModel.append({
@@ -77,6 +77,7 @@ NavigationPane {
             errorLabel.text = data.text
             errorLabel.visible = true;
         }
+        lastItemType = 'error'
         busy = false;
         loading.visible = false;
         titleBar.refreshEnabled = ! busy;
@@ -111,11 +112,7 @@ NavigationPane {
             }
         }
         Container {
-            Container {
-                id: spacer
-                visible: showSpacer()
-                minHeight: 200
-                maxHeight: 200
+            layout: DockLayout {
             }
             Container {
                 visible: errorLabel.visible
@@ -123,7 +120,7 @@ NavigationPane {
                 verticalAlignment: VerticalAlignment.Center
                 Label {
                     id: errorLabel
-                    text: "<b><span style='color:#fe8515'>Error getting stories,</span></b>\nCheck your connection and try again!"
+                    text: "<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!"
                     textStyle.fontSize: FontSize.PointValue
                     textStyle.textAlign: TextAlign.Center
                     textStyle.fontSizeValue: 9
@@ -134,17 +131,17 @@ NavigationPane {
                 }
             }
             Container {
+                visible: loading.visible
                 horizontalAlignment: HorizontalAlignment.Center
                 verticalAlignment: VerticalAlignment.Center
-                Container {
-                    visible: loading.visible
-                    ActivityIndicator {
-                        id: loading
-                        minHeight: 300
-                        minWidth: 300
-                        running: true
-                        visible: true
-                    }
+                ActivityIndicator {
+                    id: loading
+                    horizontalAlignment: HorizontalAlignment.Center
+                    verticalAlignment: VerticalAlignment.Center
+                    minHeight: 300
+                    minWidth: 300
+                    running: true
+                    visible: true
                 }
             }
             Container {
@@ -155,13 +152,7 @@ NavigationPane {
                         id: theModel
                     }
                     function itemType(data, indexPath) {
-                        if (data.type != 'error') {
-                            lastItemType = 'item';
-                            return 'item';
-                        } else {
-                            lastItemType = 'error';
-                            return 'error';
-                        }
+                        return data.type;
                     }
                     listItemComponents: [
                         ListItemComponent {
@@ -184,7 +175,8 @@ NavigationPane {
                                 page.commentLink = ListItemData.hnid;
                                 page.title = ListItemData.title;
                                 page.titlePoster = ListItemData.poster;
-                                page.titleTime = ListItemData.timePosted + "| " + ListItemData.points
+                                page.titleTime = ListItemData.timePosted + "| " + ListItemData.points;
+                                page.titleDomain = ListItemData.domain;
                                 page.isAsk = ListItemData.isAsk;
                                 page.articleLink = ListItemData.articleURL;
                                 page.titleComments = ListItemData.commentCount;
@@ -193,8 +185,10 @@ NavigationPane {
                             }
                             function openArticle(ListItemData) {
                                 var page = webPage.createObject();
-                                page.htmlContent = selectedItem.articleURL;
-                                page.text = selectedItem.title;
+                                page.htmlContent = ListItemData.articleURL;
+                                if (settings.readerMode == true && ListItemData.isAsk != "true")
+                                    page.htmlContent = readerURL + ListItemData.articleURL;
+                                page.text = ListItemData.title;
                                 askPage.push(page);
                             }
 
@@ -204,18 +198,37 @@ NavigationPane {
                             ErrorItem {
                                 id: errorItem
                             }
+                        },
+                        ListItemComponent {
+                            type: 'load'
+                            LoadItem {
+                                id: loadItem
+                                horizontalAlignment: HorizontalAlignment.Center
+                                verticalAlignment: VerticalAlignment.Center
+                                property string type: ListItemData.type
+                            }
                         }
                     ]
                     onTriggered: {
-                        if (dataModel.data(indexPath).type == 'error') {
+                        if (dataModel.data(indexPath).type != 'item') {
                             return;
                         }
+                        
                         var selectedItem = dataModel.data(indexPath);
                         if (settings.openInBrowser == true) {
                             // will auto-invoke after re-arming
                             console.log("OPENING IN BROWSER");
                             linkInvocation.query.uri = "";
                             linkInvocation.query.uri = selectedItem.articleURL;
+                            return;
+                        }
+                        if (settings.readerMode == true && selectedItem.isAsk != "true") {
+                            selectedItem.articleURL = readerURL + selectedItem.articleURL;
+                            console.log('Item triggered. ' + selectedItem.articleURL);
+                            var page = webPage.createObject();
+                            page.htmlContent = selectedItem.articleURL;
+                            page.text = selectedItem.title;
+                            askPage.push(page);
                             return;
                         }
                         console.log(selectedItem.isAsk);
@@ -246,6 +259,11 @@ NavigationPane {
                             onAtEndChanged: {
                                 if (atEnd == true && theModel.isEmpty() == false && morePage != "" && busy == false) {
                                     console.log('end reached!')
+                                    lastItemType = 'load'
+                                    theModel.append({
+                                            type: 'load'
+                                        });
+                                    theList.scrollToPosition(ScrollPosition.End, ScrollAnimation.Smooth)
                                     Tart.send('requestPage', {
                                             source: morePage,
                                             sentBy: whichPage
@@ -263,6 +281,7 @@ NavigationPane {
                     property bool auto_trigger: false
                     query {
                         uri: "http://peterhansen.ca"
+                        invokeTargetId: "sys.browser"
 
                         onUriChanged: {
                             if (uri != "") {

@@ -39,6 +39,7 @@ TitleBar {
                 leftPadding: 15
                 //rightPadding: 15
                 Container {
+                    topPadding: 10
                     verticalAlignment: VerticalAlignment.Center
                     minWidth: 600
                     maxWidth: 600
@@ -62,7 +63,7 @@ TitleBar {
                 }
                 Container {
                     leftMargin: 35
-                    topPadding: 10
+                    topPadding: 15
                     verticalAlignment: VerticalAlignment.Center
                     horizontalAlignment: horizontalAlignment.Right
 

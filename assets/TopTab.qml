@@ -11,6 +11,7 @@ NavigationPane {
     property string morePage: ""
     property string errorText: ""
     property string lastItemType: ""
+    property string readerURL: "http://www.readability.com/m?url="
     property bool busy: true
 
     onCreationCompleted: {
@@ -35,15 +36,15 @@ NavigationPane {
     }
 
     function onAddtopStories(data) {
-        lastItemType = 'item'
         var stories = data.stories;
         morePage = data.moreLink;
         errorLabel.visible = false;
         var lastItem = theModel.size() - 1
         //console.log("LAST ITEM: " + lastItemType);
-        if (lastItemType == 'error') {
+        if (lastItemType == 'error' || lastItemType == 'load') {
             theModel.removeAt(lastItem)
         }
+        lastItemType = 'item'
         theModel.append({
                 type: 'item',
                 title: data.story['title'],
@@ -63,11 +64,10 @@ NavigationPane {
     }
 
     function onTopListError(data) {
-        lastItemType = 'error'
         if (theModel.isEmpty() != true) {
             var lastItem = theModel.size() - 1
             //console.log(lastItemType);
-            if (lastItemType == 'error') {
+            if (lastItemType == 'error' || lastItemType == 'load') {
                 theModel.removeAt(lastItem)
             }
             theModel.append({
@@ -78,6 +78,7 @@ NavigationPane {
             errorLabel.text = data.text
             errorLabel.visible = true;
         }
+        lastItemType = 'error'
         busy = false;
         loading.visible = false;
         titleBar.refreshEnabled = ! busy;
@@ -93,7 +94,7 @@ NavigationPane {
 
     Page {
         titleBar: HNTitleBar {
-            
+
             id: titleBar
             text: "Reader|YC - Top Posts"
             listName: theList
@@ -104,20 +105,16 @@ NavigationPane {
                     Tart.send('requestPage', {
                             source: 'topPage',
                             sentBy: 'topPage'
-                    });
-                console.log("pressed")
-                theModel.clear();
-                refreshEnabled = ! busy;
-                loading.visible = true;
+                        });
+                    console.log("pressed")
+                    theModel.clear();
+                    refreshEnabled = ! busy;
+                    loading.visible = true;
                 }
             }
         }
         Container {
-            Container {
-                id: spacer
-                visible: showSpacer()
-                minHeight: 200
-                maxHeight: 200
+            layout: DockLayout {
             }
             Container {
                 visible: errorLabel.visible
@@ -136,17 +133,17 @@ NavigationPane {
                 }
             }
             Container {
+                visible: loading.visible
                 horizontalAlignment: HorizontalAlignment.Center
                 verticalAlignment: VerticalAlignment.Center
-                Container {
-                    visible: loading.visible
-                    ActivityIndicator {
-                        id: loading
-                        minHeight: 300
-                        minWidth: 300
-                        running: true
-                        visible: true
-                    }
+                ActivityIndicator {
+                    id: loading
+                    horizontalAlignment: HorizontalAlignment.Center
+                    verticalAlignment: VerticalAlignment.Center
+                    minHeight: 300
+                    minWidth: 300
+                    running: true
+                    visible: true
                 }
             }
             Container {
@@ -156,13 +153,7 @@ NavigationPane {
                         id: theModel
                     }
                     function itemType(data, indexPath) {
-                        if (data.type != 'error') {
-                            lastItemType = 'item';
-                            return 'item';
-                        } else {
-                            lastItemType = 'error';
-                            return 'error';
-                        }
+                        return data.type
                     }
                     listItemComponents: [
                         ListItemComponent {
@@ -197,6 +188,8 @@ NavigationPane {
                             function openArticle(ListItemData) {
                                 var page = webPage.createObject();
                                 page.htmlContent = ListItemData.articleURL;
+                                if (settings.readerMode == true && ListItemData.isAsk != "true")
+                                    page.htmlContent = readerURL + ListItemData.articleURL;
                                 page.text = ListItemData.title;
                                 topPage.push(page);
                             }
@@ -215,11 +208,19 @@ NavigationPane {
                                     title: ListItemData.title
                                 }
                             }
-
+                        },
+                        ListItemComponent {
+                            type: 'load'
+                            LoadItem {
+                                id: loadItem
+                                horizontalAlignment: HorizontalAlignment.Center
+                                verticalAlignment: VerticalAlignment.Center
+                                property string type: ListItemData.type
+                            }
                         }
                     ]
                     onTriggered: {
-                        if (dataModel.data(indexPath).type == 'error') {
+                        if (dataModel.data(indexPath).type != 'item') {
                             return;
                         }
 
@@ -231,6 +232,15 @@ NavigationPane {
                             linkInvocation.query.uri = selectedItem.articleURL;
                             return;
                         }
+                        if (settings.readerMode == true && selectedItem.isAsk != "true") {
+                            selectedItem.articleURL = readerURL + selectedItem.articleURL;
+                            console.log('Item triggered. ' + selectedItem.articleURL);
+                            var page = webPage.createObject();
+                            page.htmlContent = selectedItem.articleURL;
+                            page.text = selectedItem.title;
+                            topPage.push(page);
+                            return;
+                        }
                         console.log(selectedItem.isAsk);
                         if (selectedItem.isAsk == "true" && selectedItem.hnid != '-1') {
                             console.log("Ask post");
@@ -240,7 +250,8 @@ NavigationPane {
                             page.commentLink = selectedItem.hnid;
                             page.title = selectedItem.title;
                             page.titlePoster = selectedItem.poster;
-                            page.titleTime = selectedItem.timePosted + "| " + selectedItem.points
+                            page.titleTime = selectedItem.timePosted + "| " + selectedItem.points;
+                            page.titleDomain = ListItemData.domain;
                             page.isAsk = selectedItem.isAsk;
                             page.articleLink = selectedItem.articleURL;
                             page.titleComments = selectedItem.commentCount;
@@ -258,6 +269,11 @@ NavigationPane {
                             onAtEndChanged: {
                                 if (atEnd == true && theModel.isEmpty() == false && morePage != "" && busy == false) {
                                     console.log('end reached!')
+                                    lastItemType = 'load'
+                                    theModel.append({
+                                            type: 'load'
+                                        });
+                                    theList.scrollToPosition(ScrollPosition.End ,ScrollAnimation.Smooth)
                                     Tart.send('requestPage', {
                                             source: morePage,
                                             sentBy: whichPage
@@ -275,7 +291,7 @@ NavigationPane {
                     property bool auto_trigger: false
                     query {
                         uri: "http://peterhansen.ca"
-
+                        invokeTargetId: "sys.browser"
                         onUriChanged: {
                             if (uri != "") {
                                 linkInvocation.query.updateQuery();
