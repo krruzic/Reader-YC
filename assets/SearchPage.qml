@@ -267,20 +267,26 @@ NavigationPane {
                     attachedObjects: [
                         ListScrollStateHandler {
                             onAtEndChanged: {
-                                if (atEnd == true && searchModel.isEmpty() == false && busy == false && (searchModel.size() % 30) == 0) {
-                                    console.log('end reached!')
-                                    lastItemType = 'load'
+                                if (atEnd == true && theModel.isEmpty() == false && morePage != "" && busy == false) {
+                                    console.log('end reached!');
+                                    var lastItem = theModel.size() - 1;
+                                    if (lastItemType == 'load') {
+                                        console.log("GLITCHING");
+                                        return;
+                                    }
+                                    if (lastItemType == 'error') { // Remove an error item
+                                        searchModel.removeAt(lastItem);
+                                    }
                                     searchModel.append({
                                             type: 'load'
                                         });
-                                    searchList.scrollToPosition(ScrollPosition.End ,ScrollAnimation.Smooth)
+                                    //searchList.scrollToPosition(ScrollPosition.End, ScrollAnimation.Smooth);
+                                    lastItemType = 'load';
                                     Tart.send('requestPage', {
-                                            source: search,
-                                            sentBy: 'searchPage',
-                                            startIndex: start
+                                            source: morePage,
+                                            sentBy: whichPage
                                         });
-                                    loading.visible = false;
-                                    searchField.enabled = false;
+                                    busy = true;
                                 }
                             }
                         }
