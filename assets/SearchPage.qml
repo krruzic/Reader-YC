@@ -30,6 +30,7 @@ NavigationPane {
         loading.visible = false;
         searchField.enabled = true;
         errorLabel.visible = false;
+        busy = false;
         var story = data.story;
         var lastItem = searchModel.size() - 1
         if (lastItemType == 'error' || lastItemType == 'load') {
@@ -52,7 +53,6 @@ NavigationPane {
         start = start + 1;
         searchField.visible = true;
     }
-
     function onSearchError(data) {
         if (searchModel.isEmpty() != true) {
             var lastItem = searchModel.size() - 1
@@ -68,6 +68,7 @@ NavigationPane {
             errorLabel.visible = true;
         }
         lastItemType = 'error'
+        busy = false;
         errorLabel.text = data.text
         searchField.visible = true;
         searchField.enabled = true;
@@ -112,7 +113,7 @@ NavigationPane {
                                 sentBy: 'searchPage',
                                 startIndex: start
                             });
-                        start = start + 30;
+                        //start = start + 30;
                         errorLabel.visible = false;
                         loading.visible = true;
                         searchField.visible = false;
@@ -267,9 +268,10 @@ NavigationPane {
                     attachedObjects: [
                         ListScrollStateHandler {
                             onAtEndChanged: {
-                                if (atEnd == true && theModel.isEmpty() == false && morePage != "" && busy == false) {
+                                console.log("RES: " + searchModel.size() % 30)
+                                if (atEnd == true && searchModel.isEmpty() == false && busy == false && (searchModel.size() % 30) == 0) {
                                     console.log('end reached!');
-                                    var lastItem = theModel.size() - 1;
+                                    var lastItem = searchModel.size() - 1;
                                     if (lastItemType == 'load') {
                                         console.log("GLITCHING");
                                         return;
@@ -283,8 +285,9 @@ NavigationPane {
                                     //searchList.scrollToPosition(ScrollPosition.End, ScrollAnimation.Smooth);
                                     lastItemType = 'load';
                                     Tart.send('requestPage', {
-                                            source: morePage,
-                                            sentBy: whichPage
+                                            source: search,
+                                            startIndex: start,
+                                            sentBy: 'searchPage'
                                         });
                                     busy = true;
                                 }

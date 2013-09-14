@@ -4,7 +4,7 @@ Page {
     titleBar: HNTitleBar {
         id: helpTitleBar
         text: "Reader|YC - Help"
-        refreshEnabled: false
+        refreshEnabled: true
     }
     Container {
 

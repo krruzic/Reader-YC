@@ -94,7 +94,7 @@ Page {
                 var page = webPage.createObject();
                 page.htmlContent = articleLink;
                 if (settings.readerMode == true && isAsk != "true")
-                    page.htmlContent = readerURL + ListItemData.articleURL;
+                    page.htmlContent = readerURL + articleLink;
                 page.text = commentPane.title;
                 root.activePane.push(page);
             }

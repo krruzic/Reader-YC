@@ -17,7 +17,7 @@ Container {
     Container {
         bottomPadding: 35
         background: itemBackground.imagePaint
-        
+
         attachedObjects: [
             ImagePaintDefinition {
                 id: itemBackground
@@ -29,7 +29,7 @@ Container {
                 repeatPattern: RepeatPattern.XY
             }
         ]
-        
+
         Container {
             horizontalAlignment: horizontalAlignment.Center
             id: mainContainer
@@ -53,7 +53,7 @@ Container {
                     textStyle.color: Color.Black
                     multiline: true
                     autoSize.maxLineCount: 3
-                
+
                 }
                 Label {
                     id: labelPostDomain
@@ -88,7 +88,7 @@ Container {
                         horizontalAlignment: HorizontalAlignment.Left
                         textStyle.textAlign: TextAlign.Left
                     }
-                    
+
                     Label {
                         id: labelTimePosted
                         layoutProperties: StackLayoutProperties {
@@ -105,7 +105,7 @@ Container {
                 }
             }
         }
-        
+
         Container {
             leftPadding: 19
             rightPadding: 19

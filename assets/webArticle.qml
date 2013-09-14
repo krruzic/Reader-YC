@@ -5,10 +5,10 @@ Page {
     property alias htmlContent: webDisplay.url
     property alias html: webDisplay.html
     property alias text: titleBar.text
-//    onCreationCompleted: {
-//        Tart.register(webPane);
-//    }
-    
+    //    onCreationCompleted: {
+    //        Tart.register(webPane);
+    //    }
+
     actions: [
         //        ActionItem {
         //            ActionBar.placement: ActionBarPlacement.OnBar
@@ -45,15 +45,15 @@ Page {
                 data = text + "\n" + htmlContent + "\n" + " Shared using Reader|YC ";
             }
         },
-//        ActionItem {
-//            ActionBar.placement: ActionBarPlacement.OnBar
-//            title: "Reader Mode"
-//            onTriggered: {
-//                Tart.send('webviewRequest', {
-//                        url: webDisplay.url
-//                });
-//            }
-//        },
+        //        ActionItem {
+        //            ActionBar.placement: ActionBarPlacement.OnBar
+        //            title: "Reader Mode"
+        //            onTriggered: {
+        //                Tart.send('webviewRequest', {
+        //                        url: webDisplay.url
+        //                });
+        //            }
+        //        },
         ActionItem {
             ActionBar.placement: ActionBarPlacement.InOverflow
             imageSource: "asset:///images/icons/ic_previous.png"
@@ -73,15 +73,17 @@ Page {
             }
         }
     ]
-    
-//    function onReaderData(data) {
-//        webDisplay.html = data.html;
-//    }
+
+    //    function onReaderData(data) {
+    //        webDisplay.html = data.html;
+    //    }
     titleBar: HNTitleBar {
         id: titleBar
+        listName: scrollView
         onRefreshPage: {
+            console.log(listName);
             webDisplay.reload();
-            refreshEnabled = false
+            refreshEnabled = false;
         }
         showButton: true
         refreshEnabled: true

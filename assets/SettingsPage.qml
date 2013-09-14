@@ -100,10 +100,10 @@ Page {
                     textStyle.fontSizeValue: 6
                     textStyle.color: Color.create("#fe8a3e")
                 }
-                
+
                 ToggleButton {
                     horizontalAlignment: HorizontalAlignment.Right
-                    
+
                     id: readerToggle
                     onCheckedChanged: {
                         if (checked == true) {
@@ -117,7 +117,7 @@ Page {
                 }
             }
             Divider {
-            
+
             }
             Button {
                 verticalAlignment: verticalAlignment.Top
@@ -165,7 +165,7 @@ Page {
         else
             browserToggle.checked = ! browserToggle.checked;
     }
-    
+
     function precheckReader(value) {
         print("CURR READER: " + readerToggle.checked);
         print(value);
