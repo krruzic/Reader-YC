@@ -8,7 +8,7 @@ Page {
         text: "Reader|YC - User"
         refreshEnabled: true
         buttonImage: "asset:///images/search.png"
-        buttonPressedImage: "asset:///images/search.png"
+        //buttonPressedImage: "asset:///images/search.png"
     }
     onCreationCompleted: {
         Tart.register(userPane);

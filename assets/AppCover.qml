@@ -28,9 +28,9 @@ SceneCover {
         Container {
             leftPadding: 10
             rightPadding: 10
-            minWidth: 314
-            horizontalAlignment: horizontalAlignment.Center
-            verticalAlignment: verticalAlignment.Center
+            minWidth: 334
+            horizontalAlignment: HorizontalAlignment.Center
+            verticalAlignment: VerticalAlignment.Center
             Container {
                 layoutProperties: StackLayoutProperties {
                     spaceQuota: 2
@@ -41,7 +41,7 @@ SceneCover {
                 layoutProperties: StackLayoutProperties {
                     spaceQuota: 1
                 }
-                minWidth: 314
+                //minWidth: 314
                 text: root.coverTitle
                 textStyle.fontSize: FontSize.PointValue
                 textStyle.textAlign: TextAlign.Left
@@ -54,11 +54,11 @@ SceneCover {
             }
         }
         Container {
+            bottomPadding: 15
             leftPadding: 10
             rightPadding: 10
-            bottomPadding: 15
-            horizontalAlignment: horizontalAlignment.Center
-            verticalAlignment: verticalAlignment.Bottom
+            horizontalAlignment: HorizontalAlignment.Center
+            verticalAlignment: VerticalAlignment.Bottom
             layout: StackLayout {
                 orientation: LayoutOrientation.LeftToRight
             }

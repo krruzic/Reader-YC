@@ -4,8 +4,8 @@ TitleBar {
     property alias text: pageTitle.text
     property alias refreshEnabled: refreshButton.enabled
     property alias showButton: refreshButton.visible
-    property alias buttonImage: refreshButton.defaultImageSource
-    property alias buttonPressedImage: refreshButton.pressedImageSource
+    property alias buttonImage: refreshButton.imageSource
+    //    /property alias buttonPressedImage: refreshButton.pressedImageSource
     property variant listName: null
     signal refreshPage()
     kind: TitleBarKind.FreeForm
@@ -14,83 +14,114 @@ TitleBar {
 
         Container {
             id: topcontainer
+            layout: DockLayout {
+                //orientation: LayoutOrientation.LeftToRight
+            }
 
             background: background.imagePaint
             horizontalAlignment: HorizontalAlignment.Fill
-            //verticalAlignment: VerticalAlignment.Top
-            
+            verticalAlignment: VerticalAlignment.Center
+            //topPadding: 15
+
             gestureHandlers: [
                 DoubleTapHandler {
                     onDoubleTapped: {
                         if (listName) {
-                            listName.scrollToPosition(ScrollPosition.Beginning, ScrollAnimation.Smooth);
                             console.log("GESTURE TRIGGERED!");
+                            if (listName.toString().indexOf("QmlScrollView") == -1) { // Checks if the object is a lsitview/scrollview
+                                listName.scrollToPosition(ScrollPosition.Beginning, ScrollAnimation.Smooth);
+                            } else {
+                                listName.scrollToPoint(0, 0, ScrollAnimation.Smooth);
+                            }
                         } else {
                             return;
                         }
                     }
                 }
             ]
-            Container { // Header
-                id: titleContainer
-                layout: StackLayout {
-                    orientation: LayoutOrientation.LeftToRight
-                }
-                //topPadding: 30
+            //            Container { // Header
+            //                id: titleContainer
+            //                layout: DockLayout {
+            //                    //orientation: LayoutOrientation.LeftToRight
+            //                }
+            //                horizontalAlignment: HorizontalAlignment.Fill
+            //                verticalAlignment: VerticalAlignment.Fill
+            //                topPadding: 10
+            //                leftPadding: 15
+            //                rightPadding: 20
+            //                //bottomPadding: 10
+            Container {
                 leftPadding: 15
-                //rightPadding: 15
-                Container {
-                    topPadding: 10
-                    verticalAlignment: VerticalAlignment.Center
+                verticalAlignment: VerticalAlignment.Center
+                horizontalAlignment: HorizontalAlignment.Left
+                bottomPadding: 10
+//                minWidth: 600
+//                maxWidth: 600
+                ScrollView {
                     minWidth: 600
                     maxWidth: 600
-                    ScrollView {
-                        verticalAlignment: verticalAlignment.Center
-                        horizontalAlignment: horizontalAlignment.Left
-                        scrollViewProperties.scrollMode: ScrollMode.Horizontal
-                        scrollViewProperties.pinchToZoomEnabled: false
-                        scrollViewProperties.overScrollEffectMode: OverScrollEffectMode.OnScroll
-                        Label {
-                            id: pageTitle
-                            text: "Reader|YC - Top Posts"
-                            textStyle.fontSize: FontSize.PointValue
-                            textStyle.textAlign: TextAlign.Left
-                            textStyle.color: Color.White
-                            textFormat: TextFormat.Plain
-                            enabled: false
-                            textStyle.fontSizeValue: 9.0
-                        }
-                    }
-                }
-                Container {
-                    leftMargin: 35
-                    topPadding: 15
-                    verticalAlignment: VerticalAlignment.Center
-                    horizontalAlignment: horizontalAlignment.Right
-
-                    ImageButton {
-                        id: refreshButton
+                    scrollViewProperties.scrollMode: ScrollMode.Horizontal
+                    scrollViewProperties.pinchToZoomEnabled: false
+                    scrollViewProperties.overScrollEffectMode: OverScrollEffectMode.OnScroll
+                    Label {
+                        id: pageTitle
+                        text: "Reader|YC - Top Posts"
+                        //textStyle.base: SystemDefaults.TextStyles.BigText
+                        textStyle.fontSize: FontSize.PointValue
+                        textStyle.textAlign: TextAlign.Left
+                        textStyle.color: Color.White
+                        textFormat: TextFormat.Plain
                         enabled: false
-                        horizontalAlignment: horizontalAlignment.Right
-                        defaultImageSource: "asset:///images/refresh.png"
-                        pressedImageSource: "asset:///images/refresh.png"
-                        onClicked: {
-                            refreshPage();
-                        }
+                        textStyle.fontSizeValue: 9.0
                     }
-//                    minWidth: 86
-//                    minHeight: 79
-//                    maxWidth: 86
-//                    maxHeight: 79
-
                 }
-                attachedObjects: [
-                    ImagePaintDefinition {
-                        id: background
-                        imageSource: "asset:///images/titlebar.png"
-                    }
-                ]
             }
+            Container {
+                //leftMargin: 35
+                //topPadding: 15
+                //bottomPadding: 15
+                leftPadding: 10
+                rightPadding: 20
+                verticalAlignment: VerticalAlignment.Center
+                horizontalAlignment: HorizontalAlignment.Right
+                visible: true
+                ImageView {
+                    id: refreshButton
+                    enabled: false
+                    visible: enabled
+                    imageSource: "asset:///images/refresh.png"
+                    scalingMethod: ScalingMethod.AspectFit
+                    gestureHandlers: [
+                        TapHandler {
+                            onTapped: {
+                                if (refreshButton.enabled)
+                                    refreshPage();
+                            }
+                        }
+                    ]
+                }
+            }
+            //                ImageButton {
+            //                    id: refreshButton
+            //                    enabled: false
+            //
+            //                    defaultImageSource: "asset:///images/refresh.png"
+            //                    pressedImageSource: "asset:///images/refresh.png"
+            //                    onClicked: {
+            //                        refreshPage();
+            //                    }
+            //                }
+            //                    minWidth: 86
+            //                    minHeight: 79
+            //                    maxWidth: 86
+            //                    maxHeight: 79
+
         }
+        attachedObjects: [
+            ImagePaintDefinition {
+                id: background
+                imageSource: "asset:///images/titlebar.png"
+            }
+        ]
     }
 }

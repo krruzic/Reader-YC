@@ -27,10 +27,9 @@ SceneCover {
         Container {
             leftPadding: 10
             rightPadding: 10
-            topPadding: 20
-            minWidth: 314
-            horizontalAlignment: horizontalAlignment.Center
-            verticalAlignment: verticalAlignment.Center
+            minWidth: 310
+            horizontalAlignment: HorizontalAlignment.Center
+            verticalAlignment: VerticalAlignment.Center
             Label {
                 id: titleLabel
                 minWidth: 290
@@ -43,6 +42,38 @@ SceneCover {
                 multiline: true
                 textStyle.fontSizeValue: 6.0
                 autoSize.maxLineCount: 3
+            }
+        }
+        Container {
+            leftPadding: 10
+            rightPadding: 10
+            bottomPadding: 15
+            horizontalAlignment: HorizontalAlignment.Center
+            verticalAlignment: VerticalAlignment.Bottom
+            layout: StackLayout {
+                orientation: LayoutOrientation.LeftToRight
+            }
+            Label {
+                id: posterLabel
+                text: root.coverPoster
+                textStyle.fontSize: FontSize.PointValue
+                textStyle.textAlign: TextAlign.Center
+                textStyle.color: Color.White
+                textFormat: TextFormat.Plain
+                textStyle.fontSizeValue: 5.0
+
+            }
+            Divider {
+                opacity: 0
+            }
+            Label {
+                id: commentLabel
+                text: root.coverComments
+                textStyle.fontSize: FontSize.PointValue
+                textStyle.textAlign: TextAlign.Center
+                textStyle.color: Color.White
+                textFormat: TextFormat.Plain
+                textStyle.fontSizeValue: 5.0
             }
         }
     }

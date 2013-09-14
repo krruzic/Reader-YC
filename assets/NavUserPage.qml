@@ -29,7 +29,7 @@ NavigationPane {
             showButton: true
             refreshEnabled: true
             buttonImage: "asset:///images/search.png"
-            buttonPressedImage: "asset:///images/search.png"
+            //buttonPressedImage: "asset:///images/search.png"
             onRefreshPage: {
                 searchField.visible = true;
                 slideSearch.play();

@@ -211,7 +211,7 @@ TabbedPane {
 
         Tart.register(root);
         Tart.send('uiReady');
-        
+
     }
     showTabsOnActionBar: true
     activeTab: topTab
@@ -265,7 +265,7 @@ TabbedPane {
     function onRestoreSettings(data) {
         settings.restore(data);
     }
-    
+
     onSettingsChanged: {
         var data = {
             openInBrowser: settings.openInBrowser,
@@ -276,24 +276,22 @@ TabbedPane {
                 settings: data
             });
     }
-    
-    
 
     attachedObjects: [
         ComponentDefinition {
-            id: aboutDef;
+            id: aboutDef
             source: "AboutPage.qml"
         },
         ComponentDefinition {
-            id: helpDef;
+            id: helpDef
             source: "HelpPage.qml"
         },
         ComponentDefinition {
-            id: appCover;
+            id: appCover
             source: "AppCover.qml"
         },
         ComponentDefinition {
-            id: settingsDef;
+            id: settingsDef
             source: "SettingsPage.qml"
         },
         QTimer {
@@ -329,7 +327,7 @@ TabbedPane {
             onReaderModeChanged: {
                 settingsChanged();
             }
-            
+
             function restore(data) {
                 print('restoring', Object.keys(data));
                 if (data.openInBrowser != null) {
