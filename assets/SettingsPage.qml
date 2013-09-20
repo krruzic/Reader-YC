@@ -1,6 +1,6 @@
 import bb.cascades 1.0
 import bb.system 1.0
-import "tart.js" as Tart
+//import "tart.js" as Tart
 
 Page {
     id: settingsPage
@@ -17,13 +17,13 @@ Page {
 
     }
     ScrollView {
-        preferredWidth: 768
+        //preferredWidth: 768
         scrollViewProperties {
             scrollMode: ScrollMode.Vertical
         }
 
         Container {
-            preferredWidth: 768
+            //preferredWidth: 768
             topPadding: 10
             leftPadding: 10
             rightPadding: 10
@@ -32,7 +32,7 @@ Page {
                 }
                 horizontalAlignment: HorizontalAlignment.Fill // Make full width
                 Label {
-                    horizontalAlignment: horizontalAlignment.Left
+                    horizontalAlignment: HorizontalAlignment.Left
                     verticalAlignment: VerticalAlignment.Top
                     text: "<b>Article Click Behaviour</b>"
                     textFormat: TextFormat.Html
@@ -40,14 +40,8 @@ Page {
                     textStyle.fontSizeValue: 7
                     textStyle.color: Color.create("#434344")
                 }
-                Container {
-                    maxHeight: 60
-                    minHeight: 60
-                    horizontalAlignment: horizontalAlignment.Left
-                    verticalAlignment: VerticalAlignment.Center
-                }
                 Label {
-                    horizontalAlignment: horizontalAlignment.Left
+                    horizontalAlignment: HorizontalAlignment.Left
                     verticalAlignment: VerticalAlignment.Bottom
                     text: "Always open in browser"
                     textStyle.fontSize: FontSize.PointValue
@@ -78,7 +72,7 @@ Page {
                 }
                 horizontalAlignment: HorizontalAlignment.Fill // Make full width
                 Label {
-                    horizontalAlignment: horizontalAlignment.Left
+                    horizontalAlignment: HorizontalAlignment.Left
                     verticalAlignment: VerticalAlignment.Top
                     text: "<b>Reader Mode</b>"
                     textFormat: TextFormat.Html
@@ -86,14 +80,9 @@ Page {
                     textStyle.fontSizeValue: 7
                     textStyle.color: Color.create("#434344")
                 }
-                Container {
-                    maxHeight: 60
-                    minHeight: 60
-                    horizontalAlignment: horizontalAlignment.Left
-                    verticalAlignment: VerticalAlignment.Center
-                }
+
                 Label {
-                    horizontalAlignment: horizontalAlignment.Left
+                    horizontalAlignment: HorizontalAlignment.Left
                     verticalAlignment: VerticalAlignment.Bottom
                     text: "Display URLs using Readability"
                     textStyle.fontSize: FontSize.PointValue
@@ -120,7 +109,7 @@ Page {
 
             }
             Button {
-                verticalAlignment: verticalAlignment.Top
+                verticalAlignment: VerticalAlignment.Top
                 horizontalAlignment: HorizontalAlignment.Center
 
                 id: cacheButton
@@ -131,12 +120,14 @@ Page {
                 }
             }
             Label {
-                horizontalAlignment: horizontalAlignment.Center
+                verticalAlignment: VerticalAlignment.Bottom
+                horizontalAlignment: HorizontalAlignment.Center
                 text: "This will delete all cached comments and favourited articles"
                 textStyle.fontSize: FontSize.PointValue
-                textStyle.fontSizeValue: 6
-                textStyle.textAlign: TextAlign.Center
-                preferredWidth: 768
+                textStyle.fontSizeValue: 5
+                multiline: true
+                //textStyle.textAlign: TextAlign.Center
+                //preferredWidth: 768
             }
             Divider {
 
@@ -145,8 +136,8 @@ Page {
                 text: "Reader|YC - Copyright © 2013 Surge Co."
                 textStyle.fontSize: FontSize.PointValue
                 textStyle.fontSizeValue: 5
-                preferredWidth: 768
-                horizontalAlignment: horizontalAlignment.Center
+                //preferredWidth: 768
+                horizontalAlignment: HorizontalAlignment.Center
                 textStyle.textAlign: TextAlign.Center
             }
         }
@@ -176,9 +167,9 @@ Page {
     }
 
     attachedObjects: [
-        SystemToast {
+        Button {
             id: cacheDeleteToast
-            body: ""
+            //body: ""
         }
     ]
 }

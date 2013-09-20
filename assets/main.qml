@@ -15,6 +15,26 @@ TabbedPane {
     signal settingsChanged()
 
     Menu.definition: MenuDefinition {
+        helpAction: HelpActionItem {
+            imageSource: "asset:///images/icons/ic_help.png"
+            title: "Help"
+
+            onTriggered: {
+                var page = helpDef.createObject(activeTab.content);
+                activeTab.push(page)
+                Application.menuEnabled = false;
+            }
+
+        }
+        settingsAction: settingsActionItem {
+            title: "Settings"
+
+            onTriggered: {
+                var page = settingsDef.createObject(activeTab.content);
+                activeTab.push(page)
+                Application.menuEnabled = false;
+            }
+        }
         actions: [
             ActionItem {
                 imageSource: "asset:///images/icons/ic_info.png"
@@ -22,25 +42,6 @@ TabbedPane {
 
                 onTriggered: {
                     var page = aboutDef.createObject(activeTab.content);
-                    activeTab.push(page)
-                    Application.menuEnabled = false;
-                }
-            },
-            ActionItem {
-                imageSource: "asset:///images/icons/ic_help.png"
-                title: "Help"
-
-                onTriggered: {
-                    var page = helpDef.createObject(activeTab.content);
-                    activeTab.push(page)
-                    Application.menuEnabled = false;
-                }
-            },
-            ActionItem {
-                title: "Settings"
-
-                onTriggered: {
-                    var page = settingsDef.createObject(activeTab.content);
                     activeTab.push(page)
                     Application.menuEnabled = false;
                 }
@@ -280,15 +281,15 @@ TabbedPane {
     attachedObjects: [
         ComponentDefinition {
             id: aboutDef
-            source: "AboutPage.qml"
+            source: "asset:///AboutPage.qml"
         },
         ComponentDefinition {
             id: helpDef
-            source: "HelpPage.qml"
+            source: "asset:///HelpPage.qml"
         },
         ComponentDefinition {
             id: appCover
-            source: "AppCover.qml"
+            source: "asset:///AppCover.qml"
         },
         ComponentDefinition {
             id: settingsDef

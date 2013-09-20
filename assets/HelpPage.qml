@@ -4,7 +4,7 @@ Page {
     titleBar: HNTitleBar {
         id: helpTitleBar
         text: "Reader|YC - Help"
-        refreshEnabled: true
+        //refreshEnabled: true
     }
     Container {
 
@@ -205,10 +205,10 @@ Page {
             text: "Reader|YC - Copyright © 2013 Surge Co."
             textStyle.fontSize: FontSize.PointValue
             textStyle.fontSizeValue: 5
-            preferredWidth: 768
+            //preferredWidth: 768
             layoutProperties: StackLayoutProperties {
             }
-            horizontalAlignment: horizontalAlignment.Center
+            horizontalAlignment: HorizontalAlignment.Center
             textStyle.textAlign: TextAlign.Center
         }
     }
