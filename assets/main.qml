@@ -26,7 +26,7 @@ TabbedPane {
             }
 
         }
-        settingsAction: settingsActionItem {
+        settingsAction: SettingsActionItem {
             title: "Settings"
 
             onTriggered: {
