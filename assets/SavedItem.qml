@@ -35,7 +35,7 @@ Container {
             ActionItem {
                 title: "View Article"
                 imageSource: "asset:///images/icons/ic_article.png"
-                enabled: if (saveItem.selectedItem.articleURL != '') {
+                enabled: if (saveItem.ListItemData.articleURL != '') {
                     true
                 }
                 onTriggered: {
@@ -51,7 +51,7 @@ Container {
                     invokeActionId: "bb.action.SHARE"
                 }
                 onTriggered: {
-                    data = saveItem.selectedItem.title + "\n" + saveItem.selectedItem.articleURL + "\nShared using Reader|YC "
+                    data = ListItemData.title + "\n" + ListItemData.articleURL + "\nShared using Reader|YC "
                 }
             }
             InvokeActionItem {
@@ -61,7 +61,7 @@ Container {
                 id: browserQuery
                 //query.mimeType: "text/plain"
                 query.invokeActionId: "bb.action.OPEN"
-                query.uri: saveItem.selectedItem.articleURL
+                query.uri: ListItemData.articleURL
                 query.invokeTargetId: "sys.browser"
                 query.onQueryChanged: {
                     browserQuery.query.updateQuery();
@@ -72,7 +72,7 @@ Container {
                 imageSource: "asset:///images/icons/ic_copy_link.png"
                 onTriggered: {
                     Tart.send('copyLink', {
-                            articleLink: saveItem.selectedItem.articleURL
+                            articleLink: ListItemData.articleURL
                         });
                 }
             }

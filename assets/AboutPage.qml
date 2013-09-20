@@ -8,7 +8,6 @@ Page {
     }
     Container {
         ScrollView {
-
             Container {
                 layout: StackLayout {
                 }
@@ -159,15 +158,69 @@ Page {
                     Divider {
 
                     }
-                    Label {
-                        text: "Reader|YC - Copyright © 2013 Surge Co."
-                        textStyle.fontSize: FontSize.PointValue
-                        textStyle.fontSizeValue: 5
-                        preferredWidth: 768
-                        layoutProperties: StackLayoutProperties {
+                    Container {
+                        layout: StackLayout {
                         }
-                        horizontalAlignment: horizontalAlignment.Center
-                        textStyle.textAlign: TextAlign.Center
+                        topPadding: 10
+                        leftPadding: 10
+                        rightPadding: 20
+                        Container {
+                            layout: StackLayout {
+                                orientation: LayoutOrientation.LeftToRight
+                            }
+                            Container {
+                                layoutProperties: StackLayoutProperties {
+                                    spaceQuota: 6
+                                }
+                                Label {
+                                    text: "<b>Privacy Policy</b>"
+                                    textFormat: TextFormat.Html
+                                    textStyle.color: Color.create("#434344")
+                                    bottomMargin: 0
+                                    topMargin: 0
+                                }
+                                Container {
+                                    leftPadding: 20
+                                    topPadding: 6
+
+                                    Label {
+                                        text: 'Everything you wanted to know about private stuff'
+                                        textFormat: TextFormat.Html
+                                        textStyle.fontSize: FontSize.PointValue
+                                        textStyle.fontSizeValue: 6
+                                        textStyle.color: Color.create("#fe8a3e")
+                                        multiline: true
+                                        bottomMargin: 0
+                                    }
+                                    TextArea {
+                                        bottomMargin: 0
+                                        topMargin: 0
+                                        editable: false
+                                        text: "Reader|YC literally sends no info to anyone. Why do you think there are NO permissions? PS: I had to write this. Your private and non-private information is safe on your phone.\nDon't believe me? The app is open source, check it out for yourself.\nFuture versions of this app may incorporate logging in to enable voting and posting. Still, this app will collect nothing, and all data will be sent to the Hackernews servers via HTTPS to ensure security"
+                                        textStyle.fontSize: FontSize.PointValue
+                                        textStyle.fontSizeValue: 6
+                                        textStyle.color: Color.create("#ff303030")
+                                    }
+                                }
+                            }
+                        }
+                        Divider {
+
+                        }
+                        Label {
+                            text: "Reader|YC - Copyright © 2013 Surge Co."
+                            textStyle.fontSize: FontSize.PointValue
+                            textStyle.fontSizeValue: 5
+                            //preferredWidth: 768
+                            layoutProperties: StackLayoutProperties {
+                            }
+                            horizontalAlignment: HorizontalAlignment.Center
+                            textStyle.textAlign: TextAlign.Center
+                        }
+                        Container {
+                            minHeight: 20
+                            maxHeight: 20
+                        }
                     }
                 }
             }

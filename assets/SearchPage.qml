@@ -118,6 +118,7 @@ NavigationPane {
                         loading.visible = true;
                         searchField.visible = false;
                     }
+                    input.submitKey: SubmitKey.Search
                 }
             }
             Container {

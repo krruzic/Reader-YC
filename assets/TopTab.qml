@@ -241,7 +241,7 @@ NavigationPane {
                             return;
                         }
                         console.log(selectedItem.isAsk);
-                        if (selectedItem.isAsk == "true" && selectedItem.hnid != '-1') {
+                        if (selectedItem.isAsk == "true") {
                             console.log("Ask post");
                             var page = commentPage.createObject();
                             console.log(selectedItem.commentsURL)
@@ -249,7 +249,7 @@ NavigationPane {
                             page.title = selectedItem.title;
                             page.titlePoster = selectedItem.poster;
                             page.titleTime = selectedItem.timePosted + "| " + selectedItem.points;
-                            page.titleDomain = ListItemData.domain;
+                            page.titleDomain = selectedItem.domain;
                             page.isAsk = selectedItem.isAsk;
                             page.articleLink = selectedItem.articleURL;
                             page.titleComments = selectedItem.commentCount;
