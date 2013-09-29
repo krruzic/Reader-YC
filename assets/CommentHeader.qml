@@ -1,10 +1,10 @@
 import bb.cascades 1.0
-import "tart.js" as Tart
+//import "tart.js" as Tart
 
 Container {
     id: headerPane
-    leftPadding: 19
-    rightPadding: 19
+    leftPadding: 10
+    rightPadding: 10
     property alias hTitle: labelPostTitle.text
     property alias poster: labelUsername.text
     property alias domain: labelPostDomain.text
@@ -15,7 +15,7 @@ Container {
     }
 
     Container {
-        bottomPadding: 35
+        bottomPadding: 25
         background: itemBackground.imagePaint
 
         attachedObjects: [
@@ -33,8 +33,6 @@ Container {
         Container {
             horizontalAlignment: horizontalAlignment.Center
             id: mainContainer
-            preferredWidth: 730
-            maxWidth: 730
             layout: StackLayout {
                 orientation: LayoutOrientation.LeftToRight
             }
@@ -71,7 +69,7 @@ Container {
                 Container {
                     leftMargin: 1
                     rightPadding: 15
-                    bottomPadding: 10
+                   //bottomPadding: 10
                     layout: StackLayout {
                         orientation: LayoutOrientation.LeftToRight
                     }

@@ -21,18 +21,19 @@ SceneCover {
         minWidth: 310
         maxHeight: 211
         maxWidth: 310
+        horizontalAlignment: HorizontalAlignment.Center
+        verticalAlignment:VerticalAlignment.Center
         layout: StackLayout {
 
         }
         Container {
             leftPadding: 10
             rightPadding: 10
-            minWidth: 290
+            minWidth: 310
             horizontalAlignment: HorizontalAlignment.Center
             verticalAlignment: VerticalAlignment.Center
             Label {
                 id: titleLabel
-                //minWidth: 290
                 text: root.coverTitle
                 textStyle.fontSize: FontSize.PointValue
                 textStyle.textAlign: TextAlign.Left
@@ -40,7 +41,7 @@ SceneCover {
                 textFormat: TextFormat.Plain
                 textStyle.fontStyle: FontStyle.Italic
                 multiline: true
-                textStyle.fontSizeValue: 6.0
+                textStyle.fontSizeValue: 8.0
                 autoSize.maxLineCount: 3
             }
         }

@@ -38,7 +38,7 @@ def parseStories(page):
         story['title'] = i.find_all('a')[0].text
         story['link'] = i.find("a")["href"]
         if 'item?id='in story['link']:
-            story['link'] = 'https://news.ycombinator.com/' + story['link']
+            story['link'] = 'news.ycombinator.com/' + story['link']
             story['askPost'] = "true"
         try:
             story['domain'] = i.find_all("span")[0].text

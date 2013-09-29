@@ -53,19 +53,19 @@ TitleBar {
             Container {
                 leftPadding: 15
                 verticalAlignment: VerticalAlignment.Center
-                horizontalAlignment: HorizontalAlignment.Left
-                bottomPadding: 10
-//                minWidth: 600
-//                maxWidth: 600
+                horizontalAlignment: HorizontalAlignment.Fill
+                layout: StackLayout {
+                    orientation: LayoutOrientation.LeftToRight
+                }
                 ScrollView {
-                    minWidth: 600
-                    maxWidth: 600
+                    verticalAlignment: VerticalAlignment.Center
+                    horizontalAlignment: HorizontalAlignment.Fill
                     scrollViewProperties.scrollMode: ScrollMode.Horizontal
                     scrollViewProperties.pinchToZoomEnabled: false
                     scrollViewProperties.overScrollEffectMode: OverScrollEffectMode.OnScroll
                     Label {
                         id: pageTitle
-                        text: "Reader|YC - Top Posts"
+                        text: "Reader|YC - Top Postsgk jgjhgkjgk jgk jjkkgj kgj kgj "
                         //textStyle.base: SystemDefaults.TextStyles.BigText
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.textAlign: TextAlign.Left
@@ -75,31 +75,30 @@ TitleBar {
                         textStyle.fontSizeValue: 9.0
                     }
                 }
-            }
-            Container {
-                //leftMargin: 35
-                //topPadding: 15
-                //bottomPadding: 15
-                leftPadding: 10
-                rightPadding: 20
-                verticalAlignment: VerticalAlignment.Center
-                horizontalAlignment: HorizontalAlignment.Right
-                visible: true
-                ImageView {
-                    id: refreshButton
-                    enabled: false
-                    visible: enabled
-                    imageSource: "asset:///images/refresh.png"
-                    scalingMethod: ScalingMethod.AspectFit
-                    gestureHandlers: [
-                        TapHandler {
-                            onTapped: {
-                                if (refreshButton.enabled)
-                                    refreshPage();
+                Container {
+                    leftPadding: 10
+                    leftMargin: 20
+                    rightPadding: 20
+                    verticalAlignment: VerticalAlignment.Center
+                    horizontalAlignment: HorizontalAlignment.Right
+                    visible: true
+                    ImageView {
+                        id: refreshButton
+                        enabled: true
+                        visible: enabled
+                        imageSource: "asset:///images/refresh.png"
+                        scalingMethod: ScalingMethod.AspectFit
+                        gestureHandlers: [
+                            TapHandler {
+                                onTapped: {
+                                    if (refreshButton.enabled)
+                                        refreshPage();
+                                }
                             }
-                        }
-                    ]
+                        ]
+                    }
                 }
+
             }
             //                ImageButton {
             //                    id: refreshButton
