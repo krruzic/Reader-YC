@@ -3,13 +3,11 @@ from .HNStoryAPI import getStoryPage
 from .HNCommentAPI import getCommentPage
 from .HNUserAPI import getUserPage
 from .HNSearchAPI import getSearchResults
-#from requests import session
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
-
-#import requests
+import requests, requests.utils, pickle
 import tart
-
+# import lxml.html as l
 
 #HS = HackerNewsStoryAPI()
 #HC = HackerNewsCommentAPI()
@@ -36,6 +34,21 @@ class App(tart.Application):
 
     def onUiReady(self):
         print("UI READY!!")
+        # doc = """
+        #     <html><body>
+        #     <table>
+        #       <tr>
+        #         <td>one</td>
+        #         <td>1</td>
+        #       </tr>
+        #       <tr>
+        #         <td>two</td>
+        #         <td>2</td
+        #       </tr>
+        #     </table>
+        #     </body></html>"""
+        # doc = l.document_fromstring(doc)
+        # print(doc.finall('.//tr'))
         tart.send('restoreSettings', **self.settings)
         self.onRequestPage("topPage", "topPage")
 
@@ -170,7 +183,7 @@ class App(tart.Application):
             tart.send('searchError', text="<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!")
 
     def onRequestLogin(self, username, password):
-
+        from requests.utils import cookiejar_from_dict as jar
         HN = "https://news.ycombinator.com/"
         HN_LOGIN = HN + "newslogin?whence=news"
         HN_LOGIN_POST = HN + 'y'
@@ -182,18 +195,31 @@ class App(tart.Application):
             fnid = soup.find('input', attrs=dict(name='fnid'))['value']
         except:
             print()
-        print(fnid)
+        #print(fnid, username, password)
         payload = {
             'fnid': fnid,
             'u': username,
             'p': password
         }
 
-        with session() as c:
-            c.post(HN_LOGIN_POST, data=payload)
-            print(c.cookies)
-            request = c.get('https://news.ycombinator.com/saved?id=deft')
-            tart.send('loginResult', text=request.text)
+        c = requests.session()
+        c.post(HN_LOGIN_POST, data=payload)
+
+        #cookies = jar(c.cookies)
+        #print(type(str(c.cookies)), str(c.cookies))
+        with open('data/userCookie', 'w') as f:
+            pickle.dump(c.cookies, f)
+
+        with open('data/userCookie') as f:
+            userCookies = pickle.load(f)
+            r = session.get('https://news.ycombinator.com/saved?id=deft', cookies=userCookies)
+
+        tart.send('loginResult', text=r.text)
+        # with session() as c:
+        #     c.post(HN_LOGIN_POST, data=payload)
+        #     print(c.cookies)
+        #     request = c.get('https://news.ycombinator.com/saved?id=deft')
+        #     tart.send('loginResult', text=request.text)
 
     def onSaveArticle(self, article):
         article = tuple(article)

@@ -13,8 +13,8 @@ Container {
     property alias postDomain: labelPostDomain.text
     property alias postUsername: labelUsername.text
     property alias postTime: labelTimePosted.text
-    //property variant backgroundVar: unreadBackground.imagePaint
-
+    horizontalAlignment: HorizontalAlignment.Fill
+    
     onCreationCompleted: {
         Tart.register(hnPage)
     }
@@ -98,7 +98,7 @@ Container {
 
     }
 
-    property int padding: 19
+    property int padding: 10
     topPadding: 5
     bottomPadding: 0
     leftPadding: padding
@@ -123,15 +123,6 @@ Container {
         copyResultToast.show();
     }
 
-    function onReadState(data) {
-        if (data.state == "unread") {
-            console.log("UNREAD");
-            mainContainer.background = unreadBackground.imagePaint
-        } else {
-            console.log("READ");
-            mainContainer.background = readBackground.imagePaint
-        }
-    }
     // Highlight function for the highlight Container
 
     // Connect the onActivedChanged signal to the highlight function
@@ -147,22 +138,24 @@ Container {
     Container {
         visible: true
         id: mainContainer
-        preferredWidth: 730
-        preferredHeight: 155
-        //maxHeight: 155
-        maxWidth: 730
         background: unreadBackground.imagePaint
+        horizontalAlignment: HorizontalAlignment.Fill
+        attachedObjects: [
+            LayoutUpdateHandler {
+                id: mainDimensions
+            }
+        ]
         Container {
             topPadding: 5
             leftPadding: 10
-            rightPadding: 0
+            rightPadding: 10
             rightMargin: 0
             bottomMargin: 0
             bottomPadding: 20
-
+            horizontalAlignment: HorizontalAlignment.Fill
             Label {
                 id: labelPostTitle
-                preferredWidth: 680
+                verticalAlignment: VerticalAlignment.Top
                 text: "Billing Incident Update, from the makers of cheese, testing this out"
                 textStyle.fontSize: FontSize.PointValue
                 textStyle.fontSizeValue: 7
@@ -173,23 +166,17 @@ Container {
                 textFormat: TextFormat.Html
             }
             Container {
+                verticalAlignment: VerticalAlignment.Center
+                bottomMargin: 0
                 topMargin: 0
-                leftMargin: 1
-                rightPadding: 15
+                //minWidth: mainDimensions.layoutFrame.width
+                //horizontalAlignment: HorizontalAlignment.Fill
                 clipContentToBounds: false
-                layout: StackLayout {
-                    orientation: LayoutOrientation.LeftToRight
+                layout: DockLayout {
                 }
                 Label {
                     id: labelPostDomain
-                    layoutProperties: StackLayoutProperties {
-                        spaceQuota: 1
-                    }
-                    topMargin: 1
-                    bottomMargin: 1
-                    translationX: 2
-                    minWidth: 400
-                    maxWidth: 440
+                    horizontalAlignment: HorizontalAlignment.Left
                     text: "http://www.dailymail.com/"
                     multiline: false
                     textStyle.fontSize: FontSize.PointValue
@@ -197,11 +184,11 @@ Container {
                     textStyle.color: Color.create("#ff69696c")
                     textStyle.fontStyle: FontStyle.Italic
                 }
-
+                Divider {
+                    opacity: 0
+                    horizontalAlignment: HorizontalAlignment.Center
+                }
                 Label {
-                    layoutProperties: StackLayoutProperties {
-                        spaceQuota: 1
-                    }
                     text: postComments + " comments"
                     multiline: false
                     textStyle.fontSize: FontSize.PointValue
@@ -212,18 +199,14 @@ Container {
                 }
             }
             Container {
-                topMargin: 10
-                leftMargin: 1
-                rightPadding: 15
-                translationY: -10
-                layout: StackLayout {
-                    orientation: LayoutOrientation.LeftToRight
+                bottomMargin: 0
+                topMargin: 0
+                verticalAlignment: VerticalAlignment.Bottom
+                //horizontalAlignment: HorizontalAlignment.Fill
+                layout: DockLayout {
                 }
                 Label {
                     id: labelUsername
-                    layoutProperties: StackLayoutProperties {
-                        spaceQuota: 1
-                    }
                     text: "username"
                     multiline: false
                     textStyle.fontSize: FontSize.PointValue
@@ -232,12 +215,12 @@ Container {
                     horizontalAlignment: HorizontalAlignment.Left
                     textStyle.textAlign: TextAlign.Left
                 }
-
+                Divider {
+                    opacity: 0
+                    horizontalAlignment: HorizontalAlignment.Center
+                }
                 Label {
                     id: labelTimePosted
-                    layoutProperties: StackLayoutProperties {
-                        spaceQuota: 2
-                    }
                     text: "some comments | some points"
                     multiline: false
                     textStyle.fontSize: FontSize.PointValue
@@ -247,25 +230,22 @@ Container {
                     textStyle.textAlign: TextAlign.Right
                 }
             }
+            Container {
+                minHeight: 10
+            }
         }
     }
     ImageView {
         id: highlightContainer
         imageSource: "asset:///images/listHighlight.amd"
-        preferredWidth: 730
-        preferredHeight: 155
-        maxHeight: 155
-        maxWidth: 730
+        preferredWidth: mainDimensions.layoutFrame.width
+        preferredHeight: mainDimensions.layoutFrame.height
         opacity: 0
     }
     attachedObjects: [
         ImagePaintDefinition {
             id: unreadBackground
             imageSource: "asset:///images/unread.amd"
-        },
-        ImagePaintDefinition {
-            id: readBackground
-            imageSource: "asset:///images/read.amd"
         },
         SystemToast {
             id: saveResultToast

@@ -1,6 +1,6 @@
 import bb.cascades 1.0
 import bb.system 1.0
-import "tart.js" as Tart
+//import "tart.js" as Tart
 
 Container {
     id: saveItem
@@ -91,7 +91,7 @@ Container {
 
     }
 
-    property int padding: 19
+    property int padding: 10
     topPadding: 5
     bottomPadding: 0
     leftPadding: padding
@@ -122,7 +122,7 @@ Container {
     }
     attachedObjects: [
         ImagePaintDefinition {
-            id: itemBackground
+            id: unreadBackground
             imageSource: "asset:///images/unread.amd"
         },
         SystemToast {
@@ -133,53 +133,45 @@ Container {
     Container {
         visible: true
         id: mainContainer
-        preferredWidth: 730
-        preferredHeight: 155
-        maxHeight: 155
-        maxWidth: 730
-        background: itemBackground.imagePaint
-        layout: StackLayout {
-            orientation: LayoutOrientation.LeftToRight
-        }
+        background: unreadBackground.imagePaint
+        horizontalAlignment: HorizontalAlignment.Fill
+        attachedObjects: [
+            LayoutUpdateHandler {
+                id: mainDimensions
+            }
+        ]
         Container {
             topPadding: 5
             leftPadding: 10
-            rightPadding: 0
+            rightPadding: 10
             rightMargin: 0
             bottomMargin: 0
             bottomPadding: 20
-
+            horizontalAlignment: HorizontalAlignment.Fill
             Label {
-                rightMargin: 42
                 id: labelPostTitle
-                preferredWidth: 680
-                maxWidth: 680
-                text: "Billing Incident Update, from the makers of cheese"
+                verticalAlignment: VerticalAlignment.Top
+                text: "Billing Incident Update, from the makers of cheese, testing this out"
                 textStyle.fontSize: FontSize.PointValue
                 textStyle.fontSizeValue: 7
-                textFormat: TextFormat.Html
                 bottomMargin: 1
+                multiline: true
                 textStyle.color: Color.Black
+                autoSize.maxLineCount: 2
+                textFormat: TextFormat.Html
             }
             Container {
-                translationY: -5
+                verticalAlignment: VerticalAlignment.Center
+                bottomMargin: 0
                 topMargin: 0
-                leftMargin: 1
-                rightPadding: 15
+                //minWidth: mainDimensions.layoutFrame.width
+                //horizontalAlignment: HorizontalAlignment.Fill
                 clipContentToBounds: false
-                layout: StackLayout {
-                    orientation: LayoutOrientation.LeftToRight
+                layout: DockLayout {
                 }
                 Label {
                     id: labelPostDomain
-                    layoutProperties: StackLayoutProperties {
-                        spaceQuota: 1
-                    }
-                    topMargin: 1
-                    bottomMargin: 1
-                    translationX: 2
-                    minWidth: 400
-                    maxWidth: 440
+                    horizontalAlignment: HorizontalAlignment.Left
                     text: "http://www.dailymail.com/"
                     multiline: false
                     textStyle.fontSize: FontSize.PointValue
@@ -187,11 +179,11 @@ Container {
                     textStyle.color: Color.create("#ff69696c")
                     textStyle.fontStyle: FontStyle.Italic
                 }
-
+                Divider {
+                    opacity: 0
+                    horizontalAlignment: HorizontalAlignment.Center
+                }
                 Label {
-                    layoutProperties: StackLayoutProperties {
-                        spaceQuota: 1
-                    }
                     text: postComments + " comments"
                     multiline: false
                     textStyle.fontSize: FontSize.PointValue
@@ -202,18 +194,14 @@ Container {
                 }
             }
             Container {
-                topMargin: 10
-                leftMargin: 1
-                rightPadding: 15
-                translationY: -10
-                layout: StackLayout {
-                    orientation: LayoutOrientation.LeftToRight
+                bottomMargin: 0
+                topMargin: 0
+                verticalAlignment: VerticalAlignment.Bottom
+                //horizontalAlignment: HorizontalAlignment.Fill
+                layout: DockLayout {
                 }
                 Label {
                     id: labelUsername
-                    layoutProperties: StackLayoutProperties {
-                        spaceQuota: 1
-                    }
                     text: "username"
                     multiline: false
                     textStyle.fontSize: FontSize.PointValue
@@ -222,12 +210,12 @@ Container {
                     horizontalAlignment: HorizontalAlignment.Left
                     textStyle.textAlign: TextAlign.Left
                 }
-
+                Divider {
+                    opacity: 0
+                    horizontalAlignment: HorizontalAlignment.Center
+                }
                 Label {
                     id: labelTimePosted
-                    layoutProperties: StackLayoutProperties {
-                        spaceQuota: 2
-                    }
                     text: "some comments | some points"
                     multiline: false
                     textStyle.fontSize: FontSize.PointValue
@@ -237,15 +225,16 @@ Container {
                     textStyle.textAlign: TextAlign.Right
                 }
             }
+            Container {
+                minHeight: 10
+            }
         }
     }
     ImageView {
         id: highlightContainer
         imageSource: "asset:///images/listHighlight.amd"
-        preferredWidth: 730
-        preferredHeight: 155
-        maxHeight: 155
-        maxWidth: 730
+        preferredWidth: mainDimensions.layoutFrame.width
+        preferredHeight: mainDimensions.layoutFrame.height
         opacity: 0
     }
 }
