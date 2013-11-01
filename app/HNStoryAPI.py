@@ -83,8 +83,8 @@ def parseStories(page):
 def getStoryPage(source):
     url = source
     print("curling page: " + url)
-    response = urllib.request.urlopen(url)
-    page = response.read()
+    response = urllib.request.Request(url=url, headers={ 'User-Agent' : 'Mozilla/5.0' })
+    page = urllib.request.urlopen(response).read()
     print("page curled")
     stories, moreLink = parseStories(page)
     return stories, moreLink

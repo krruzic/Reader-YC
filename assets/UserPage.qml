@@ -14,6 +14,7 @@ Page {
         Tart.register(userPane);
     }
     property alias searchVisible: searchField.visible
+    property alias searchText: searchField.text
     property string username: ""
     property string created: ""
     property string karma: ""
@@ -75,6 +76,7 @@ Page {
                             sentBy: 'userPage'
                         });
                 }
+                input.submitKey: SubmitKey.Search
             }
 
             Container {

@@ -96,6 +96,7 @@ NavigationPane {
                             toX: 0.0
                         }
                     ]
+                    input.submitKey: SubmitKey.Search
                 }
 
                 Container {

@@ -191,8 +191,8 @@ def getCommentPage(source, isAsk, deleteComments):
     else:
         print("Comments not cached...")
     print("curling page: " + url)
-    response = urllib.request.urlopen(url)
-    urlSource = response.read()
+    response = urllib.request.Request(url=url, headers={ 'User-Agent' : 'Mozilla/5.0' })
+    urlSource = urllib.request.urlopen(response).read()
     print("page curled")
     comments, text = parse_comments(urlSource, isAsk)
     if (comments == None):

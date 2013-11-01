@@ -68,7 +68,8 @@ Page {
                     timePosted: data.comment["time"],
                     indent: data.comment["indent"],
                     text: data.comment["text"],
-                    link: "https://news.ycombinator.com/item?id=" + data.comment["link"]
+                    link: "https://news.ycombinator.com/item?id=" + data.comment["link"],
+                    realIndent: data.comment["indent"]
                 });
             lastItemType = 'item';
         }
@@ -199,6 +200,7 @@ Page {
                             poster: ListItemData.poster
                             time: ListItemData.timePosted
                             indent: ListItemData.indent
+                            realIndent: ListItemData.indent
                             text: ListItemData.text
                         }
                     },
@@ -242,7 +244,18 @@ Page {
                     return page;
                 }
                 onTriggered: {
-                    console.log("Comment triggered!")
+//                    console.log("Comment triggered! " + dataModel.data(indexPath).type);
+//                    if (dataModel.data(indexPath).type == 'item') {
+//                        var selectedItem = dataModel.data(indexPath);
+//                        console.log(selectedItem.indent + " " + selectedItem.realIndent);
+//                        if (selectedItem.indent == selectedItem.realIndent) {
+//                            console.log("expanding comment...");
+//                            selectedItem.indent = selectedItem.expand;
+//                        } else {
+//                            console.log("shrinking comment...");
+//                            selectedItem.indent = selectedItem.realIndent;
+//                        }
+//                    }
                 }
             }
         }

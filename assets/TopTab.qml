@@ -36,7 +36,6 @@ NavigationPane {
     }
 
     function onAddtopStories(data) {
-        var stories = data.stories;
         morePage = data.moreLink;
         errorLabel.visible = false;
         var lastItem = theModel.size() - 1

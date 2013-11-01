@@ -321,14 +321,20 @@ TabbedPane {
 
             property bool openInBrowser: false
             property bool readerMode: false
-
+            property bool loggedIn: false
+            property string username: ""
             onOpenInBrowserChanged: {
                 settingsChanged();
             }
             onReaderModeChanged: {
                 settingsChanged();
             }
-
+            onLoggedInChanged: {
+                settingsChanged();
+            }
+            onUsernameChanged: {
+                settingsChanged();
+            }
             function restore(data) {
                 print('restoring', Object.keys(data));
                 if (data.openInBrowser != null) {
@@ -336,6 +342,10 @@ TabbedPane {
                     openInBrowser = data.openInBrowser;
                     print('readerMode =', data.readerMode);
                     readerMode = data.readerMode;
+                    print('logged in =', data.login);
+                    loggedIn = data.login;
+                    print('username = ', data.user);
+                    username = data.user;
                 }
             }
         }
