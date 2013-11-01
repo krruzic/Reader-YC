@@ -6,6 +6,8 @@ Container {
     property alias poster: posterLabel.text
     property alias time: timeLabel.text
     property alias indent: commmentContainer.leftPadding
+    property int realIndent: 0
+    property int expand: 0
     property alias text: commentBox.text
 
     horizontalAlignment: HorizontalAlignment.Right
@@ -16,6 +18,35 @@ Container {
     onCreationCompleted: {
         Tart.register(commmentContainer);
     }
+    gestureHandlers: [
+        TapHandler {
+            onTapped: {
+                console.log(indent + " " + realIndent);
+                if (indent == realIndent) {
+                    console.log("expanding comment...");
+                    indent = expand;
+                } else {
+                    console.log("shrinking comment...");
+                    indent = realIndent;
+                }
+            }
+        }
+    ]
+//    onTouch: {
+//        //        console.log("Comment triggered! " + dataModel.data(indexPath).type);
+//        //        if (dataModel.data(indexPath).type == 'item') {
+//        //        var selectedItem = dataModel.data(indexPath);
+//        if (event.isDown) {
+//            console.log(indent + " " + realIndent);
+//            if (indent == realIndent) {
+//                console.log("expanding comment...");
+//                indent = expand;
+//            } else {
+//                console.log("shrinking comment...");
+//                indent = realIndent;
+//            }
+//        }
+//    }
     contextActions: [
         ActionSet {
             InvokeActionItem {

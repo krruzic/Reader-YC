@@ -1,5 +1,5 @@
 import bb.cascades 1.0
-//import "tart.js" as Tart
+import "tart.js" as Tart
 
 Container {
     id: headerPane
@@ -107,6 +107,7 @@ Container {
         Container {
             leftPadding: 19
             rightPadding: 19
+            bottomPadding: 10
             Container {
                 background: textBackground.imagePaint
                 TextArea {

@@ -10,8 +10,8 @@ def getSource(url):
     """
 
     print("curling page: " + url)
-    with urllib.request.urlopen(url) as url:
-        source = url.read()
+    response = urllib.request.Request(url=url, headers={ 'User-Agent' : 'Mozilla/5.0' })
+    source = urllib.request.urlopen(response).read()
     print("page curled")
     return source
 
@@ -19,6 +19,7 @@ def getUserPage(source):
     """Looks through the user page source,
        and returns the account details
     """
+
     source = getSource("http://news.ycombinator.com/user?id=" + source)
     if (source.decode('ascii') == "No such user."):
         tart.send('userError', text="<b><span style='color:#fe8515'>That user doesn't exist</span></b>\nUsernames are case sensitive!")

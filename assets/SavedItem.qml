@@ -1,6 +1,6 @@
 import bb.cascades 1.0
 import bb.system 1.0
-//import "tart.js" as Tart
+import "tart.js" as Tart
 
 Container {
     id: saveItem
@@ -24,7 +24,7 @@ Container {
             ActionItem {
                 imageSource: "asset:///images/icons/ic_comments.png"
                 title: "Open Comments"
-                enabled: if (saveItem.selectedItem.hnid != '-1') {
+                enabled: if (ListItemData.hnid != '-1') {
                     true
                 }
                 onTriggered: {
@@ -35,7 +35,7 @@ Container {
             ActionItem {
                 title: "View Article"
                 imageSource: "asset:///images/icons/ic_article.png"
-                enabled: if (saveItem.ListItemData.articleURL != '') {
+                enabled: if (ListItemData.articleURL != '') {
                     true
                 }
                 onTriggered: {

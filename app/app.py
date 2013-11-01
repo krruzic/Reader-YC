@@ -21,13 +21,17 @@ class App(tart.Application):
     conn = sqlite3.connect("data/favourites.db")
     SETTINGS_FILE = 'data/settings.state'
     readerToken = '5613db57aaedcafdff67fb12844f5b39a0d47a93' # this is supposed to be a secret, DO NOT USE IT, get your own from http://www.readability.com/developers/api/parser
+    BASE_PATH = os.getcwd() + '/data/'
+    COOKIE = os.path.join(BASE_PATH, 'hackernews.cookie')
     cache = [] #{'ident': None} # Keep track of current request
 
     def __init__(self):
         super().__init__(debug=False)   # set True for some extra debug output
         self.settings = {
             'openInBrowser': 'false',
-            'readerMode': 'false'
+            'readerMode': 'false',
+            'user': '',
+            'login': 'false'
         }
         self.restore_data(self.settings, self.SETTINGS_FILE)
         print("restored: ", self.settings)
@@ -183,43 +187,42 @@ class App(tart.Application):
             tart.send('searchError', text="<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!")
 
     def onRequestLogin(self, username, password):
-        from requests.utils import cookiejar_from_dict as jar
-        HN = "https://news.ycombinator.com/"
-        HN_LOGIN = HN + "newslogin?whence=news"
-        HN_LOGIN_POST = HN + 'y'
-
-        r = requests.get(HN_LOGIN)
+        r = requests.get('https://news.ycombinator.com/newslogin')
         print("SOUPING")
         soup = BeautifulSoup(r.content)
         try:
             fnid = soup.find('input', attrs=dict(name='fnid'))['value']
+            print(fnid, username, password)
         except:
             print()
-        #print(fnid, username, password)
         payload = {
             'fnid': fnid,
             'u': username,
             'p': password
         }
-
-        c = requests.session()
-        c.post(HN_LOGIN_POST, data=payload)
-
-        #cookies = jar(c.cookies)
-        #print(type(str(c.cookies)), str(c.cookies))
-        with open('data/userCookie', 'w') as f:
-            pickle.dump(c.cookies, f)
-
-        with open('data/userCookie') as f:
-            userCookies = pickle.load(f)
-            r = session.get('https://news.ycombinator.com/saved?id=deft', cookies=userCookies)
-
+        sess = requests.session()
+        res = sess.get('https://news.ycombinator.com/newslogin')
+        fnid = soup.find('input')['value']
+        soup = BeautifulSoup(res.content)
+        params = {'u': username, 'p': password, 'fnid': fnid}
+        r = sess.post('https://news.ycombinator.com/y', params=params)
+        assert r.status_code == 200, "Unexpected status code: %s" % r.status_code
+        cookies = sess.cookies
+        cookie = open(self.COOKIE, 'w+')
+        print(cookies)
+        pickle.dump(cookies, cookie)
+        cookie.close()
         tart.send('loginResult', text=r.text)
-        # with session() as c:
-        #     c.post(HN_LOGIN_POST, data=payload)
-        #     print(c.cookies)
-        #     request = c.get('https://news.ycombinator.com/saved?id=deft')
-        #     tart.send('loginResult', text=request.text)
+
+    def onCheckLogin(self):
+        loggedIn = self.settings['login']
+        try:
+            with open('data/hackernews.cookie'):
+                login = True
+        except IOError:
+            login = False
+        tart.send('loginCheck', state=login)
+
 
     def onSaveArticle(self, article):
         article = tuple(article)

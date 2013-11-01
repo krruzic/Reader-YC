@@ -1,10 +1,12 @@
 import bb.cascades 1.0
 import bb.system 1.0
-//import "tart.js" as Tart
+import "tart.js" as Tart
 import bb.cascades 1.0
 
 Page {
     id: settingsPage
+    property bool loggedIn: false
+    property string username: ""
     titleBar: HNTitleBar {
         refreshEnabled: false
         id: titleBar
@@ -13,9 +15,7 @@ Page {
     }
     onCreationCompleted: {
         Tart.register(settingsPage);
-        precheckBrowser(settings.openInBrowser ? true : false);
-        precheckReader(settings.readerMode ? true : false);
-
+        precheckValues(settings.openInBrowser ? true : false, settings.readerMode ? true : false, settings.user, settings.login ? true : false);
     }
     function onCacheDeleted(data) {
         cacheButton.enabled = true;
@@ -23,60 +23,65 @@ Page {
         cacheDeleteToast.cancel();
         cacheDeleteToast.show();
     }
-    function precheckBrowser(value) {
-        print("CURR BROWSER: " + browserToggle.checked);
-        print(value);
-        if (browserToggle.checked == value) // skip if already selected
-            return;
-        else
-            browserToggle.checked = ! browserToggle.checked;
+    function precheckValues(browser, reader, user, login) {
+        browserToggle.checked = browser
+        readerToggle.checked = reader
+        username = user
+        loggedIn = login
     }
 
-    function precheckReader(value) {
-        print("CURR READER: " + readerToggle.checked);
-        print(value);
-        if (readerToggle.checked == value) // skip if already selected
-            return;
-        else
-            readerToggle.checked = ! readerToggle.checked;
-    }
-    
     function onLoginResult(data) {
+        settings.username = data.user
+        settings.login = data.login
         textBox.text = data.text;
         loading.visible = false;
         passwordField.enabled = true;
         usernameField.enabled = true;
-    
     }
+    function onLoginCheck(data) {
+        if (data.state == "false") {
+            console.log("Not logged in!")
+        } else {
+            console.log("Logged in!")
+            settings.login = true;
+        }
+    }
+
     content: Container {
         topPadding: 10
-        SegmentedControl {
-            Option {
-                id: option1
-                text: "App Settings"
-                value: "option1"
-                selected: true
-            }
-            Option {
-                id: option2
-                text: "Account Settings"
-                value: "option2"
-            }
-            onSelectedIndexChanged: {
-                if (selectedIndex == 0) {
-                    cnt1.opacity = 0;
-                    cnt1.visible = true;
-                    cnt2.visible = false;
-                    fadein1.play();
-                } else if (selectedIndex == 1) {
-                    cnt2.opacity = 0;
-                    cnt2.visible = true;
-                    cnt1.visible = false;
-                    fadein2.play();
-                }
-            }
-            selectedOption: option1
-        } // SegmentedControl
+        //        SegmentedControl {
+        //            Option {
+        //                id: option1
+        //                text: "App Settings"
+        //                value: "option1"
+        //                selected: true
+        //            }
+        //            Option {
+        //                id: option2
+        //                text: "Account Settings"
+        //                value: "option2"
+        //            }
+        //            onSelectedIndexChanged: {
+        //                if (selectedIndex == 0) {
+        //                    cnt1.opacity = 0;
+        //                    cnt1.visible = true;
+        //                    cnt2.visible = false;
+        //                    fadein1.play();
+        //                } else if (selectedIndex == 1) {
+        ////                    if (loggedIn) {
+        ////                        cnt3.opacity = 0;
+        ////                        cnt3.visible = true;
+        ////                        cnt1.visible = false;
+        ////                        fadein3.play();
+        ////                    } else {
+        //                        cnt2.opacity = 0;
+        //                        cnt2.visible = true;
+        //                        cnt1.visible = false;
+        //                        fadein2.play();
+        //                    }
+        //                }
+        //                selectedOption: option1
+        //            }
         Container {
             id: cnt1
             visible: true
@@ -218,92 +223,97 @@ Page {
             ]
         } // container
 
-        Container {
-            id: cnt2
-            visible: false
-            horizontalAlignment: HorizontalAlignment.Center
-            verticalAlignment: VerticalAlignment.Center
-            Label {
-                id: hnLabel
-                text: "<b><span style='color:#fe8515'>Login to your HN account</span></b>\nAccounts must be created <a href='https://news.ycombinator.com/newslogin?whence=news'>here </a>"
-                horizontalAlignment: HorizontalAlignment.Center
-                textStyle.fontSize: FontSize.PointValue
-                textStyle.textAlign: TextAlign.Center
-                textStyle.fontSizeValue: 7
-                textStyle.color: Color.DarkGray
-                textFormat: TextFormat.Html
-                multiline: true
-            }
-            TextField {
-                horizontalAlignment: HorizontalAlignment.Center
-                maxWidth: 500
-                id: usernameField
-                hintText: "Username"
-                input {
-                    flags: TextInputFlag.AutoCapitalizationOff | TextInputFlag.SpellCheckOff
-                }
-            }
-            TextField {
-                horizontalAlignment: HorizontalAlignment.Center
-                maxWidth: 500
-                id: passwordField
-                hintText: "Password"
-                input.masking: TextInputMasking.Masked
-                inputMode: TextFieldInputMode.Password
-                input {
-                    flags: TextInputFlag.AutoCapitalizationOff | TextInputFlag.SpellCheckOff
-                }
-            }
-            Button {
-                horizontalAlignment: HorizontalAlignment.Center
-                verticalAlignment: VerticalAlignment.Center
-                text: "Login"
-                onClicked: {
-                    passwordField.enabled = false;
-                    usernameField.enabled = false;
-                    Tart.send('requestLogin', {
-                            username: usernameField.text,
-                            password: passwordField.text
-                        });
-                    loading.visible = true
-                }
-            }
-            Container {
-                horizontalAlignment: HorizontalAlignment.Center
-                verticalAlignment: VerticalAlignment.Center
-                Container {
-                    visible: loading.visible
-                    ActivityIndicator {
-                        id: loading
-                        minHeight: 300
-                        minWidth: 300
-                        running: true
-                        visible: false
-                    }
-                }
-            }
-            TextArea {
-                id: textBox
-                editable: false
-                textFormat: TextFormat.Html
-                maxWidth: 500
-            }
-            animations: [
-                FadeTransition {
-                    id: fadein2
-                    target: cnt2
-                    fromOpacity: 0.0
-                    toOpacity: 1.0
-                    delay: 20
-                    duration: 500
-                
-                }
-            ]
-        }
+        //        Container {
+        //            id: cnt2
+        //            visible: false
+        //            horizontalAlignment: HorizontalAlignment.Center
+        //            verticalAlignment: VerticalAlignment.Center
+        //            Label {
+        //                id: hnLabel
+        //                text: "<b><span style='color:#fe8515'>Login to your HN account</span></b>\nAccounts must be created <a href='https://news.ycombinator.com/newslogin?whence=news'>here </a>"
+        //                horizontalAlignment: HorizontalAlignment.Center
+        //                textStyle.fontSize: FontSize.PointValue
+        //                textStyle.textAlign: TextAlign.Center
+        //                textStyle.fontSizeValue: 7
+        //                textStyle.color: Color.DarkGray
+        //                textFormat: TextFormat.Html
+        //                multiline: true
+        //            }
+        //            TextField {
+        //                horizontalAlignment: HorizontalAlignment.Center
+        //                maxWidth: 500
+        //                id: usernameField
+        //                hintText: "Username"
+        //                input {
+        //                    flags: TextInputFlag.AutoCapitalizationOff | TextInputFlag.SpellCheckOff
+        //                }
+        //            }
+        //            TextField {
+        //                horizontalAlignment: HorizontalAlignment.Center
+        //                maxWidth: 500
+        //                id: passwordField
+        //                hintText: "Password"
+        //                input.masking: TextInputMasking.Masked
+        //                inputMode: TextFieldInputMode.Password
+        //                input {
+        //                    flags: TextInputFlag.AutoCapitalizationOff | TextInputFlag.SpellCheckOff
+        //                }
+        //            }
+        //            Button {
+        //                horizontalAlignment: HorizontalAlignment.Center
+        //                verticalAlignment: VerticalAlignment.Center
+        //                text: "Login"
+        //                onClicked: {
+        //                    passwordField.enabled = false;
+        //                    usernameField.enabled = false;
+        //                    Tart.send('requestLogin', {
+        //                            username: usernameField.text,
+        //                            password: passwordField.text
+        //                        });
+        //                    loading.visible = true
+        //                }
+        //            }
+        //            Container {
+        //                horizontalAlignment: HorizontalAlignment.Center
+        //                verticalAlignment: VerticalAlignment.Center
+        //                Container {
+        //                    visible: loading.visible
+        //                    ActivityIndicator {
+        //                        id: loading
+        //                        minHeight: 300
+        //                        minWidth: 300
+        //                        running: true
+        //                        visible: false
+        //                    }
+        //                }
+        //            }
+        //            TextArea {
+        //                id: textBox
+        //                editable: false
+        //                textFormat: TextFormat.Html
+        //                maxWidth: 500
+        //            }
+        //            animations: [
+        //                FadeTransition {
+        //                    id: fadein2
+        //                    target: cnt2
+        //                    fromOpacity: 0.0
+        //                    toOpacity: 1.0
+        //                    delay: 20
+        //                    duration: 500
+        //
+        //                }
+        //            ]
+        //        }
+        //        Container {
+        //            id: cnt3
+        //            Label {
+        //                text: "Logged in as: " + username
+        //            }
+        //        }
     }
-
     attachedObjects: [
-        Button {
+        SystemToast {
             id: cacheDeleteToast
             //body: ""
         }
