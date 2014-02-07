@@ -1,9 +1,9 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 
 Page {
     titleBar: HNTitleBar {
         id: helpTitleBar
-        text: "Reader|YC - Help"
+        text: "Reader YC - Help"
         //refreshEnabled: true
     }
     Container {
@@ -23,7 +23,7 @@ Page {
                         spaceQuota: 6
                     }
                     Label {
-                        text: "<b>Reader|YC is Open Source</b>"
+                        text: "<b>Reader YC is Open Source</b>"
                         textFormat: TextFormat.Html
                         textStyle.color: Color.create("#434344")
                     }
@@ -133,7 +133,7 @@ Page {
                         spaceQuota: 6
                     }
                     Label {
-                        text: "<b>Support Reader|YC Development</b>"
+                        text: "<b>Support Reader YC Development</b>"
                         textFormat: TextFormat.Html
                         textStyle.color: Color.create("#434344")
                     }
@@ -202,7 +202,7 @@ Page {
             //            }
         }
         Label {
-            text: "Reader|YC - Copyright © 2013 Surge Co."
+            text: "Reader YC - Copyright © 2013 Surge Co."
             textStyle.fontSize: FontSize.PointValue
             textStyle.fontSizeValue: 5
             //preferredWidth: 768
@@ -228,7 +228,7 @@ Page {
             query.mimeType: "text/plain"
             query.invokeTargetId: "sys.pim.uib.email.hybridcomposer"
             query.invokeActionId: "bb.action.SENDEMAIL"
-            query.uri: "mailto:krruzic@gmail.com?subject=Reader|YC Help"
+            query.uri: "mailto:krruzic@gmail.com?subject=Reader YC Help"
         }
     ]
 }

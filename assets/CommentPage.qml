@@ -1,4 +1,4 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 import "tart.js" as Tart
 
 Page {
@@ -54,6 +54,8 @@ Page {
                     poster: commentPane.titlePoster,
                     domain: commentPane.titleDomain,
                     articleTime: commentPane.titleTime,
+                    commentCount: commentPane.titleComments,
+                    points: commentPane.titlePoints,
                     text: data.text
                 });
             lastItemType = 'header';
@@ -71,6 +73,7 @@ Page {
                     link: "https://news.ycombinator.com/item?id=" + data.comment["link"],
                     realIndent: data.comment["indent"]
                 });
+            console.log("indent: " + data.comment["indent"]);
             lastItemType = 'item';
         }
     }
@@ -84,7 +87,7 @@ Page {
                 invokeActionId: "bb.action.SHARE"
             }
             onTriggered: {
-                data = commentPane.title + "\n" + "https://news.ycombinator.com/item?id=" + commentLink + "\n" + " Shared using Reader|YC "
+                data = commentPane.title + "\n" + "https://news.ycombinator.com/item?id=" + commentLink + "\n" + " Shared using Reader YC "
             }
         },
         ActionItem {
@@ -147,6 +150,7 @@ Page {
         }
     }
     Container {
+        background: Color.White
         layout: DockLayout {
         }
         Container {
@@ -183,11 +187,9 @@ Page {
                             leftPadding: 19
                             rightPadding: 19
                             property string type: ListItemData.type
-                            hTitle: ListItemData.hTitle
-                            poster: ListItemData.poster
-                            domain: ListItemData.domain
-                            articleTime: ListItemData.articleTime
                             text: ListItemData.text
+                            commentCount: ListItemData.commentCount
+                            points: ListItemData.points
                         }
                     },
                     ListItemComponent {
@@ -197,10 +199,8 @@ Page {
                             leftPadding: 19
                             rightPadding: 19
                             property string type: ListItemData.type
-                            poster: ListItemData.poster
                             time: ListItemData.timePosted
                             indent: ListItemData.indent
-                            realIndent: ListItemData.indent
                             text: ListItemData.text
                         }
                     },
@@ -242,20 +242,6 @@ Page {
                     var page = eval(pageToPush).createObject();
                     root.activePane.push(page);
                     return page;
-                }
-                onTriggered: {
-//                    console.log("Comment triggered! " + dataModel.data(indexPath).type);
-//                    if (dataModel.data(indexPath).type == 'item') {
-//                        var selectedItem = dataModel.data(indexPath);
-//                        console.log(selectedItem.indent + " " + selectedItem.realIndent);
-//                        if (selectedItem.indent == selectedItem.realIndent) {
-//                            console.log("expanding comment...");
-//                            selectedItem.indent = selectedItem.expand;
-//                        } else {
-//                            console.log("shrinking comment...");
-//                            selectedItem.indent = selectedItem.realIndent;
-//                        }
-//                    }
                 }
             }
         }

@@ -1,4 +1,4 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 import "tart.js" as Tart
 
 SceneCover {
@@ -108,7 +108,7 @@ SceneCover {
     //                    horizontalAlignment: horizontalAlignment.Left
     //                    Label {
     //                        id: pageTitle
-    //                        text: "Reader|YC"
+    //                        text: "Reader YC"
     //                        textStyle.fontSize: FontSize.PointValue
     //                        textStyle.textAlign: TextAlign.Left
     //                        textStyle.color: Color.White

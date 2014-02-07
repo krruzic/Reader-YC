@@ -1,4 +1,4 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 import "tart.js" as Tart
 
 NavigationPane {
@@ -81,7 +81,7 @@ NavigationPane {
             refreshEnabled: false
             id: titleBar
             listName: searchList
-            text: "Reader|YC - Search HN"
+            text: "Reader YC - Search HN"
         }
         Container {
             Container {
@@ -141,7 +141,7 @@ NavigationPane {
                 verticalAlignment: VerticalAlignment.Center
                 Label {
                     id: errorLabel
-                    text: "<b><span style='color:#fe8515'>Try searching for a post!</span></b>"
+                    text: "<b><span style='color:#ff7900'>Try searching for a post!</span></b>"
                     textStyle.fontSize: FontSize.PointValue
                     textStyle.textAlign: TextAlign.Center
                     textStyle.fontSizeValue: 9

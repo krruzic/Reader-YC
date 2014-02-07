@@ -1,4 +1,4 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 import bb.data 1.0
 import bb 1.0
 import "tart.js" as Tart
@@ -93,9 +93,8 @@ NavigationPane {
 
     Page {
         titleBar: HNTitleBar {
-
             id: titleBar
-            text: "Reader|YC - Top Posts"
+            text: "Reader YC - Top Posts"
             listName: theList
             onRefreshPage: {
                 console.log("We are busy: " + busy)
@@ -115,13 +114,14 @@ NavigationPane {
         Container {
             layout: DockLayout {
             }
+            background: Color.White
             Container {
                 visible: errorLabel.visible
                 horizontalAlignment: HorizontalAlignment.Center
                 verticalAlignment: VerticalAlignment.Center
                 Label {
                     id: errorLabel
-                    text: "<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!"
+                    text: "<b><span style='color:#ff7900'>Error getting stories</span></b>\nCheck your connection and try again!"
                     textStyle.fontSize: FontSize.PointValue
                     textStyle.textAlign: TextAlign.Center
                     textStyle.fontSizeValue: 9
@@ -164,7 +164,6 @@ NavigationPane {
                                 postTitle: ListItemData.title
                                 postDomain: ListItemData.domain
                                 postUsername: ListItemData.poster
-                                postTime: ListItemData.timePosted + "| " + ListItemData.points
                                 postArticle: ListItemData.articleURL
                                 askPost: ListItemData.isAsk
                                 commentSource: ListItemData.commentsURL
@@ -175,7 +174,7 @@ NavigationPane {
                                 page.commentLink = ListItemData.hnid;
                                 page.title = ListItemData.title;
                                 page.titlePoster = ListItemData.poster;
-                                page.titleTime = ListItemData.timePosted + "| " + ListItemData.points;
+                                page.titleTime = ListItemData.timePosted;
                                 page.titleDomain = ListItemData.domain;
                                 page.isAsk = ListItemData.isAsk;
                                 page.articleLink = ListItemData.articleURL;

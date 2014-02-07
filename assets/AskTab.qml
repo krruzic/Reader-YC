@@ -1,4 +1,4 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 import bb.data 1.0
 import bb 1.0
 import "tart.js" as Tart
@@ -94,7 +94,7 @@ NavigationPane {
     Page {
         titleBar: HNTitleBar {
             id: titleBar
-            text: "Reader|YC - Ask HN"
+            text: "Reader YC - Ask HN"
             listName: theList
             onRefreshPage: {
                 console.log("We are busy: " + busy)
@@ -120,7 +120,7 @@ NavigationPane {
                 verticalAlignment: VerticalAlignment.Center
                 Label {
                     id: errorLabel
-                    text: "<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!"
+                    text: "<b><span style='color:#ff7900'>Error getting stories</span></b>\nCheck your connection and try again!"
                     textStyle.fontSize: FontSize.PointValue
                     textStyle.textAlign: TextAlign.Center
                     textStyle.fontSizeValue: 9

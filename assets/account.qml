@@ -1,4 +1,4 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 
 Container {
     id: cnt2
@@ -9,7 +9,7 @@ Container {
         verticalAlignment: VerticalAlignment.Center
         Label {
             id: hnLabel
-            text: "<b><span style='color:#fe8515'>Login to your HN account</span></b>\nAccounts must be created <a href='https://news.ycombinator.com/newslogin?whence=news'>here </a>"
+            text: "<b><span style='color:#ff7900'>Login to your HN account</span></b>\nAccounts must be created <a href='https://news.ycombinator.com/newslogin?whence=news'>here </a>"
             horizontalAlignment: HorizontalAlignment.Center
             textStyle.fontSize: FontSize.PointValue
             textStyle.textAlign: TextAlign.Center

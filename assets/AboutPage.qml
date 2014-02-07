@@ -1,9 +1,9 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 
 Page {
     titleBar: HNTitleBar {
         id: aboutTitleBar
-        text: "Reader|YC - About"
+        text: "Reader YC - About"
         refreshEnabled: false
     }
     Container {
@@ -75,7 +75,7 @@ Page {
                             Label {
                                 bottomMargin: 0
                                 topMargin: 0
-                                text: "<b>What is Reader|YC?</b>"
+                                text: "<b>What is Reader YC?</b>"
                                 textFormat: TextFormat.Html
                                 textStyle.color: Color.create("#434344")
                             }
@@ -83,7 +83,7 @@ Page {
                                 leftPadding: 20
                                 topPadding: 6
                                 Label {
-                                    text: 'Reader|YC is client for Hacker News, allowing you to browse HN on your BlackBerry 10 device'
+                                    text: 'Reader YC is client for Hacker News, allowing you to browse HN on your BlackBerry 10 device'
                                     textFormat: TextFormat.Html
                                     textStyle.fontSize: FontSize.PointValue
                                     textStyle.fontSizeValue: 6
@@ -95,7 +95,7 @@ Page {
                                     bottomMargin: 0
                                     topMargin: 0
                                     editable: false
-                                    text: "After getting fed up with 'mobilized' versions of Hacker News and noticing the lack of a good BB10 client, Surge Co. decided to build Reader|YC as a pet project. Reader|YC is open source and <a href='http://github.com/krruzic/Reader-YC/'>contributions</a> are encouraged."
+                                    text: "After getting fed up with 'mobilized' versions of Hacker News and noticing the lack of a good BB10 client, Surge Co. decided to build Reader YC as a pet project. Reader YC is open source and <a href='http://github.com/krruzic/Reader-YC/'>contributions</a> are encouraged."
                                     textStyle.fontSize: FontSize.PointValue
                                     textStyle.fontSizeValue: 6
                                     textStyle.color: Color.create("#ff303030")
@@ -147,7 +147,7 @@ Page {
                                     bottomMargin: 0
                                     topMargin: 0
                                     editable: false
-                                    text: "Reader|YC is the first of many apps to come out of Surge Co. The Co-founders are huge BlackBerry fans and plan to continue supporting BB10 with native, beautiful apps."
+                                    text: "Reader YC is the first of many apps to come out of Surge Co. The Co-founders are huge BlackBerry fans and plan to continue supporting BB10 with native, beautiful apps."
                                     textStyle.fontSize: FontSize.PointValue
                                     textStyle.fontSizeValue: 6
                                     textStyle.color: Color.create("#ff303030")
@@ -196,7 +196,7 @@ Page {
                                         bottomMargin: 0
                                         topMargin: 0
                                         editable: false
-                                        text: "Reader|YC literally sends no info to anyone. Why do you think there are NO permissions? PS: I had to write this. Your private and non-private information is safe on your phone.\nDon't believe me? The app is open source, check it out for yourself.\nFuture versions of this app may incorporate logging in to enable voting and posting. Still, this app will collect nothing, and all data will be sent to the Hackernews servers via HTTPS to ensure security"
+                                        text: "Reader YC literally sends no info to anyone. Why do you think there are NO permissions? PS: I had to write this. Your private and non-private information is safe on your phone.\nDon't believe me? The app is open source, check it out for yourself.\nFuture versions of this app may incorporate logging in to enable voting and posting. Still, this app will collect nothing, and all data will be sent to the Hackernews servers via HTTPS to ensure security"
                                         textStyle.fontSize: FontSize.PointValue
                                         textStyle.fontSizeValue: 6
                                         textStyle.color: Color.create("#ff303030")
@@ -208,7 +208,7 @@ Page {
 
                         }
                         Label {
-                            text: "Reader|YC - Copyright © 2013 Surge Co."
+                            text: "Reader YC - Copyright © 2013 Surge Co."
                             textStyle.fontSize: FontSize.PointValue
                             textStyle.fontSizeValue: 5
                             //preferredWidth: 768

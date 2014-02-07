@@ -1,22 +1,19 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 import "tart.js" as Tart
 
 Container {
     id: headerPane
     leftPadding: 10
     rightPadding: 10
-    property alias hTitle: labelPostTitle.text
-    property alias poster: labelUsername.text
-    property alias domain: labelPostDomain.text
     property alias text: textBox.text
-    property alias articleTime: labelTimePosted.text
+    property string commentCount: ""
+    property string points: ""
     onCreationCompleted: {
         Tart.register(headerPane)
     }
 
     Container {
         bottomPadding: 25
-        background: itemBackground.imagePaint
 
         attachedObjects: [
             ImagePaintDefinition {
@@ -31,99 +28,146 @@ Container {
         ]
 
         Container {
-            horizontalAlignment: horizontalAlignment.Center
+            attachedObjects: [
+                TextStyleDefinition {
+                    id: lightStyle
+                    base: SystemDefaults.TextStyles.BodyText
+                    fontSize: FontSize.PointValue
+                    fontSizeValue: 7
+                    rules: [
+                        FontFaceRule {
+                            source: "asset:///SlatePro-Light.ttf"
+                            fontFamily: "MyFontFamily"
+                        }
+                    ]
+                    fontFamily: "MyFontFamily, sans-serif"
+                },
+                LayoutUpdateHandler {
+                    id: mainDimensions
+                }
+            ]
+            visible: true
             id: mainContainer
-            layout: StackLayout {
-                orientation: LayoutOrientation.LeftToRight
-            }
+            background: Color.White
+            horizontalAlignment: HorizontalAlignment.Fill
+
             Container {
                 topPadding: 5
                 leftPadding: 10
+                rightPadding: 10
+                rightMargin: 0
+                bottomMargin: 0
+                bottomPadding: 0
+                horizontalAlignment: HorizontalAlignment.Fill
                 Label {
                     id: labelPostTitle
-                    preferredWidth: 680
-                    maxWidth: 680
-                    text: "Billing Incident Update for your idiotic product, from the makers of cheese"
-                    textStyle.fontSize: FontSize.PointValue
-                    textStyle.fontSizeValue: 7
+                    verticalAlignment: VerticalAlignment.Top
+                    text: ListItemData.hTitle
                     bottomMargin: 1
-                    textFormat: TextFormat.Html
-                    textStyle.color: Color.Black
                     multiline: true
-                    autoSize.maxLineCount: 3
-
-                }
-                Label {
-                    id: labelPostDomain
-                    topMargin: 1
-                    bottomMargin: 1
-                    translationX: 1
-                    maxWidth: 500.0
-                    text: "http://www.dailymail.com/"
-                    multiline: false
-                    textStyle.fontSize: FontSize.PointValue
+                    autoSize.maxLineCount: 2
                     textStyle.fontSizeValue: 7
-                    textStyle.color: Color.create("#ff69696c")
-                    textStyle.fontStyle: FontStyle.Italic
+                    textStyle.base: lightStyle.style
                 }
                 Container {
-                    leftMargin: 1
-                    rightPadding: 15
-                   //bottomPadding: 10
-                    layout: StackLayout {
-                        orientation: LayoutOrientation.LeftToRight
+                    layout: DockLayout {
                     }
-                    Label {
-                        id: labelUsername
-                        layoutProperties: StackLayoutProperties {
-                            spaceQuota: 1
-                        }
-                        text: "username"
-                        multiline: false
-                        textStyle.fontSize: FontSize.PointValue
-                        textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#fe8515")
+                    horizontalAlignment: HorizontalAlignment.Fill
+                    Container {
                         horizontalAlignment: HorizontalAlignment.Left
-                        textStyle.textAlign: TextAlign.Left
-                    }
-
-                    Label {
-                        id: labelTimePosted
-                        layoutProperties: StackLayoutProperties {
-                            spaceQuota: 2
+                        verticalAlignment: VerticalAlignment.Center
+                        Label {
+                            topMargin: 5
+                            id: labelPostDomain
+                            horizontalAlignment: HorizontalAlignment.Left
+                            text: ListItemData.domain
+                            multiline: false
+                            textStyle.color: Color.create("#ff7900")
+                            textStyle.fontStyle: FontStyle.Italic
+                            textStyle.base: lightStyle.style
+                            bottomMargin: 0
                         }
-                        text: "some time ago | some points"
-                        multiline: false
-                        textStyle.fontSize: FontSize.PointValue
-                        textStyle.fontSizeValue: 6
-                        textStyle.color: Color.Gray
+                        Label {
+                            topMargin: 5
+                            text: ListItemData.articleTime
+                            id: labelTimePosted
+                            textStyle.fontSizeValue: 5
+                            textStyle.base: lightStyle.style
+                        }
+                    }
+                    Container {
+                        id: storyinfo
                         horizontalAlignment: HorizontalAlignment.Right
-                        textStyle.textAlign: TextAlign.Right
+                        verticalAlignment: VerticalAlignment.Center
+                        Container {
+                            horizontalAlignment: HorizontalAlignment.Right
+                            verticalAlignment: VerticalAlignment.Center
+                            layout: StackLayout {
+                                orientation: LayoutOrientation.LeftToRight
+                            }
+                            leftPadding: 4
+                            ImageView {
+                                rightPadding: 0
+                                leftMargin: 0
+                                imageSource: "asset:///images/comment.png"
+                                maxHeight: 26
+                                maxWidth: 26
+                                translationY: 2
+                                verticalAlignment: VerticalAlignment.Center
+                                horizontalAlignment: HorizontalAlignment.Right
+                            }
+                            Label {
+                                leftMargin: 0
+                                rightMargin: 0
+                                text: "<html><i>" + commentCount + "</i></html>"
+                                textStyle.fontSize: FontSize.PointValue
+                                textStyle.fontSizeValue: 5
+                                horizontalAlignment: HorizontalAlignment.Right
+                                verticalAlignment: VerticalAlignment.Center
+                                textStyle.color: Color.create("#7e7e7e")
+                                textStyle.base: lightStyle.style
+                                textFormat: TextFormat.Html
+                            }
+                            Label {
+                                leftMargin: 0
+                                text: "<html><i> | ▲ </i></html>" + points
+                                textStyle.fontSize: FontSize.PointValue
+                                textStyle.fontSizeValue: 5
+                                horizontalAlignment: HorizontalAlignment.Right
+                                verticalAlignment: VerticalAlignment.Center
+                                textStyle.color: Color.create("#7e7e7e")
+                                textStyle.base: lightStyle.style
+                                textFormat: TextFormat.Html
+                            }
+                        }
+                        Label {
+                            topMargin: 0
+                            textStyle.fontSizeValue: 5
+                            text: ListItemData.poster
+                            id: labelUsername
+                            textStyle.color: Color.create("#ff7900")
+                            textStyle.base: lightStyle.style
+                            horizontalAlignment: HorizontalAlignment.Right
+                        }
                     }
                 }
-            }
-        }
-
-        Container {
-            leftPadding: 19
-            rightPadding: 19
-            bottomPadding: 10
-            Container {
-                background: textBackground.imagePaint
                 TextArea {
-                    id: textBox
-                    text: ""
-                    onTextChanging: {
-                        if (text != "")
-                            visible = true;
-                    }
-                    visible: false
                     editable: false
-                    focusHighlightEnabled: false
-                    textFormat: TextFormat.Html
-                    textStyle.color: Color.Black
-                    textStyle.fontSize: FontSize.PointValue
-                    textStyle.fontSizeValue: 6
+                    textStyle.base: lightStyle.style
+                    id: textBox
+                    visible: false
+                    onTextChanging: {
+                        if (text == ""){
+                            visible = false;
+                        }
+                        else {
+                            visible = true;
+                        }
+                    }
+                }
+                Divider {
+                    bottomMargin: 0
+                    bottomPadding: 0
                 }
             }
         }

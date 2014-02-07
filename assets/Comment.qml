@@ -1,52 +1,36 @@
-import bb.cascades 1.0
-import "tart.js" as Tart
+import bb.cascades 1.2
+//import "tart.js" as Tart
 Container {
     id: commmentContainer
     visible: true
-    property alias poster: posterLabel.text
-    property alias time: timeLabel.text
+    property string time: ""
     property alias indent: commmentContainer.leftPadding
-    property int realIndent: 0
-    property int expand: 0
     property alias text: commentBox.text
 
-    horizontalAlignment: HorizontalAlignment.Right
+    horizontalAlignment: HorizontalAlignment.Fill
     leftPadding: indent
-    rightPadding: 20
-    topPadding: 5.0
-    bottomPadding: 5.0
+    //rightPadding: 20
     onCreationCompleted: {
         Tart.register(commmentContainer);
     }
-    gestureHandlers: [
-        TapHandler {
-            onTapped: {
-                console.log(indent + " " + realIndent);
-                if (indent == realIndent) {
-                    console.log("expanding comment...");
-                    indent = expand;
-                } else {
-                    console.log("shrinking comment...");
-                    indent = realIndent;
+    attachedObjects: [
+        TextStyleDefinition {
+            id: lightStyle
+            base: SystemDefaults.TextStyles.BodyText
+            fontSize: FontSize.PointValue
+            fontSizeValue: 7
+            rules: [
+                FontFaceRule {
+                    source: "asset:///SlatePro-Light.ttf"
+                    fontFamily: "MyFontFamily"
                 }
-            }
+            ]
+            fontFamily: "MyFontFamily, sans-serif"
+        },
+        LayoutUpdateHandler {
+            id: mainDimensions
         }
     ]
-//    onTouch: {
-//        //        console.log("Comment triggered! " + dataModel.data(indexPath).type);
-//        //        if (dataModel.data(indexPath).type == 'item') {
-//        //        var selectedItem = dataModel.data(indexPath);
-//        if (event.isDown) {
-//            console.log(indent + " " + realIndent);
-//            if (indent == realIndent) {
-//                console.log("expanding comment...");
-//                indent = expand;
-//            } else {
-//                console.log("shrinking comment...");
-//                indent = realIndent;
-//            }
-//        }
-//    }
     contextActions: [
         ActionSet {
             InvokeActionItem {
@@ -57,7 +41,7 @@ Container {
                 }
                 onTriggered: {
                     var selectedItem = commentItem.ListItem.view.dataModel.data(commentItem.ListItem.indexPath);
-                    data = 'Comment by:  ' + selectedItem.poster + '\n' + selectedItem.link + "\nShared using Reader|YC "
+                    data = 'Comment by:  ' + selectedItem.poster + '\n' + selectedItem.link + "\nShared using Reader YC "
                 }
             }
             ActionItem {
@@ -77,75 +61,59 @@ Container {
                         });
                 }
             }
-            //            ActionItem {
-            //                title: "Hide Children"
-            //                onTriggered: {
-            //                    var selectedItem = commentItem.ListItem.indexInSection;
-            //                    commentItem.ListItem.view.hideChildren(selectedItem);
-            //                }
-            //            }
         }
     ]
     Container {
-        leftPadding: 6
-        background: commentBackground.imagePaint
-        Container {
-            rightPadding: 10
-            leftPadding: 6
-            layout: StackLayout {
-                orientation: LayoutOrientation.LeftToRight
-            }
-            Label {
-                id: posterLabel
-                textStyle.fontSize: FontSize.XSmall
-                text: "Madkristoff"
-                horizontalAlignment: horizontalAlignment.Left
-                textStyle.color: Color.Black
-            }
-            Divider {
-                opacity: 0.0
+        layout: StackLayout {
+            orientation: LayoutOrientation.LeftToRight
+        }
 
-            }
-            Label {
-                id: timeLabel
-                textStyle.fontSize: FontSize.XSmall
-                text: "4 minutes ago"
-                horizontalAlignment: horizontalAlignment.Right
-                textStyle.color: Color.Black
-            }
+        Container {
+            background: Color.create("#ff7900")
+            horizontalAlignment: HorizontalAlignment.Fill
+            minWidth: 6
+            bottomMargin: 0
+            topMargin: 0
+            minHeight: bodyDimensions.layoutFrame.height
         }
         Container {
-            layout: AbsoluteLayout {
-
+            //leftPadding: 6
+            Label {
+                id: posterLabel
+                translationX: 10
+                text: ListItemData.poster + " | " + time
+                textStyle.base: lightStyle.style
+                textFormat: TextFormat.Html
+                textStyle.color: Color.create("#7e7e7e")
+                bottomMargin: 0
+                topMargin: 0
             }
-            Divider {
-                translationX: -5
-            }
+            attachedObjects: [
+                LayoutUpdateHandler {
+                    id: bodyDimensions
+                }
+            ]
+            background: Color.White
             TextArea {
-                translationY: -12
+                bottomMargin: 0
+                topMargin: 0
                 id: commentBox
                 text: "This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, I know that it's short...."
                 editable: false
                 backgroundVisible: true
-                inputMode: TextAreaInputMode.Text
                 textFormat: TextFormat.Html
                 focusHighlightEnabled: true
                 enabled: true
                 scrollMode: TextAreaScrollMode.Stiff
                 input.submitKeyFocusBehavior: SubmitKeyFocusBehavior.Lose
-                textStyle.fontSize: FontSize.XSmall
+                textStyle.fontSizeValue: 6
                 textStyle.color: Color.Black
-                bottomPadding: 30
                 maximumLength: 10000000
+                textStyle.base: lightStyle.style
             }
-
+            Divider {
+                topMargin: 0
+            }
         }
-        attachedObjects: [
-            ImagePaintDefinition {
-                id: commentBackground
-                imageSource: "asset:///images/CommentBackground.amd"
-                repeatPattern: RepeatPattern.XY
-            }
-        ]
     }
 }

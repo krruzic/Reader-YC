@@ -16,6 +16,7 @@ def pretty_date(time):
 
     from datetime import datetime
     now = datetime.now()
+    print(time)
     if type(time) is int:
         diff = now - datetime.fromtimestamp(time)
     elif isinstance(time,datetime):

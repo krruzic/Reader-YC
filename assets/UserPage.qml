@@ -1,13 +1,12 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 import "tart.js" as Tart
 
 Page {
     id: userPane
     titleBar: HNTitleBar {
         id: titleBar
-        text: "Reader|YC - User"
-        refreshEnabled: true
-        buttonImage: "asset:///images/search.png"
+        text: "Reader YC - User"
+        refreshEnabled: false
         //buttonPressedImage: "asset:///images/search.png"
     }
     onCreationCompleted: {

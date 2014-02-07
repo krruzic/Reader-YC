@@ -1,4 +1,4 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 import bb.system 1.0
 import "tart.js" as Tart
 
@@ -51,7 +51,7 @@ Container {
                     invokeActionId: "bb.action.SHARE"
                 }
                 onTriggered: {
-                    data = ListItemData.title + "\n" + ListItemData.articleURL + "\nShared using Reader|YC "
+                    data = ListItemData.title + "\n" + ListItemData.articleURL + "\nShared using Reader YC "
                 }
             }
             InvokeActionItem {
@@ -206,7 +206,7 @@ Container {
                     multiline: false
                     textStyle.fontSize: FontSize.PointValue
                     textStyle.fontSizeValue: 6
-                    textStyle.color: Color.create("#fe8515")
+                    textStyle.color: Color.create("#ff7900")
                     horizontalAlignment: HorizontalAlignment.Left
                     textStyle.textAlign: TextAlign.Left
                 }
