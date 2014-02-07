@@ -1,4 +1,4 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 //import "tart.js" as Tart
 Page {
     id: webPane
@@ -42,7 +42,7 @@ Page {
                 invokeActionId: "bb.action.SHARE"
             }
             onTriggered: {
-                data = text + "\n" + htmlContent + "\n" + " Shared using Reader|YC ";
+                data = text + "\n" + htmlContent + "\n" + " Shared using Reader YC ";
             }
         },
         //        ActionItem {

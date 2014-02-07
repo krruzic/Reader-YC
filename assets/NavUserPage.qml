@@ -1,4 +1,4 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 import "tart.js" as Tart
 NavigationPane {
     property alias searchVisible: searchField.visible
@@ -25,10 +25,9 @@ NavigationPane {
         id: userPane
         titleBar: HNTitleBar {
             id: titleBar
-            text: "Reader|YC - User"
-            showButton: true
-            refreshEnabled: true
-            buttonImage: "asset:///images/search.png"
+            text: "Reader YC - User"
+            showButton: false
+            refreshEnabled: false
             //buttonPressedImage: "asset:///images/search.png"
             onRefreshPage: {
                 searchField.visible = true;
@@ -123,7 +122,7 @@ NavigationPane {
                     }
                     Label {
                         id: errorLabel
-                        text: "<b><span style='color:#fe8515'>Try searching a user!</span></b>\n(Accounts are case sensitive)"
+                        text: "<b><span style='color:#ff7900'>Try searching a user!</span></b>\n(Accounts are case sensitive)"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.textAlign: TextAlign.Center
                         textStyle.fontSizeValue: 9

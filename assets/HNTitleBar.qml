@@ -1,4 +1,4 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 
 TitleBar {
     property alias text: pageTitle.text
@@ -13,6 +13,24 @@ TitleBar {
     kindProperties: FreeFormTitleBarKindProperties {
 
         Container {
+            attachedObjects: [
+                TextStyleDefinition {
+                    id: lightStyle
+                    base: SystemDefaults.TextStyles.BodyText
+                    fontSize: FontSize.PointValue
+                    fontSizeValue: 7
+                    rules: [
+                        FontFaceRule {
+                            source: "asset:///SlatePro-Light.ttf"
+                            fontFamily: "MyFontFamily"
+                        }
+                    ]
+                    fontFamily: "MyFontFamily, sans-serif"
+                },
+                LayoutUpdateHandler {
+                    id: mainDimensions
+                }
+            ]
             id: topcontainer
             layout: DockLayout {
                 //orientation: LayoutOrientation.LeftToRight
@@ -65,14 +83,15 @@ TitleBar {
                     scrollViewProperties.overScrollEffectMode: OverScrollEffectMode.OnScroll
                     Label {
                         id: pageTitle
-                        text: "Reader|YC - Top Postsgk jgjhgkjgk jgk jjkkgj kgj kgj "
+                        text: "Reader YC - Top Postsgk jgjhgkjgk jgk jjkkgj kgj kgj "
                         //textStyle.base: SystemDefaults.TextStyles.BigText
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.textAlign: TextAlign.Left
                         textStyle.color: Color.White
                         textFormat: TextFormat.Plain
                         enabled: false
-                        textStyle.fontSizeValue: 9.0
+                        textStyle.fontSizeValue: 8
+                        textStyle.base: lightStyle.style
                     }
                 }
                 Container {

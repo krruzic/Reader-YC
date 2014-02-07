@@ -1,7 +1,7 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 import bb.system 1.0
 import "tart.js" as Tart
-import bb.cascades 1.0
+import bb.cascades 1.2
 
 Page {
     id: settingsPage
@@ -10,7 +10,7 @@ Page {
     titleBar: HNTitleBar {
         refreshEnabled: false
         id: titleBar
-        text: "Reader|YC - Settings"
+        text: "Reader YC - Settings"
 
     }
     onCreationCompleted: {
@@ -202,7 +202,7 @@ Page {
 
                     }
                     Label {
-                        text: "Reader|YC - Copyright © 2013 Surge Co."
+                        text: "Reader YC - Copyright © 2013 Surge Co."
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 5
                         //preferredWidth: 768
@@ -230,7 +230,7 @@ Page {
         //            verticalAlignment: VerticalAlignment.Center
         //            Label {
         //                id: hnLabel
-        //                text: "<b><span style='color:#fe8515'>Login to your HN account</span></b>\nAccounts must be created <a href='https://news.ycombinator.com/newslogin?whence=news'>here </a>"
+        //                text: "<b><span style='color:#ff7900'>Login to your HN account</span></b>\nAccounts must be created <a href='https://news.ycombinator.com/newslogin?whence=news'>here </a>"
         //                horizontalAlignment: HorizontalAlignment.Center
         //                textStyle.fontSize: FontSize.PointValue
         //                textStyle.textAlign: TextAlign.Center

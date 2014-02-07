@@ -1,4 +1,4 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 import "tart.js" as Tart
 Page {
     id: loginPage
@@ -17,7 +17,7 @@ Page {
         layout: DockLayout {
         }
         HNTitleBar {
-            text: "Reader|YC - Login"
+            text: "Reader YC - Login"
         }
         Container {
             horizontalAlignment: HorizontalAlignment.Center

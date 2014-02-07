@@ -88,13 +88,13 @@ class App(tart.Application):
             if len(self.cache) > 5: # If we have 5 reqs going, remove the first one before adding
                 self.cache.pop(0)
             self.cache.append(currReq)
-            t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost, deleteComments))
+            t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost))
 
         else: # If the request does exist
             if len(self.cache) == 1: # If it is the only one we make the request (first request added)
                 print("Only request?")
                 #self.cache.append(currReq) # Append it to cache
-                t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost, deleteComments))
+                t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost))
             else: # If there are multiple requests
                 print("Checking request")
                 #ts, src = self.cache[position]['ident'] # Check the time the request was made
@@ -102,19 +102,19 @@ class App(tart.Application):
                     print("Request is the same!")
                     if datetime.now() - ts > timedelta(minutes=5): # Check if cache was made 5 mins ago
                         print("Old enough, request OK")
-                        t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost, deleteComments))
+                        t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost))
                     else:
                         return
         t.daemon = True
         t.start()
 
 
-    def parseRequest(self, source, sentBy, startIndex, askPost, deleteComments):
+    def parseRequest(self, source, sentBy, startIndex, askPost):
         print("Parsing request for: " + sentBy)
         if (sentBy == 'topPage'or sentBy == 'askPage'or sentBy == 'newestPage'):
             self.story_routine(source, sentBy)
         elif (sentBy == 'commentPage'):
-            self.comments_routine(source, askPost, deleteComments)
+            self.comments_routine(source, askPost)
         elif (sentBy == 'userPage'):
             self.user_routine(source)
         elif (sentBy == 'searchPage'):
@@ -156,10 +156,10 @@ class App(tart.Application):
             tart.send('addCoverStories', stories=stories)
 
 
-    def comments_routine(self, source, askPost, deleteComments):
+    def comments_routine(self, source, askPost):
         print("source sent:" + source)
         try:
-            getCommentPage(source, askPost, deleteComments)
+            getCommentPage(source, askPost)
         except IOError:
             print("ERROR GETTING COMMENTS")
             tart.send('addText', text='', hnid=source)

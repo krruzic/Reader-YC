@@ -1,4 +1,4 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 import bb.system 1.0
 import "tart.js" as Tart
 
@@ -69,7 +69,7 @@ NavigationPane {
             refreshEnabled: false
             id: titleBar
             listName: favouritesList
-            text: "Reader|YC - Favourites"
+            text: "Reader YC - Favourites"
 
         }
         Container {
@@ -80,7 +80,7 @@ NavigationPane {
                 horizontalAlignment: HorizontalAlignment.Center
                 verticalAlignment: VerticalAlignment.Center
                 Label {
-                    text: "<b><span style='color:#fe8515'>Nothing to see here</span></b>\nTry favouriting a story!"
+                    text: "<b><span style='color:#ff7900'>Nothing to see here</span></b>\nTry favouriting a story!"
                     textStyle.fontSize: FontSize.PointValue
                     textStyle.textAlign: TextAlign.Center
                     textStyle.fontSizeValue: 9
@@ -117,7 +117,7 @@ NavigationPane {
                             page.commentLink = ListItemData.hnid;
                             page.title = ListItemData.title;
                             page.titlePoster = ListItemData.poster;
-                            page.titleTime = ListItemData.timePosted + "| " + ListItemData.points;
+                            page.titleTime = ListItemData.timePosted;
                             page.titleDomain = ListItemData.domain;
                             page.isAsk = ListItemData.isAsk;
                             page.articleLink = ListItemData.articleURL;

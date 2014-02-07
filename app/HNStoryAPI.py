@@ -33,7 +33,16 @@ def parseStories(page):
     totalTime = 0
 
     for i, m in zip(head, metadata):
-        story ={'title': None, 'domain': None, 'score': None, 'author': None, 'time': None, 'commentCount': None, 'link': None, 'commentURL': 'news.ycombinator.com/item?id=-1', 'hnid': '-1', 'askPost': 'false'}
+        story ={'title': None, 
+            'domain': None, 
+            'score': None, 
+            'author': None, 
+            'time': None, 
+            'commentCount': None, 
+            'link': None, 
+            'commentURL': 'news.ycombinator.com/item?id=-1', 
+            'hnid': '-1', 
+            'askPost': 'false'}
         startTime = time.time()
         story['title'] = i.find_all('a')[0].text
         story['link'] = i.find("a")["href"]
@@ -49,7 +58,7 @@ def parseStories(page):
         if 'point' in m.text:
             story_time = re.search(r'by \S+ (\d+.*?)\s+\|', m.text).group(1) + ' '
             story['time'] = story_time
-            story['score'] = re.search("(\d+)\s+points?", m.text).group(1) + ' points'
+            story['score'] = re.search("(\d+)\s+points?", m.text).group(1)
             story['author'] = m.a.text.strip()
             story['hnid'] = m.span['id'].split('_')[1]
             story['commentURL'] = "https://news.ycombinator.com/item?id=" + story['hnid']
@@ -66,7 +75,7 @@ def parseStories(page):
         else: # Jobs post
             story['time'] = m.text.strip()
             story['commentCount'] = '0'
-            story['score'] = 'HN Jobs '
+            story['score'] = '0'
             story['author'] = 'ycombinator'
 
         endTime = time.time()

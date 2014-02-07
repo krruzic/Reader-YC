@@ -1,4 +1,4 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 Container {
     layout: DockLayout {
     }

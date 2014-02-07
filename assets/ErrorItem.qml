@@ -1,4 +1,4 @@
-import bb.cascades 1.0
+import bb.cascades 1.2
 Container {
     property alias title: errorItem.text
     minWidth: 720
@@ -12,7 +12,7 @@ Container {
         }
         Label {
             id: errorItem
-            text: "<b><span style='color:#fe8515'>Error getting stories</span></b>\nCheck your connection and try again!"
+            text: "<b><span style='color:#ff7900'>Error getting stories</span></b>\nCheck your connection and try again!"
             textStyle.fontSize: FontSize.PointValue
             textStyle.textAlign: TextAlign.Center
             textStyle.fontSizeValue: 7
