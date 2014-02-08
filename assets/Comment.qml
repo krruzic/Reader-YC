@@ -8,6 +8,7 @@ Container {
     property alias indent: commmentContainer.leftPadding
     property alias text: commentBox.text
     property string op: ""
+    property string link: ""
     horizontalAlignment: HorizontalAlignment.Fill
     leftPadding: indent
     onCreationCompleted: {
@@ -94,6 +95,14 @@ Container {
                             articleLink: commentBox.text
                         });
                 }
+            }
+            ACtionItem {
+            	title: "Reply to comment"
+            	imageSource: "asset:///images/icons/ic_comments.png"
+            	onTriggered: {
+            	    // insert new element into listview after selected item 
+            	    // (Reply item)
+            	}
             }
         }
     ]

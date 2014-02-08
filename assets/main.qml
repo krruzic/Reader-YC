@@ -335,7 +335,6 @@ TabbedPane {
                 settingsChanged();
             }
             onUsernameChanged: {
-                console.log("username updated!")
                 settingsChanged();
             }
             function restore(data) {

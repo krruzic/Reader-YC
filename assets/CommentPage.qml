@@ -71,8 +71,7 @@ Page {
                     timePosted: data.comment["time"],
                     indent: data.comment["indent"],
                     text: data.comment["text"],
-                    link: "https://news.ycombinator.com/item?id=" + data.comment["link"],
-                    realIndent: data.comment["indent"]
+                    link: data.comment["id"]
                 });
             lastItemType = 'item';
         }
@@ -202,6 +201,7 @@ Page {
                             time: ListItemData.timePosted
                             indent: ListItemData.indent
                             text: ListItemData.text
+                            link: ListItemData.link
                             op: commentPane.titlePoster
                         }
                     },

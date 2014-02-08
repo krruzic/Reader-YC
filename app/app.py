@@ -219,12 +219,13 @@ class App(tart.Application):
         about = about.replace('<i>', '*')
         about = about.replace('<\i>', '*')
         about = re.sub("<.*?>", "", about)
+        about = about[1:]
         email = soup.find('input', {'name': 'email'})['value']
         email = h.unescape(email)
 
         tart.send('profileRetrieved', email=email, about=about)
 
-    def onSaveProfile(self, email, about):
+    def onSaveProfile(self, username, email, about):
         f = open(self.COOKIE, 'rb')
         cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
         #h = html.parser.HTMLParser() # To decode the HTML entities
@@ -232,7 +233,7 @@ class App(tart.Application):
         email = cgi.escape(email)
         sess = requests.session()
 
-        r = sess.get('https://news.ycombinator.com/user?id={0}'.format(username), headers=HEADERS, cookies=cookies)
+        r = sess.get('https://news.ycombinator.com/user?id={0}'.format(username), headers=self.HEADERS, cookies=cookies)
         soup = BeautifulSoup(r.content)
         showdead = str(soup.find('select', {'name': 'showdead'}))
         showdead = showdead[showdead.find('selected=')+12:showdead.find("</option")]
@@ -252,6 +253,7 @@ class App(tart.Application):
         }
         print(params)
         r = sess.post('https://news.ycombinator.com/x', headers=self.HEADERS, params=params, cookies=cookies)
+        tart.send('profileSaved')
 
 
 

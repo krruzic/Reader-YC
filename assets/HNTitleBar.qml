@@ -19,7 +19,7 @@ TitleBar {
                     base: SystemDefaults.TextStyles.BodyText
                     fontSize: FontSize.PointValue
                     fontSizeValue: 7
-                    fontWeight: FontWeight.W100
+                    fontWeight: FontWeight.W500
                 },
                 LayoutUpdateHandler {
                     id: mainDimensions

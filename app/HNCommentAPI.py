@@ -119,7 +119,6 @@ def getCommentPage(source, isAsk):
     """Gets the comments and text of the post
     """
 
-    workingDir = os.getcwd() + '/data/cache/'
     textURL = 'https://news.ycombinator.com/item?id=%s' % source
     commentsURL = 'http://hn.algolia.com/api/v1/items/{0}'.format(source)
     text = ""
