@@ -35,6 +35,7 @@ Page {
         if (data.result == "true") {
             settings.username = username;
             settings.loggedIn = true;
+            print(settings.loggedIn);
             profileContainer.visible = true;
             cnt2.visible = false;
         } else {
@@ -105,6 +106,20 @@ Page {
                 }
             }
             selectedOption: option1
+        }
+        Container {
+            horizontalAlignment: HorizontalAlignment.Center
+            verticalAlignment: VerticalAlignment.Center
+            Container {
+                visible: loading.visible
+                ActivityIndicator {
+                    id: loading
+                    minHeight: 300
+                    minWidth: 300
+                    running: true
+                    visible: false
+                }
+            }
         }
         Container {
             id: cnt1
@@ -300,20 +315,6 @@ Page {
                                 password: passwordField.text
                             });
                         loading.visible = true
-                    }
-                }
-                Container {
-                    horizontalAlignment: HorizontalAlignment.Center
-                    verticalAlignment: VerticalAlignment.Center
-                    Container {
-                        visible: loading.visible
-                        ActivityIndicator {
-                            id: loading
-                            minHeight: 300
-                            minWidth: 300
-                            running: true
-                            visible: false
-                        }
                     }
                 }
             }

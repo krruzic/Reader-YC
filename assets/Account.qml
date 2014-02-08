@@ -72,6 +72,7 @@ Container {
                 Container {
                     background: background.imagePaint
                     TextField {
+                        textStyle.base: lightStyle.style
                         enabled: false
                         backgroundVisible: false
                         verticalAlignment: VerticalAlignment.Center
@@ -84,6 +85,8 @@ Container {
             Container {
                 background: background.imagePaint
                 TextArea {
+                    autoSize.maxLineCount: 20
+                    textStyle.base: lightStyle.style
                     backgroundVisible: false
                     enabled: false
                     id: bioField
@@ -106,8 +109,8 @@ Container {
                     horizontalAlignment: HorizontalAlignment.Center
                     text: "Save"
                     onClicked: {
-                        settings.loggedIn = false;
                         Tart.send('saveProfile', {
+                            	username: settings.username,
                                 email: emailField.text,
                                 about: bioField.text
                             });
