@@ -24,6 +24,11 @@ Container {
                 id: textBackground
                 imageSource: "asset:///images/text.amd"
                 repeatPattern: RepeatPattern.XY
+            },
+            ImagePaintDefinition {
+                id: background
+                imageSource: "asset:///images/commentBox.png.amd"
+                repeatPattern: RepeatPattern.XY
             }
         ]
 
@@ -34,13 +39,7 @@ Container {
                     base: SystemDefaults.TextStyles.BodyText
                     fontSize: FontSize.PointValue
                     fontSizeValue: 7
-                    rules: [
-                        FontFaceRule {
-                            source: "asset:///SlatePro-Light.ttf"
-                            fontFamily: "MyFontFamily"
-                        }
-                    ]
-                    fontFamily: "MyFontFamily, sans-serif"
+                    fontWeight: FontWeight.W100
                 },
                 LayoutUpdateHandler {
                     id: mainDimensions
@@ -99,6 +98,8 @@ Container {
                         id: storyinfo
                         horizontalAlignment: HorizontalAlignment.Right
                         verticalAlignment: VerticalAlignment.Center
+                        //background: background.imagePaint
+                        rightPadding: 10
                         Container {
                             horizontalAlignment: HorizontalAlignment.Right
                             verticalAlignment: VerticalAlignment.Center

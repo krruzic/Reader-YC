@@ -73,6 +73,9 @@ NavigationPane {
 
         }
         Container {
+            background: Color.White
+            horizontalAlignment: HorizontalAlignment.Center
+            verticalAlignment: VerticalAlignment.Center
             layout: DockLayout {
             }
             Container {
@@ -80,6 +83,7 @@ NavigationPane {
                 horizontalAlignment: HorizontalAlignment.Center
                 verticalAlignment: VerticalAlignment.Center
                 Label {
+                    textStyle.base: lightStyle.style
                     text: "<b><span style='color:#ff7900'>Nothing to see here</span></b>\nTry favouriting a story!"
                     textStyle.fontSize: FontSize.PointValue
                     textStyle.textAlign: TextAlign.Center
@@ -184,6 +188,13 @@ NavigationPane {
         }
     }
     attachedObjects: [
+        TextStyleDefinition {
+            id: lightStyle
+            base: SystemDefaults.TextStyles.BodyText
+            fontSize: FontSize.PointValue
+            fontSizeValue: 7
+            fontWeight: FontWeight.W100
+        },
         Invocation {
             id: linkInvocation
             property bool auto_trigger: false

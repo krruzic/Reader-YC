@@ -63,6 +63,7 @@ Page {
     }
 
     function onAddComments(data) {
+        busy = false;
         if (commentLink == data.hnid) {
             commentModel.append({
                     type: 'item',
@@ -73,7 +74,6 @@ Page {
                     link: "https://news.ycombinator.com/item?id=" + data.comment["link"],
                     realIndent: data.comment["indent"]
                 });
-            console.log("indent: " + data.comment["indent"]);
             lastItemType = 'item';
         }
     }
@@ -202,6 +202,7 @@ Page {
                             time: ListItemData.timePosted
                             indent: ListItemData.indent
                             text: ListItemData.text
+                            op: commentPane.titlePoster
                         }
                     },
                     ListItemComponent {

@@ -16,9 +16,6 @@ Page {
     Container {
         layout: DockLayout {
         }
-        HNTitleBar {
-            text: "Reader YC - Login"
-        }
         Container {
             horizontalAlignment: HorizontalAlignment.Center
             verticalAlignment: VerticalAlignment.Center

@@ -7,7 +7,15 @@ Page {
         //refreshEnabled: true
     }
     Container {
-
+        attachedObjects: [
+            TextStyleDefinition {
+                id: lightStyle
+                base: SystemDefaults.TextStyles.BodyText
+                fontSize: FontSize.PointValue
+                fontSizeValue: 7
+                fontWeight: FontWeight.W100
+            }
+        ]
         Container {
             layout: StackLayout {
             }
@@ -23,15 +31,21 @@ Page {
                         spaceQuota: 6
                     }
                     Label {
+                        textStyle.base: lightStyle.style
                         text: "<b>Reader YC is Open Source</b>"
                         textFormat: TextFormat.Html
                         textStyle.color: Color.create("#434344")
+                        bottomMargin: 0
+                        topMargin: 0
                     }
                     Label {
+                        textStyle.base: lightStyle.style
                         text: "Contribute on GitHub!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#fe8a3e")
+                        textStyle.color: Color.create("#ff7900")
+                        bottomMargin: 0
+                        topMargin: 0
                     }
                 }
                 Button {
@@ -57,15 +71,21 @@ Page {
                         spaceQuota: 6
                     }
                     Label {
+                        textStyle.base: lightStyle.style
                         text: "<b>Bug?</b>"
                         textFormat: TextFormat.Html
                         textStyle.color: Color.create("#434344")
+                        bottomMargin: 0
+                        topMargin: 0
                     }
                     Label {
+                        textStyle.base: lightStyle.style
                         text: "Email the devs!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#fe8a3e")
+                        textStyle.color: Color.create("#ff7900")
+                        bottomMargin: 0
+                        topMargin: 0
                     }
                 }
                 Button {
@@ -91,15 +111,21 @@ Page {
                         spaceQuota: 6
                     }
                     Label {
+                        textStyle.base: lightStyle.style
                         text: "<b>Feature Request?</b>"
                         textFormat: TextFormat.Html
                         textStyle.color: Color.create("#434344")
+                        bottomMargin: 0
+                        topMargin: 0
                     }
                     Label {
+                        textStyle.base: lightStyle.style
                         text: "Submit an issue!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#fe8a3e")
+                        textStyle.color: Color.create("#ff7900")
+                        bottomMargin: 0
+                        topMargin: 0
                     }
                 }
                 Button {
@@ -133,15 +159,21 @@ Page {
                         spaceQuota: 6
                     }
                     Label {
+                        textStyle.base: lightStyle.style
                         text: "<b>Support Reader YC Development</b>"
                         textFormat: TextFormat.Html
                         textStyle.color: Color.create("#434344")
+                        bottomMargin: 0
+                        topMargin: 0
                     }
                     Label {
+                        textStyle.base: lightStyle.style
                         text: "Leave a Review on BlackBerry World!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#fe8a3e")
+                        textStyle.color: Color.create("#ff7900")
+                        bottomMargin: 0
+                        topMargin: 0
                     }
                 }
                 Button {
@@ -183,7 +215,7 @@ Page {
             //                        text: "Invite BBM Friends to download!"
             //                        textStyle.fontSize: FontSize.PointValue
             //                        textStyle.fontSizeValue: 6
-            //                        textStyle.color: Color.create("#fe8a3e")
+            //                        textStyle.color: Color.create("#ff7900")
             //                    }
             //                }
             //                Button {
@@ -202,6 +234,7 @@ Page {
             //            }
         }
         Label {
+            textStyle.base: lightStyle.style
             text: "Reader YC - Copyright © 2013 Surge Co."
             textStyle.fontSize: FontSize.PointValue
             textStyle.fontSizeValue: 5

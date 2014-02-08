@@ -19,13 +19,7 @@ TitleBar {
                     base: SystemDefaults.TextStyles.BodyText
                     fontSize: FontSize.PointValue
                     fontSizeValue: 7
-                    rules: [
-                        FontFaceRule {
-                            source: "asset:///SlatePro-Light.ttf"
-                            fontFamily: "MyFontFamily"
-                        }
-                    ]
-                    fontFamily: "MyFontFamily, sans-serif"
+                    fontWeight: FontWeight.W100
                 },
                 LayoutUpdateHandler {
                     id: mainDimensions

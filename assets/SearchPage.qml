@@ -172,7 +172,7 @@ NavigationPane {
                                 postTitle: ListItemData.title
                                 postDomain: ListItemData.domain
                                 postUsername: ListItemData.poster
-                                postTime: ListItemData.timePosted + "| " + ListItemData.points
+                                postTime: ListItemData.timePosted
                                 postArticle: ListItemData.articleURL
                                 askPost: ListItemData.isAsk
                                 commentSource: ListItemData.commentsURL

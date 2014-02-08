@@ -7,6 +7,16 @@ Page {
         refreshEnabled: false
     }
     Container {
+        background: Color.White
+        attachedObjects: [
+            TextStyleDefinition {
+                id: lightStyle
+                base: SystemDefaults.TextStyles.BodyText
+                fontSize: FontSize.PointValue
+                fontSizeValue: 7
+                fontWeight: FontWeight.W100
+            }
+        ]
         ScrollView {
             Container {
                 layout: StackLayout {
@@ -23,6 +33,7 @@ Page {
                             spaceQuota: 6
                         }
                         Label {
+                            textStyle.base: lightStyle.style
                             topMargin: 0
                             bottomMargin: 0
                             text: "<b>What is Hacker News?</b>"
@@ -33,15 +44,17 @@ Page {
                             leftPadding: 20
                             topPadding: 6
                             Label {
+                                textStyle.base: lightStyle.style
                                 bottomMargin: 0
                                 text: '[from the Hacker News <a href="http://ycombinator.com/newswelcome.html"> welcome page</a>]'
                                 textFormat: TextFormat.Html
                                 textStyle.fontSize: FontSize.PointValue
                                 textStyle.fontSizeValue: 6
-                                textStyle.color: Color.create("#fe8a3e")
+                                textStyle.color: Color.create("#ff7900")
                                 multiline: true
                             }
                             TextArea {
+                                textStyle.base: lightStyle.style
                                 bottomMargin: 0
                                 topMargin: 0
                                 editable: false
@@ -73,6 +86,7 @@ Page {
                                 spaceQuota: 6
                             }
                             Label {
+                                textStyle.base: lightStyle.style
                                 bottomMargin: 0
                                 topMargin: 0
                                 text: "<b>What is Reader YC?</b>"
@@ -83,15 +97,17 @@ Page {
                                 leftPadding: 20
                                 topPadding: 6
                                 Label {
+                                    textStyle.base: lightStyle.style
                                     text: 'Reader YC is client for Hacker News, allowing you to browse HN on your BlackBerry 10 device'
                                     textFormat: TextFormat.Html
                                     textStyle.fontSize: FontSize.PointValue
                                     textStyle.fontSizeValue: 6
-                                    textStyle.color: Color.create("#fe8a3e")
+                                    textStyle.color: Color.create("#ff7900")
                                     multiline: true
                                     bottomMargin: 0
                                 }
                                 TextArea {
+                                    textStyle.base: lightStyle.style
                                     bottomMargin: 0
                                     topMargin: 0
                                     editable: false
@@ -124,6 +140,7 @@ Page {
                                 spaceQuota: 6
                             }
                             Label {
+                                textStyle.base: lightStyle.style
                                 text: "<b>Who is Surge Co.?</b>"
                                 textFormat: TextFormat.Html
                                 textStyle.color: Color.create("#434344")
@@ -135,15 +152,17 @@ Page {
                                 topPadding: 6
 
                                 Label {
+                                    textStyle.base: lightStyle.style
                                     text: 'Surge Co. is a small group of developers founded by David Dryden and Kristopher Ruzic'
                                     textFormat: TextFormat.Html
                                     textStyle.fontSize: FontSize.PointValue
                                     textStyle.fontSizeValue: 6
-                                    textStyle.color: Color.create("#fe8a3e")
+                                    textStyle.color: Color.create("#ff7900")
                                     multiline: true
                                     bottomMargin: 0
                                 }
                                 TextArea {
+                                    textStyle.base: lightStyle.style
                                     bottomMargin: 0
                                     topMargin: 0
                                     editable: false
@@ -156,7 +175,8 @@ Page {
                         }
                     }
                     Divider {
-
+                        topMargin: 0
+                        bottomMargin: 0
                     }
                     Container {
                         layout: StackLayout {
@@ -173,6 +193,7 @@ Page {
                                     spaceQuota: 6
                                 }
                                 Label {
+                                    textStyle.base: lightStyle.style
                                     text: "<b>Privacy Policy</b>"
                                     textFormat: TextFormat.Html
                                     textStyle.color: Color.create("#434344")
@@ -184,15 +205,17 @@ Page {
                                     topPadding: 6
 
                                     Label {
+                                        textStyle.base: lightStyle.style
                                         text: 'Everything you wanted to know about private stuff'
                                         textFormat: TextFormat.Html
                                         textStyle.fontSize: FontSize.PointValue
                                         textStyle.fontSizeValue: 6
-                                        textStyle.color: Color.create("#fe8a3e")
+                                        textStyle.color: Color.create("#ff7900")
                                         multiline: true
                                         bottomMargin: 0
                                     }
                                     TextArea {
+                                        textStyle.base: lightStyle.style
                                         bottomMargin: 0
                                         topMargin: 0
                                         editable: false
@@ -208,6 +231,7 @@ Page {
 
                         }
                         Label {
+                            textStyle.base: lightStyle.style
                             text: "Reader YC - Copyright © 2013 Surge Co."
                             textStyle.fontSize: FontSize.PointValue
                             textStyle.fontSizeValue: 5

@@ -1,11 +1,54 @@
 import urllib.request
 from bs4 import BeautifulSoup
 import re, json, os, glob, html.parser
+from datetime import *
 
 import tart
 
+from datetime import *
 
+def pretty_date(time):
+    """
+Get a datetime object or a int() Epoch timestamp and return a
+pretty string like 'an hour ago', 'Yesterday', '3 months ago',
+'just now', etc
+"""
+    print(type(time))
+    now = datetime.utcnow()
+    if type(time) is int:
+        diff = now - datetime.fromtimestamp(time)
+    elif isinstance(time, datetime):
+        diff = now - time
+    elif not time:
+        diff = now - now
+    second_diff = diff.seconds
+    day_diff = diff.days
 
+    if day_diff < 0:
+        return "Just now "
+
+    if day_diff == 0:
+        if second_diff < 10:
+            return "Just now "
+        if second_diff < 60:
+            return str(second_diff) + " seconds ago "
+        if second_diff < 120:
+            return "1 minute ago "
+        if second_diff < 3600:
+            return str( second_diff // 60 ) + " minutes ago "
+        if second_diff < 7200:
+            return "1 hour ago "
+        if second_diff < 86400:
+            return str( second_diff // 3600 ) + " hours ago "
+    if day_diff == 1:
+        return "Yesterday "
+    if day_diff <= 7:
+        return str(day_diff) + " days ago "
+    if day_diff < 31:
+        return str(day_diff // 7) + " weeks ago "
+    if str(day_diff // 365) == '1':
+        return str(day_diff // 365) + " year ago "
+    return str(day_diff // 365) + " years ago "
 
 def getText(url):
     """Finds the text portion of text posts,
@@ -31,6 +74,10 @@ def getText(url):
     if '<form action="/r"' in text: # Sometimes my method of checking for text posts fails...
         text = ""
     #tart.send('addText', text=text)
+    text = text.replace('rel="nofollow"', '')
+    text = text.replace('<p>', '\n') # Replace unclosed <p>'s with new lines
+    text = text.replace('</p>', '') # Remove the crap BS4 adds
+
     return text
 
 
@@ -43,15 +90,22 @@ def flatten(comments, level = 0):
 
     res = []
     #add the level key so you can keep track of the original level
-    for c in comments:
-        c['indent'] = level * 40
-        c['text'] = h.unescape(c['text'])
-        c['time'] = c['created_at']
+    for comment in comments:
+        comment['text'] = comment['text'].replace('rel="nofollow"', '')
+        comment['text'] = comment['text'].replace('\n', '')
+        comment['text'] = comment['text'].replace('<p>', '\n') # Replace unclosed <p>'s with new lines
+        comment['text'] = comment['text'].replace('</p>', '') # Remove the crap BS4 adds
+        comment['indent'] = level * 40
+        comment['text'] = h.unescape(comment['text'])
+        parts = comment['created_at'].split('.')
+        dt = datetime.strptime(parts[0], "%Y-%m-%dT%H:%M:%S")
+        print(dt)
+        comment['time'] = pretty_date(dt) # returns a relative date
 
         #removes the childs from the item (important)
-        childs = c.pop('children', [])
+        childs = comment.pop('children', [])
         #adds the item to the result
-        res.append(c)
+        res.append(comment)
         #and the flattened childs later
         res += flatten(childs, level+1)
         #in the next loop the next sibling will be added
@@ -68,7 +122,7 @@ def getCommentPage(source, isAsk):
     workingDir = os.getcwd() + '/data/cache/'
     textURL = 'https://news.ycombinator.com/item?id=%s' % source
     commentsURL = 'http://hn.algolia.com/api/v1/items/{0}'.format(source)
-
+    text = ""
     if (isAsk == "true"):
         text = getText(textURL)
 
@@ -84,6 +138,7 @@ def getCommentPage(source, isAsk):
 
 
     print("Sending comments")
+    tart.send('addText', text=text, hnid=source)
     if (comments == []):
         tart.send('commentError', text="No comments! Check back later!")
     for comment in comments:

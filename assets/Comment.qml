@@ -1,4 +1,5 @@
 import bb.cascades 1.2
+import bb.system 1.2
 //import "tart.js" as Tart
 Container {
     id: commmentContainer
@@ -6,12 +7,14 @@ Container {
     property string time: ""
     property alias indent: commmentContainer.leftPadding
     property alias text: commentBox.text
-
+    property string op: ""
     horizontalAlignment: HorizontalAlignment.Fill
     leftPadding: indent
-    //rightPadding: 20
     onCreationCompleted: {
         Tart.register(commmentContainer);
+        if (ListItemData.poster == op) {
+            posterLabel.text = "<span style='color:#ff7900'>" + ListItemData.poster + "</span>" + "   " + time
+        }
     }
     attachedObjects: [
         TextStyleDefinition {
@@ -19,18 +22,40 @@ Container {
             base: SystemDefaults.TextStyles.BodyText
             fontSize: FontSize.PointValue
             fontSizeValue: 7
-            rules: [
-                FontFaceRule {
-                    source: "asset:///SlatePro-Light.ttf"
-                    fontFamily: "MyFontFamily"
-                }
-            ]
-            fontFamily: "MyFontFamily, sans-serif"
+            fontWeight: FontWeight.W100
         },
         LayoutUpdateHandler {
             id: mainDimensions
+        },
+        SystemToast {
+            id: copyResultToast
+            body: ""
         }
     ]
+
+    function setHighlight(highlighted) {
+        if (highlighted) {
+            comment.background = Color.create("#e0e0e0")
+        } else {
+            comment.background = Color.White
+        }
+    }
+
+    // Connect the onActivedChanged signal to the highlight function
+    ListItem.onActivationChanged: {
+        setHighlight(ListItem.active);
+    }
+
+    // Connect the onSelectedChanged signal to the highlight function
+    ListItem.onSelectionChanged: {
+        setHighlight(ListItem.selected);
+    }
+
+    function onCopyResult(data) {
+        copyResultToast.body = "Comment copied!";
+        copyResultToast.cancel();
+        copyResultToast.show();
+    }
     contextActions: [
         ActionSet {
             InvokeActionItem {
@@ -61,30 +86,45 @@ Container {
                         });
                 }
             }
+            ActionItem {
+                title: "Copy Comment"
+                imageSource: "asset:///images/icons/ic_copy.png"
+                onTriggered: {
+                    Tart.send('copyLink', {
+                            articleLink: commentBox.text
+                        });
+                }
+            }
         }
     ]
     Container {
+        bottomPadding: 10
+        leftPadding: 20
         layout: StackLayout {
             orientation: LayoutOrientation.LeftToRight
         }
 
         Container {
+            id: commentLine
             background: Color.create("#ff7900")
             horizontalAlignment: HorizontalAlignment.Fill
             minWidth: 6
             bottomMargin: 0
             topMargin: 0
             minHeight: bodyDimensions.layoutFrame.height
+            visible: true
         }
         Container {
-            //leftPadding: 6
+            rightPadding: 10
+            id: comment
             Label {
                 id: posterLabel
                 translationX: 10
-                text: ListItemData.poster + " | " + time
+                text: ListItemData.poster + "  " + time
                 textStyle.base: lightStyle.style
                 textFormat: TextFormat.Html
                 textStyle.color: Color.create("#7e7e7e")
+                textStyle.fontSizeValue: 5
                 bottomMargin: 0
                 topMargin: 0
             }
@@ -94,26 +134,24 @@ Container {
                 }
             ]
             background: Color.White
-            TextArea {
-                bottomMargin: 0
+            Label {
+                translationX: 10
+                bottomMargin: 10
                 topMargin: 0
                 id: commentBox
                 text: "This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, I know that it's short...."
-                editable: false
-                backgroundVisible: true
+                multiline: true
                 textFormat: TextFormat.Html
-                focusHighlightEnabled: true
                 enabled: true
-                scrollMode: TextAreaScrollMode.Stiff
-                input.submitKeyFocusBehavior: SubmitKeyFocusBehavior.Lose
                 textStyle.fontSizeValue: 6
                 textStyle.color: Color.Black
-                maximumLength: 10000000
                 textStyle.base: lightStyle.style
             }
             Divider {
                 topMargin: 0
             }
+
         }
+
     }
 }
