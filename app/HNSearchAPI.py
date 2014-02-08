@@ -81,9 +81,9 @@ def getSearchResults(startIndex, source):
         title = e['item']['title']
         points = e['item']['points']
         if (points == 1):
-            points = str(points) + " point"
+            points = str(points)
         else:
-            points = str(points) + " points"
+            points = str(points)
         num_comments = e['item']['num_comments']
         domain = e['item']['domain']
         poster = e['item']['username']

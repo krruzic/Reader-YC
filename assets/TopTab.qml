@@ -115,6 +115,8 @@ NavigationPane {
             layout: DockLayout {
             }
             background: Color.White
+            horizontalAlignment: HorizontalAlignment.Center
+            verticalAlignment: VerticalAlignment.Center
             Container {
                 visible: errorLabel.visible
                 horizontalAlignment: HorizontalAlignment.Center
@@ -129,6 +131,7 @@ NavigationPane {
                     textFormat: TextFormat.Html
                     multiline: true
                     visible: false
+                    textStyle.base: lightStyle.style
                 }
             }
             Container {
@@ -291,6 +294,13 @@ NavigationPane {
                 }
             }
             attachedObjects: [
+                TextStyleDefinition {
+                    id: lightStyle
+                    base: SystemDefaults.TextStyles.BodyText
+                    fontSize: FontSize.PointValue
+                    fontSizeValue: 7
+                    fontWeight: FontWeight.W100
+                },
                 Invocation {
                     id: linkInvocation
                     property bool auto_trigger: false

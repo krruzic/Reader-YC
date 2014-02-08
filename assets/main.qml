@@ -270,7 +270,9 @@ TabbedPane {
     onSettingsChanged: {
         var data = {
             openInBrowser: settings.openInBrowser,
-            readerMode: settings.readerMode
+            readerMode: settings.readerMode,
+            loggedIn: settings.loggedIn,
+            username: settings.username
         };
 
         Tart.send('saveSettings', {
@@ -333,6 +335,7 @@ TabbedPane {
                 settingsChanged();
             }
             onUsernameChanged: {
+                console.log("username updated!")
                 settingsChanged();
             }
             function restore(data) {
@@ -342,10 +345,10 @@ TabbedPane {
                     openInBrowser = data.openInBrowser;
                     print('readerMode =', data.readerMode);
                     readerMode = data.readerMode;
-                    print('logged in =', data.login);
-                    loggedIn = data.login;
-                    print('username = ', data.user);
-                    username = data.user;
+                    print('logged in =', data.loggedIn);
+                    loggedIn = data.loggedIn;
+                    print('username = ', data.username);
+                    username = data.username;
                 }
             }
         }

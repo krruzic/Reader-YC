@@ -5,7 +5,7 @@ from .HNUserAPI import getUserPage
 from .HNSearchAPI import getSearchResults
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
-import requests, requests.utils, pickle
+import requests, requests.utils, pickle, re, html.parser, cgi
 import tart
 # import lxml.html as l
 
@@ -23,6 +23,9 @@ class App(tart.Application):
     readerToken = '5613db57aaedcafdff67fb12844f5b39a0d47a93' # this is supposed to be a secret, DO NOT USE IT, get your own from http://www.readability.com/developers/api/parser
     BASE_PATH = os.getcwd() + '/data/'
     COOKIE = os.path.join(BASE_PATH, 'hackernews.cookie')
+    HEADERS = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.29 Safari/537.22',
+    }
     cache = [] #{'ident': None} # Keep track of current request
 
     def __init__(self):
@@ -30,29 +33,14 @@ class App(tart.Application):
         self.settings = {
             'openInBrowser': 'false',
             'readerMode': 'false',
-            'user': '',
-            'login': 'false'
+            'loggedIn': 'false',
+            'username': ''
         }
         self.restore_data(self.settings, self.SETTINGS_FILE)
         print("restored: ", self.settings)
 
     def onUiReady(self):
         print("UI READY!!")
-        # doc = """
-        #     <html><body>
-        #     <table>
-        #       <tr>
-        #         <td>one</td>
-        #         <td>1</td>
-        #       </tr>
-        #       <tr>
-        #         <td>two</td>
-        #         <td>2</td
-        #       </tr>
-        #     </table>
-        #     </body></html>"""
-        # doc = l.document_fromstring(doc)
-        # print(doc.finall('.//tr'))
         tart.send('restoreSettings', **self.settings)
         self.onRequestPage("topPage", "topPage")
 
@@ -165,7 +153,6 @@ class App(tart.Application):
             tart.send('addText', text='', hnid=source)
             tart.send('commentError', text="<b><span style='color:#fe8515'>Error getting comments</span></b>\nCheck your connection and try again!", hnid=source)
 
-
     def user_routine(self, source):
         print("source sent: " + source)
 
@@ -200,29 +187,77 @@ class App(tart.Application):
             'u': username,
             'p': password
         }
+        result = "false"
         sess = requests.session()
-        res = sess.get('https://news.ycombinator.com/newslogin')
+        res = sess.get('https://news.ycombinator.com/newslogin', headers=self.HEADERS)
         fnid = soup.find('input')['value']
         soup = BeautifulSoup(res.content)
         params = {'u': username, 'p': password, 'fnid': fnid}
-        r = sess.post('https://news.ycombinator.com/y', params=params)
-        assert r.status_code == 200, "Unexpected status code: %s" % r.status_code
-        cookies = sess.cookies
-        cookie = open(self.COOKIE, 'w+')
-        print(cookies)
-        pickle.dump(cookies, cookie)
-        cookie.close()
-        tart.send('loginResult', text=r.text)
+        r = sess.post('https://news.ycombinator.com/y', headers=self.HEADERS, params=params)
+        # assert r.status_code == 200, "Unexpected status code: %s" % r.status_code
+        print(r.text)
+        if ("Bad login" not in r.text):
+            print("no bad login")
+            cookies = sess.cookies
+            f = open(self.COOKIE, 'wb')
+            pickle.dump(requests.utils.dict_from_cookiejar(cookies), f)
+            f.close()
+            result = "true"
+        tart.send('loginResult', result=result)
 
-    def onCheckLogin(self):
-        loggedIn = self.settings['login']
-        try:
-            with open('data/hackernews.cookie'):
-                login = True
-        except IOError:
-            login = False
-        tart.send('loginCheck', state=login)
+    def onGetProfile(self, username):
+        f = open(self.COOKIE, 'rb')
+        cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
+        f.close()
 
+        h = html.parser.HTMLParser() # To decode the HTML entities
+        r = requests.get('https://news.ycombinator.com/user?id={0}'.format(username), headers=self.HEADERS, cookies=cookies)
+        soup = BeautifulSoup(r.content)
+        #print(r.content)
+        about = soup.find('textarea', {'name': 'about'}).text 
+        about = h.unescape(about)
+        about = about.replace('<i>', '*')
+        about = about.replace('<\i>', '*')
+        about = re.sub("<.*?>", "", about)
+        email = soup.find('input', {'name': 'email'})['value']
+        email = h.unescape(email)
+
+        tart.send('profileRetrieved', email=email, about=about)
+
+    def onSaveProfile(self, email, about):
+        f = open(self.COOKIE, 'rb')
+        cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
+        #h = html.parser.HTMLParser() # To decode the HTML entities
+        about = cgi.escape(about)
+        email = cgi.escape(email)
+        sess = requests.session()
+
+        r = sess.get('https://news.ycombinator.com/user?id={0}'.format(username), headers=HEADERS, cookies=cookies)
+        soup = BeautifulSoup(r.content)
+        showdead = str(soup.find('select', {'name': 'showdead'}))
+        showdead = showdead[showdead.find('selected=')+12:showdead.find("</option")]
+    
+        noprocrast = str(soup.find('select', {'name': 'noprocrast'}))
+        noprocrast = noprocrast[noprocrast.find('selected=')+12:noprocrast.find("</option")]
+
+        params =  {
+            'fnid': soup.find('input', attrs=dict(name='fnid'))['value'],
+            'about': about,
+            'email': email,
+            'showdead': showdead,#soup.find('select', {'name': 'showdead'})['selected'].text,
+            'noprocrast': noprocrast,#soup.find('select', {'name': 'noprocrast'})['selected'].text,
+            'maxvisit': soup.find('input', {'name': 'maxvisit'})['value'],
+            'minaway': soup.find('input', {'name': 'minaway'})['value'],
+            'delay': soup.find('input', {'name': 'delay'})['value']
+        }
+        print(params)
+        r = sess.post('https://news.ycombinator.com/x', headers=self.HEADERS, params=params, cookies=cookies)
+
+
+
+    def onLogout(self):
+        os.remove(self.COOKIE)
+        tart.send('logoutResult')
 
     def onSaveArticle(self, article):
         article = tuple(article)
@@ -269,10 +304,8 @@ class App(tart.Application):
         cursor.execute('SELECT * FROM articles')
         tart.send('fillList', list=self.get_rowdicts(cursor))
 
-
     def get_rowdicts(self, cursor):
         return list(cursor)
-
 
     def onDeleteCache(self):
         print("PYTHON DELETING CACHE")
@@ -298,33 +331,6 @@ class App(tart.Application):
             """)
         tart.send('cacheDeleted', text="Cache cleared!")
 
-
-    # def onReadArticle(self, link):
-    #     cursor = sqlite3.connect("data/read.db")
-    #     sel = cursor.execute( "SELECT COUNT(*) FROM readTable" )
-    #     Result = sel.fetchall()
-    #     records = Result[0][0]
-    #     if (records >= 300):
-    #         print("Read Table emptied!")
-    #         cursor.execute("DELETE from * readTable")
-    #         cursor.commit()
-
-    #     try:
-    #         cursor.execute("INSERT INTO readTable VALUES (?)", (link,))
-    #         print("article marked as read")
-    #         tart.send('readState', state="read")
-    #     except sqlite3.IntegrityError:
-    #         cursor.close()
-    #         print("Error inserting...")
-    #         return
-
-    #     sel = cursor.execute("SELECT * FROM readTable WHERE link = ?", (link,))
-    #     data = sel.fetchall()
-    #if (len(data) == 0):
-    #         tart.send('readState', state="unread")
-    #     else:
-    #         tart.send('readState', state="read")
-    #     cursor.close()
     def onCopyLink(self, articleLink):
         from tart import clipboard
         c = clipboard.Clipboard()

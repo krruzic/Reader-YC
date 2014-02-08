@@ -42,6 +42,7 @@ Page {
     }
 
     Container {
+        background: Color.White
         Container {
             topPadding: 10
             leftPadding: 19

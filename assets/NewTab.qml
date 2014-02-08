@@ -118,6 +118,7 @@ NavigationPane {
                 horizontalAlignment: HorizontalAlignment.Center
                 verticalAlignment: VerticalAlignment.Center
                 Label {
+                    textStyle.base: lightStyle.style
                     id: errorLabel
                     text: "<b><span style='color:#ff7900'>Error getting stories</span></b>\nCheck your connection and try again!"
                     textStyle.fontSize: FontSize.PointValue
@@ -283,6 +284,13 @@ NavigationPane {
         }
 
         attachedObjects: [
+            TextStyleDefinition {
+                id: lightStyle
+                base: SystemDefaults.TextStyles.BodyText
+                fontSize: FontSize.PointValue
+                fontSizeValue: 7
+                fontWeight: FontWeight.W100
+            },
             Invocation {
                 id: linkInvocation
                 property bool auto_trigger: false

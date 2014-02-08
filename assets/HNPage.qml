@@ -1,6 +1,6 @@
 import bb.cascades 1.2
 import bb.system 1.2
-//import "tart.js" as Tart
+import "tart.js" as Tart
 
 Container {
     id: hnPage
@@ -14,9 +14,8 @@ Container {
     property alias postUsername: labelUsername.text
     property alias postTime: labelTimePosted.text
     horizontalAlignment: HorizontalAlignment.Fill
-
     onCreationCompleted: {
-        Tart.register(hnPage)
+        Tart.register(hnPage);
     }
     contextActions: [
         ActionSet {
@@ -136,13 +135,7 @@ Container {
                 base: SystemDefaults.TextStyles.BodyText
                 fontSize: FontSize.PointValue
                 fontSizeValue: 7
-                rules: [
-                    FontFaceRule {
-                        source: "asset:///SlatePro-Light.ttf"
-                        fontFamily: "MyFontFamily"
-                    }
-                ]
-                fontFamily: "MyFontFamily, sans-serif"
+                fontWeight: FontWeight.W100
             },
             LayoutUpdateHandler {
                 id: mainDimensions
@@ -201,6 +194,8 @@ Container {
                     id: storyinfo
                     horizontalAlignment: HorizontalAlignment.Right
                     verticalAlignment: VerticalAlignment.Center
+                    //background: background.imagePaint
+                    rightPadding: 10
                     Container {
                         horizontalAlignment: HorizontalAlignment.Right
                         verticalAlignment: VerticalAlignment.Center
@@ -267,6 +262,11 @@ Container {
         SystemToast {
             id: copyResultToast
             body: ""
+        },
+        ImagePaintDefinition {
+            id: background
+            imageSource: "asset:///images/commentBox.png.amd"
+            repeatPattern: RepeatPattern.XY
         }
     ]
 }
