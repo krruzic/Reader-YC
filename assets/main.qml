@@ -142,24 +142,6 @@ TabbedPane {
         }
     }
     Tab {
-        title: qsTr("User Pages")
-        imageSource: "asset:///images/icons/ic_users.png"
-        id: userTab
-        NavUserPage {
-            id: userPage
-            onPopTransitionEnded: {
-                page.destroy();
-                Application.menuEnabled = true;
-            }
-        }
-
-        signal push(variant p)
-        onPush: {
-            userPage.push(p);
-        }
-    }
-
-    Tab {
         title: qsTr("Search HN")
         imageSource: "asset:///images/icons/ic_search.png"
         id: searchTab
@@ -192,8 +174,6 @@ TabbedPane {
         }
     }
     onActiveTabChanged: {
-        userPage.searchVisible = false;
-        userPage.playAnim();
         if (activeTab == favouritesTab) {
             console.log("Loading favourites")
             Tart.send('loadFavourites', {
@@ -335,6 +315,7 @@ TabbedPane {
                 settingsChanged();
             }
             onUsernameChanged: {
+                Global.username = username;
                 settingsChanged();
             }
             function restore(data) {

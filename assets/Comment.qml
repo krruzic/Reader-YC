@@ -1,22 +1,35 @@
 import bb.cascades 1.2
 import bb.system 1.2
-//import "tart.js" as Tart
+import "tart.js" as Tart
+import "global.js" as Global
+
 Container {
     id: commmentContainer
     visible: true
     property string time: ""
     property alias indent: commmentContainer.leftPadding
     property alias text: commentBox.text
-    property string op: ""
     property string link: ""
     horizontalAlignment: HorizontalAlignment.Fill
     leftPadding: indent
     onCreationCompleted: {
         Tart.register(commmentContainer);
-        if (ListItemData.poster == op) {
-            posterLabel.text = "<span style='color:#ff7900'>" + ListItemData.poster + "</span>" + "   " + time
+        if (Global.username != "") {
+            replyAction.enabled = true;
         }
     }
+    onContextMenuHandlerChanged: {
+        if (link == "") {
+            replyAction.enabled = false;	
+        }
+    }
+//    onContextMenuHandlerChanged: {
+//        if (contextMenuHandler) {
+//            contextMenuHandlerChanged(contextMenuHandler)
+//            controlAdded(control)
+//            add(controls.)
+//        }
+//    }
     attachedObjects: [
         TextStyleDefinition {
             id: lightStyle
@@ -52,6 +65,12 @@ Container {
         setHighlight(ListItem.selected);
     }
 
+    onLinkChanged: {
+        if (link == "") {
+            replyAction.enabled = false;
+        }
+    }
+
     function onCopyResult(data) {
         copyResultToast.body = "Comment copied!";
         copyResultToast.cancel();
@@ -71,23 +90,6 @@ Container {
                 }
             }
             ActionItem {
-                title: "View user page"
-                imageSource: "asset:///images/icons/ic_users.png"
-                onTriggered: {
-                    console.log("Pushing user page");
-                    var selectedItem = commentItem.ListItem.view.dataModel.data(commentItem.ListItem.indexPath);
-                    console.log(selectedItem.poster);
-                    var page = commentItem.ListItem.view.pushPage('userPage');
-                    page.username = selectedItem.poster;
-                    page.searchText = selectedItem.poster;
-                    page.busy = true;
-                    Tart.send('requestPage', {
-                            source: selectedItem.poster,
-                            sentBy: 'userPage'
-                        });
-                }
-            }
-            ActionItem {
                 title: "Copy Comment"
                 imageSource: "asset:///images/icons/ic_copy.png"
                 onTriggered: {
@@ -96,13 +98,16 @@ Container {
                         });
                 }
             }
-            ACtionItem {
-            	title: "Reply to comment"
-            	imageSource: "asset:///images/icons/ic_comments.png"
-            	onTriggered: {
-            	    // insert new element into listview after selected item 
-            	    // (Reply item)
-            	}
+            ActionItem {
+                id: replyAction
+                title: "Reply to comment"
+                imageSource: "asset:///images/icons/ic_comments.png"
+                enabled: false
+                onTriggered: {
+                    // insert new element into listview after selected item
+                    // (Reply item)
+                    commentItem.ListItem.view.addComment(commmentContainer.ListItem.indexInSection, link, indent);
+                }
             }
         }
     ]

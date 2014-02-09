@@ -113,6 +113,7 @@ NavigationPane {
         Container {
             layout: DockLayout {
             }
+            background: Color.White
             Container {
                 visible: errorLabel.visible
                 horizontalAlignment: HorizontalAlignment.Center
@@ -162,7 +163,7 @@ NavigationPane {
                                 postTitle: ListItemData.title
                                 postDomain: ListItemData.domain
                                 postUsername: ListItemData.poster
-                                postTime: ListItemData.timePosted + "| " + ListItemData.points
+                                postTime: ListItemData.timePosted
                                 postArticle: ListItemData.articleURL
                                 askPost: ListItemData.isAsk
                                 commentSource: ListItemData.commentsURL
@@ -174,7 +175,7 @@ NavigationPane {
                                 page.commentLink = ListItemData.hnid;
                                 page.title = ListItemData.title;
                                 page.titlePoster = ListItemData.poster;
-                                page.titleTime = ListItemData.timePosted + "| " + ListItemData.points;
+                                page.titleTime = ListItemData.timePosted;
                                 page.titleDomain = ListItemData.domain;
                                 page.isAsk = ListItemData.isAsk;
                                 page.articleLink = ListItemData.articleURL;

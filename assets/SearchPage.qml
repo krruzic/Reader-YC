@@ -84,41 +84,52 @@ NavigationPane {
             text: "Reader YC - Search HN"
         }
         Container {
+            background: Color.White
             Container {
                 topPadding: 10
                 leftPadding: 19
                 rightPadding: 19
-                TextField {
-                    horizontalAlignment: HorizontalAlignment.Center
-                    verticalAlignment: verticalAlignment.Top
-                    visible: true
-                    objectName: "searchField"
-                    enabled: true
-                    textStyle.color: Color.create("#262626")
-                    textStyle.fontSize: FontSize.Medium
-                    layoutProperties: StackLayoutProperties {
-                        spaceQuota: 1
+                Container {
+                    attachedObjects: [
+                        ImagePaintDefinition {
+                            imageSource: "asset:///images/text.amd"
+                            id: background
+                        }
+                    ]
+                	background: background.imagePaint
+                    TextField {
+                        backgroundVisible: false;
+                        horizontalAlignment: HorizontalAlignment.Center
+                        verticalAlignment: verticalAlignment.Top
+                        visible: true
+                        objectName: "searchField"
+                        enabled: true
+                        textStyle.color: Color.create("#262626")
+                        textStyle.fontSize: FontSize.Medium
+                        layoutProperties: StackLayoutProperties {
+                            spaceQuota: 1
+                        }
+                        input {
+                            flags: TextInputFlag.AutoCapitalizationOff | TextInputFlag.SpellCheckOff
+                        }
+                        hintText: qsTr("Search Posts on HN")
+                        id: searchField
+                        input.onSubmitted: {
+                            start = 0;
+                            search = searchField.text;
+                            searchModel.clear();
+                            Tart.send('requestPage', {
+                                    source: searchField.text,
+                                    sentBy: 'searchPage',
+                                    startIndex: start
+                                });
+                            //start = start + 30;
+                            errorLabel.visible = false;
+                            loading.visible = true;
+                            searchField.visible = false;
+                        }
+                        input.submitKey: SubmitKey.Search
                     }
-                    input {
-                        flags: TextInputFlag.AutoCapitalizationOff | TextInputFlag.SpellCheckOff
-                    }
-                    hintText: qsTr("Search Posts on HN")
-                    id: searchField
-                    input.onSubmitted: {
-                        start = 0;
-                        search = searchField.text;
-                        searchModel.clear();
-                        Tart.send('requestPage', {
-                                source: searchField.text,
-                                sentBy: 'searchPage',
-                                startIndex: start
-                            });
-                        //start = start + 30;
-                        errorLabel.visible = false;
-                        loading.visible = true;
-                        searchField.visible = false;
-                    }
-                    input.submitKey: SubmitKey.Search
                 }
             }
             Container {
@@ -287,7 +298,7 @@ NavigationPane {
                                     lastItemType = 'load';
                                     Tart.send('requestPage', {
                                             source: search,
-                                            startIndex: start,
+                                            startIndex: (start / 30),
                                             sentBy: 'searchPage'
                                         });
                                     busy = true;

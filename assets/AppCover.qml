@@ -4,9 +4,12 @@ import "tart.js" as Tart
 SceneCover {
 
     attachedObjects: [
-        ImagePaintDefinition {
-            id: header
-            imageSource: "asset:///images/titlebar.png"
+        TextStyleDefinition {
+            id: lightStyle
+            base: SystemDefaults.TextStyles.BodyText
+            fontSize: FontSize.PointValue
+            fontSizeValue: 7
+            fontWeight: FontWeight.W100
         },
         ImagePaintDefinition {
             id: background
@@ -41,13 +44,12 @@ SceneCover {
                 layoutProperties: StackLayoutProperties {
                     spaceQuota: 1
                 }
-                //minWidth: 314
+                textStyle.base: lightStyle.style
                 text: root.coverTitle
                 textStyle.fontSize: FontSize.PointValue
                 textStyle.textAlign: TextAlign.Left
                 textStyle.color: Color.White
                 textFormat: TextFormat.Plain
-                textStyle.fontStyle: FontStyle.Italic
                 multiline: true
                 textStyle.fontSizeValue: 6.0
                 autoSize.maxLineCount: 3
@@ -63,6 +65,7 @@ SceneCover {
                 orientation: LayoutOrientation.LeftToRight
             }
             Label {
+                textStyle.base: lightStyle.style
                 id: posterLabel
                 text: root.coverPoster
                 textStyle.fontSize: FontSize.PointValue
@@ -76,6 +79,7 @@ SceneCover {
                 opacity: 0
             }
             Label {
+                textStyle.base: lightStyle.style
                 id: commentLabel
                 text: root.coverComments
                 textStyle.fontSize: FontSize.PointValue

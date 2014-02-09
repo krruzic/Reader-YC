@@ -1,5 +1,5 @@
 import bb.cascades 1.2
-import bb.system 1.0
+import bb.system 1.2
 import "tart.js" as Tart
 
 Container {
@@ -13,10 +13,11 @@ Container {
     property alias postDomain: labelPostDomain.text
     property alias postUsername: labelUsername.text
     property alias postTime: labelTimePosted.text
-
+    horizontalAlignment: HorizontalAlignment.Fill
     onCreationCompleted: {
-        Tart.register(saveItem)
+        Tart.register(saveItem);
     }
+
     contextActions: [
         ActionSet {
             title: ListItemData.title
@@ -68,6 +69,21 @@ Container {
                 }
             }
             ActionItem {
+                title: "Favourite Article"
+                imageSource: "asset:///images/icons/ic_star_add.png"
+                onTriggered: {
+                    var date = new Date();
+                    var formattedDate = Qt.formatDateTime(date, "dd-MM-yyyy"); //to format date
+                    var articleDetails = [ ListItemData.title, ListItemData.articleURL, String(formattedDate), ListItemData.poster,
+                        ListItemData.commentCount, ListItemData.isAsk, ListItemData.domain, ListItemData.points,
+                        ListItemData.hnid ];
+
+                    Tart.send('saveArticle', {
+                            article: articleDetails
+                        });
+                }
+            }
+            ActionItem {
                 title: "Copy Article Link"
                 imageSource: "asset:///images/icons/ic_copy_link.png"
                 onTriggered: {
@@ -77,7 +93,7 @@ Container {
                 }
             }
             DeleteActionItem {
-                title: "Remove from Favourites"
+                title: 'Remove from Favourites'
                 onTriggered: {
                     Tart.send('deleteArticle', {
                             hnid: ListItemData.hnid,
@@ -91,24 +107,25 @@ Container {
 
     }
 
-    property int padding: 10
-    topPadding: 5
-    bottomPadding: 0
-    leftPadding: padding
-    rightPadding: padding
-
     function setHighlight(highlighted) {
         if (highlighted) {
-            highlightContainer.opacity = 0.9;
+            mainContainer.background = Color.create("#e0e0e0")
         } else {
-            highlightContainer.opacity = 0.0;
+            mainContainer.background = Color.White
         }
+    }
+    function onSaveResult(data) {
+        saveResultToast.body = data.text;
+        saveResultToast.cancel();
+        saveResultToast.show();
     }
 
     function onCopyResult(data) {
         copyResultToast.body = data.text;
+        copyResultToast.cancel();
         copyResultToast.show();
     }
+
     // Highlight function for the highlight Container
 
     // Connect the onActivedChanged signal to the highlight function
@@ -120,121 +137,146 @@ Container {
     ListItem.onSelectionChanged: {
         setHighlight(ListItem.selected);
     }
-    attachedObjects: [
-        ImagePaintDefinition {
-            id: unreadBackground
-            imageSource: "asset:///images/unread.amd"
-        },
-        SystemToast {
-            id: copyResultToast
-            body: ""
-        }
-    ]
+
     Container {
-        visible: true
-        id: mainContainer
-        background: unreadBackground.imagePaint
-        horizontalAlignment: HorizontalAlignment.Fill
         attachedObjects: [
+            TextStyleDefinition {
+                id: lightStyle
+                base: SystemDefaults.TextStyles.BodyText
+                fontSize: FontSize.PointValue
+                fontSizeValue: 7
+                fontWeight: FontWeight.W100
+            },
             LayoutUpdateHandler {
                 id: mainDimensions
             }
         ]
+        visible: true
+        id: mainContainer
+        background: Color.White
+        horizontalAlignment: HorizontalAlignment.Fill
+
         Container {
             topPadding: 5
             leftPadding: 10
             rightPadding: 10
             rightMargin: 0
             bottomMargin: 0
-            bottomPadding: 20
+            bottomPadding: 0
             horizontalAlignment: HorizontalAlignment.Fill
             Label {
                 id: labelPostTitle
                 verticalAlignment: VerticalAlignment.Top
-                text: "Billing Incident Update, from the makers of cheese, testing this out"
-                textStyle.fontSize: FontSize.PointValue
-                textStyle.fontSizeValue: 7
+                text: ListItemData.title
                 bottomMargin: 1
                 multiline: true
-                textStyle.color: Color.Black
                 autoSize.maxLineCount: 2
-                textFormat: TextFormat.Html
+                textStyle.fontSizeValue: 7
+                textStyle.base: lightStyle.style
             }
             Container {
-                verticalAlignment: VerticalAlignment.Center
-                bottomMargin: 0
-                topMargin: 0
-                //minWidth: mainDimensions.layoutFrame.width
-                //horizontalAlignment: HorizontalAlignment.Fill
-                clipContentToBounds: false
                 layout: DockLayout {
                 }
-                Label {
-                    id: labelPostDomain
+                horizontalAlignment: HorizontalAlignment.Fill
+                Container {
                     horizontalAlignment: HorizontalAlignment.Left
-                    text: "http://www.dailymail.com/"
-                    multiline: false
-                    textStyle.fontSize: FontSize.PointValue
-                    textStyle.fontSizeValue: 7
-                    textStyle.color: Color.create("#ff69696c")
-                    textStyle.fontStyle: FontStyle.Italic
+                    verticalAlignment: VerticalAlignment.Center
+                    Label {
+                        topMargin: 5
+                        id: labelPostDomain
+                        horizontalAlignment: HorizontalAlignment.Left
+                        text: ListItemData.domain
+                        multiline: false
+                        textStyle.color: Color.create("#ff7900")
+                        textStyle.fontStyle: FontStyle.Italic
+                        textStyle.base: lightStyle.style
+                        bottomMargin: 0
+                    }
+                    Label {
+                        topMargin: 5
+                        text: ListItemData.timePosted
+                        id: labelTimePosted
+                        textStyle.fontSizeValue: 5
+                        textStyle.base: lightStyle.style
+                    }
                 }
-                Divider {
-                    opacity: 0
-                    horizontalAlignment: HorizontalAlignment.Center
-                }
-                Label {
-                    text: postComments + " comments"
-                    multiline: false
-                    textStyle.fontSize: FontSize.PointValue
-                    textStyle.fontSizeValue: 7
-                    textStyle.color: Color.Gray
+                Container {
+                    id: storyinfo
                     horizontalAlignment: HorizontalAlignment.Right
-                    textStyle.textAlign: TextAlign.Right
+                    verticalAlignment: VerticalAlignment.Center
+                    //background: background.imagePaint
+                    rightPadding: 10
+                    Container {
+                        horizontalAlignment: HorizontalAlignment.Right
+                        verticalAlignment: VerticalAlignment.Center
+                        layout: StackLayout {
+                            orientation: LayoutOrientation.LeftToRight
+                        }
+                        leftPadding: 4
+                        ImageView {
+                            rightPadding: 0
+                            leftMargin: 0
+                            imageSource: "asset:///images/comment.png"
+                            maxHeight: 26
+                            maxWidth: 26
+                            translationY: 2
+                            verticalAlignment: VerticalAlignment.Center
+                            horizontalAlignment: HorizontalAlignment.Right
+                        }
+                        Label {
+                            leftMargin: 0
+                            rightMargin: 0
+                            text: "<html><i>" + ListItemData.commentCount + "</i></html>"
+                            textStyle.fontSize: FontSize.PointValue
+                            textStyle.fontSizeValue: 5
+                            horizontalAlignment: HorizontalAlignment.Right
+                            verticalAlignment: VerticalAlignment.Center
+                            textStyle.color: Color.create("#7e7e7e")
+                            textStyle.base: lightStyle.style
+                            textFormat: TextFormat.Html
+                        }
+                        Label {
+                            leftMargin: 0
+                            text: "<html><i> | ▲ </i></html>" + ListItemData.points
+                            textStyle.fontSize: FontSize.PointValue
+                            textStyle.fontSizeValue: 5
+                            horizontalAlignment: HorizontalAlignment.Right
+                            verticalAlignment: VerticalAlignment.Center
+                            textStyle.color: Color.create("#7e7e7e")
+                            textStyle.base: lightStyle.style
+                            textFormat: TextFormat.Html
+                        }
+                    }
+                    Label {
+                        topMargin: 0
+                        textStyle.fontSizeValue: 5
+                        text: ListItemData.poster
+                        id: labelUsername
+                        textStyle.color: Color.create("#ff7900")
+                        textStyle.base: lightStyle.style
+                        horizontalAlignment: HorizontalAlignment.Right
+                    }
                 }
             }
-            Container {
+            Divider {
                 bottomMargin: 0
-                topMargin: 0
-                verticalAlignment: VerticalAlignment.Bottom
-                //horizontalAlignment: HorizontalAlignment.Fill
-                layout: DockLayout {
-                }
-                Label {
-                    id: labelUsername
-                    text: "username"
-                    multiline: false
-                    textStyle.fontSize: FontSize.PointValue
-                    textStyle.fontSizeValue: 6
-                    textStyle.color: Color.create("#ff7900")
-                    horizontalAlignment: HorizontalAlignment.Left
-                    textStyle.textAlign: TextAlign.Left
-                }
-                Divider {
-                    opacity: 0
-                    horizontalAlignment: HorizontalAlignment.Center
-                }
-                Label {
-                    id: labelTimePosted
-                    text: "some comments | some points"
-                    multiline: false
-                    textStyle.fontSize: FontSize.PointValue
-                    textStyle.fontSizeValue: 6
-                    textStyle.color: Color.Gray
-                    horizontalAlignment: HorizontalAlignment.Right
-                    textStyle.textAlign: TextAlign.Right
-                }
-            }
-            Container {
-                minHeight: 10
+                bottomPadding: 0
             }
         }
     }
-    ImageView {
-        id: highlightContainer
-        imageSource: "asset:///images/listHighlight.amd"
-        preferredWidth: mainDimensions.layoutFrame.width
-        preferredHeight: mainDimensions.layoutFrame.height
-        opacity: 0
-    }
+    attachedObjects: [
+        SystemToast {
+            id: saveResultToast
+            body: ""
+        },
+        SystemToast {
+            id: copyResultToast
+            body: ""
+        },
+        ImagePaintDefinition {
+            id: background
+            imageSource: "asset:///images/commentBox.png.amd"
+            repeatPattern: RepeatPattern.XY
+        }
+    ]
 }
