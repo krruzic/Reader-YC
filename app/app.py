@@ -123,7 +123,7 @@ class App(tart.Application):
             source = source[1:]
         try:
             stories, moreLink = readeryc.getStoryPage("https://news.ycombinator.com/" + source)
-        except IOError:
+        except requests.exceptions.ConnectionError:
             tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#ff7900'>Error getting stories</span></b>\nCheck your connection and try again!")
             return
         except IndexError:
@@ -139,15 +139,23 @@ class App(tart.Application):
 
     def comments_routine(self, source, askPost):
         print("source sent:" + source)
+        h = html.parser.HTMLParser() # To decode the HTML entities
+
         try:
             text, comments = readeryc.getCommentPage(source, askPost)
             tart.send('addText', text=text, hnid=source)
             if (comments == []):
                 tart.send('commentError', text="No comments, check back later!", hnid=source)
             for comment in comments:
+                comment['text'] = h.unescape(comment['text'])
+                comment['text'] = comment['text'].replace('<p>', '\n') # Replace unclosed <p>'s with new lines
+                comment['text'] = comment['text'].replace('<pre><code>', '<p style="font-family: Monospace; font-size:5pt; font-weight:100;">')
+                comment['text'] = comment['text'].replace('</code></pre>', '</p>')
+                comment['text'] = comment['text'].replace('\\n', '<br />')
+
                 tart.send('addComments', comment=comment, hnid=source)
 
-        except IOError:
+        except requests.exceptions.ConnectionError:
             print("ERROR GETTING COMMENTS")
             tart.send('addText', text='', hnid=source)
             tart.send('commentError', text="<b><span style='color:#ff7900'>Error getting comments</span></b>\nCheck your connection and try again!", hnid=source) 
@@ -158,7 +166,7 @@ class App(tart.Application):
             result = readeryc.getSearchResults(startIndex, source)
             for res in result:
                 tart.send('onAddSearchStories', story=res)
-        except IOError:
+        except requests.exceptions.ConnectionError:
             tart.send('searchError', text="<b><span style='color:#ff7900'>Error getting stories</span></b>\nCheck your connection and try again!")
 
     def onRequestLogin(self, username, password):
@@ -188,7 +196,7 @@ class App(tart.Application):
         if (res == True):
             tart.send('commentPosted', result="true", comment=text)
             return
-        tart.send('commentPosted', result="true", comment="")
+        tart.send('commentPosted', result="false", comment="")
 
     def onLogout(self):
         os.remove(self.COOKIE)

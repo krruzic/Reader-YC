@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import re, json, os, glob, html.parser, requests
+import re, json, os, glob, requests
 from datetime import *
 
 
@@ -80,7 +80,6 @@ def getText(url):
 
 def flatten(comments, level = 0):
     #comments is a list
-    h = html.parser.HTMLParser() # To decode the HTML entities
 
     if not comments:
         return []#exit case
@@ -88,12 +87,10 @@ def flatten(comments, level = 0):
     res = []
     #add the level key so you can keep track of the original level
     for comment in comments:
-        comment['text'] = comment['text'].replace('rel="nofollow"', '')
-        comment['text'] = comment['text'].replace('\n', '')
-        comment['text'] = comment['text'].replace('<p>', '\n') # Replace unclosed <p>'s with new lines
-        comment['text'] = comment['text'].replace('</p>', '') # Remove the crap BS4 adds
+        #comment['text'] = comment['text'].replace('rel="nofollow"', '')
+        #comment['text'] = comment['text'].replace('\n', '')
+        # comment['text'] = comment['text'].replace('</p>', '') # Remove the crap BS4 adds
         comment['indent'] = level * 40
-        comment['text'] = h.unescape(comment['text'])
         parts = comment['created_at'].split('.')
         dt = datetime.strptime(parts[0], "%Y-%m-%dT%H:%M:%S")
         comment['time'] = pretty_date(dt) # returns a relative date

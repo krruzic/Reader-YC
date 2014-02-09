@@ -24,6 +24,7 @@ Page {
             leftPadding: 10
             rightPadding: 20
             Container {
+                topPadding: 10
                 layout: StackLayout {
                     orientation: LayoutOrientation.LeftToRight
                 }
