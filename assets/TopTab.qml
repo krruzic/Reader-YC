@@ -17,6 +17,7 @@ NavigationPane {
     onCreationCompleted: {
         Tart.register(topPage);
         titleBar.refreshEnabled = false;
+//        coverSlide.play();
     }
 
     onPopTransitionEnded: {
@@ -92,7 +93,9 @@ NavigationPane {
     }
 
     Page {
+
         titleBar: HNTitleBar {
+//            visibility: ChromeVisibility.Hidden
             id: titleBar
             text: "Reader YC - Top Posts"
             listName: theList
@@ -112,6 +115,25 @@ NavigationPane {
             }
         }
         Container {
+//            ImageView {
+//                imageSource: "asset:///cover.png"
+//                verticalAlignment: VerticalAlignment.Fill
+//                horizontalAlignment: HorizontalAlignment.Fill
+//                id: coverImage
+//                animations: [
+//                    TranslateTransition {
+//                        id: coverSlide
+//                        target: coverImage
+//                        toY: -1280.0
+//                        duration: 500
+//                        delay: 0
+//                        onEnded: {
+//                            titleBar.visibility = ChromeVisibility.Visible;
+//                        }
+//                    }
+//                ]
+//                loadEffect: ImageViewLoadEffect.None
+//            }
             layout: DockLayout {
             }
             background: Color.White

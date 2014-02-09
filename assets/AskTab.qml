@@ -167,7 +167,7 @@ NavigationPane {
                                 postTitle: ListItemData.title
                                 postDomain: ListItemData.domain
                                 postUsername: ListItemData.poster
-                                postTime: ListItemData.timePosted + "| " + ListItemData.points
+                                postTime: ListItemData.timePosted
                                 postArticle: ListItemData.articleURL
                                 askPost: ListItemData.isAsk
                                 commentSource: ListItemData.commentsURL
@@ -243,7 +243,7 @@ NavigationPane {
                             page.commentLink = selectedItem.hnid;
                             page.title = selectedItem.title;
                             page.titlePoster = selectedItem.poster;
-                            page.titleTime = selectedItem.timePosted + "| " + selectedItem.points;
+                            page.titleTime = selectedItem.timePosted;
                             page.titleDomain = selectedItem.domain;
                             page.isAsk = selectedItem.isAsk;
                             page.articleLink = selectedItem.articleURL;

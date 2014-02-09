@@ -108,7 +108,6 @@ Container {
                             }
                             leftPadding: 4
                             ImageView {
-                                rightPadding: 0
                                 leftMargin: 0
                                 imageSource: "asset:///images/comment.png"
                                 maxHeight: 26
@@ -165,10 +164,10 @@ Container {
                             visible = true;
                         }
                     }
+                    textFormat: TextFormat.Html
                 }
                 Divider {
                     bottomMargin: 0
-                    bottomPadding: 0
                 }
             }
         }

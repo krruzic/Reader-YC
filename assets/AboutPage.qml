@@ -219,7 +219,7 @@ Page {
                                         bottomMargin: 0
                                         topMargin: 0
                                         editable: false
-                                        text: "Reader YC literally sends no info to anyone. Why do you think there are NO permissions? PS: I had to write this. Your private and non-private information is safe on your phone.\nDon't believe me? The app is open source, check it out for yourself.\nFuture versions of this app may incorporate logging in to enable voting and posting. Still, this app will collect nothing, and all data will be sent to the Hackernews servers via HTTPS to ensure security"
+                                        text: "Reader YC literally sends no info to anyone. Why do you think there are NO permissions? PS: I had to write this. Your private and non-private information is safe on your phone.\nDon't believe me? The app is open source, check it out for yourself.\nAs of v1.5, this app now supports login. All POST requests are sent to the hackernews servers via HTTPS and no private data is collected by me or any other 3rd party."
                                         textStyle.fontSize: FontSize.PointValue
                                         textStyle.fontSizeValue: 6
                                         textStyle.color: Color.create("#ff303030")

@@ -1,4 +1,5 @@
 import bb.cascades 1.2
+import bb.system 1.2
 import "tart.js" as Tart
 
 Page {
@@ -18,6 +19,9 @@ Page {
     property string titleComments: ""
     property string titlePoints: ""
     property string readerURL: "http://www.readability.com/m?url="
+    property bool commentEnabled: true
+    property int commentIndex: 0
+    property int replyIndent: 0
 
     onCreationCompleted: {
         busy = true;
@@ -25,15 +29,39 @@ Page {
         titleBar.refreshEnabled = false;
     }
 
+    function onCommentPosted(data) {
+        console.log("comment posted!!");
+        commentEnabled = true;
+        if (data.result == "true") {
+            commentModel.removeAt(commentIndex);
+            commentToast.body = "Comment posted!";
+            commentModel.insert(commentIndex, {
+                    type: 'item',
+                    poster: settings.username,
+                    timePosted: "Just now",
+                    indent: replyIndent,
+                    text: data.comment,
+                    link: ""
+                });
+            lastItemType = 'item';
+        } else {
+            commentToast.body("Posting comment failed!");
+            console.log("Error sending comment!")
+        }
+        commentToast.cancel();
+        commentToast.show();
+        return;
+    }
+
     function onCommentError(data) {
         if (commentLink == data.hnid && commentModel.size() <= 1) {
             commentList.visible = true;
             busy = false;
             titleBar.refreshEnabled = true;
-            var lastItem = commentModel.size() - 1
+            var lastItem = commentModel.size() - 1;
             console.log(lastItemType);
             if (lastItemType == 'error') {
-                commentModel.removeAt(lastItem)
+                commentModel.removeAt(lastItem);
             }
             commentModel.append({
                     type: 'error',
@@ -149,6 +177,12 @@ Page {
         }
     }
     Container {
+        attachedObjects: [
+            SystemToast {
+                id: commentToast
+                body: "COMMENT"
+            }
+        ]
         background: Color.White
         layout: DockLayout {
         }
@@ -174,9 +208,29 @@ Page {
                 }
 
                 function itemType(data, indexPath) {
-                    return data.type
+                    return data.type;
                 }
-
+                function addComment(index, link, indent) {
+                    if (commentEnabled == false) {
+                        return;
+                    }
+                    commentList.scrollToItem([ index ], ScrollAnimation.Smooth);
+                    console.log("replying to comment at ....");
+                    print(index, link);
+                    commentEnabled = false;
+                    commentIndex = index + 1;
+                    replyIndent = indent + 20;
+                    commentModel.insert(index + 1, {
+                            'type': 'newComment',
+                            'link': link,
+                            'text': ""
+                        });
+                }
+                function cancelComment(index) {
+                    console.log("Cancelling comment...");
+                    commentEnabled = true;
+                    commentModel.removeAt(index);
+                }
                 listItemComponents: [
                     ListItemComponent {
                         type: 'header'
@@ -202,7 +256,6 @@ Page {
                             indent: ListItemData.indent
                             text: ListItemData.text
                             link: ListItemData.link
-                            op: commentPane.titlePoster
                         }
                     },
                     ListItemComponent {
@@ -211,6 +264,16 @@ Page {
                             property string type: ListItemData.type
                             title: ListItemData.title
                             id: errorItem
+                        }
+                    },
+                    ListItemComponent {
+                        type: 'newComment'
+                        Reply {
+                            objectName: "replyItem"
+                            id: replyItem
+                            property string type: ListItemData.type
+                            link: ListItemData.link
+                            text: ""
                         }
                     }
                 ]

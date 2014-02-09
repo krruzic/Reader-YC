@@ -3,9 +3,12 @@ import "tart.js" as Tart
 
 SceneCover {
     attachedObjects: [
-        ImagePaintDefinition {
-            id: header
-            imageSource: "asset:///images/titlebar.png"
+        TextStyleDefinition {
+            id: lightStyle
+            base: SystemDefaults.TextStyles.BodyText
+            fontSize: FontSize.PointValue
+            fontSizeValue: 7
+            fontWeight: FontWeight.W100
         },
         ImagePaintDefinition {
             id: background
@@ -21,27 +24,27 @@ SceneCover {
         minWidth: 310
         maxHeight: 211
         maxWidth: 310
-        horizontalAlignment: HorizontalAlignment.Center
-        verticalAlignment:VerticalAlignment.Center
-        layout: StackLayout {
+        layout: DockLayout {
 
         }
         Container {
+            maxWidth: 145
+            minWidth: 145
             leftPadding: 10
-            rightPadding: 10
-            minWidth: 310
-            horizontalAlignment: HorizontalAlignment.Center
-            verticalAlignment: VerticalAlignment.Center
+            horizontalAlignment: HorizontalAlignment.Right
+            verticalAlignment: VerticalAlignment.Top
+            layout: DockLayout {
+            }
             Label {
                 id: titleLabel
                 text: root.coverTitle
+                textStyle.base: lightStyle.style
                 textStyle.fontSize: FontSize.PointValue
                 textStyle.textAlign: TextAlign.Left
                 textStyle.color: Color.White
                 textFormat: TextFormat.Plain
-                textStyle.fontStyle: FontStyle.Italic
                 multiline: true
-                textStyle.fontSizeValue: 8.0
+                textStyle.fontSizeValue: 6.0
                 autoSize.maxLineCount: 3
             }
         }
@@ -49,29 +52,28 @@ SceneCover {
             leftPadding: 10
             rightPadding: 10
             bottomPadding: 15
-            horizontalAlignment: HorizontalAlignment.Center
+            horizontalAlignment: HorizontalAlignment.Fill
             verticalAlignment: VerticalAlignment.Bottom
             layout: StackLayout {
                 orientation: LayoutOrientation.LeftToRight
             }
             Label {
+                textStyle.base: lightStyle.style
                 id: posterLabel
                 text: root.coverPoster
                 textStyle.fontSize: FontSize.PointValue
-                textStyle.textAlign: TextAlign.Center
+                textStyle.textAlign: TextAlign.Left
                 textStyle.color: Color.White
                 textFormat: TextFormat.Plain
                 textStyle.fontSizeValue: 5.0
 
             }
-            Divider {
-                opacity: 0
-            }
             Label {
+                textStyle.base: lightStyle.style
                 id: commentLabel
                 text: root.coverComments
                 textStyle.fontSize: FontSize.PointValue
-                textStyle.textAlign: TextAlign.Center
+                textStyle.textAlign: TextAlign.Left
                 textStyle.color: Color.White
                 textFormat: TextFormat.Plain
                 textStyle.fontSizeValue: 5.0

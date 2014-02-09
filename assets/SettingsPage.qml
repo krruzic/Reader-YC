@@ -1,7 +1,6 @@
 import bb.cascades 1.2
-import bb.system 1.0
+import bb.system 1.2
 import "tart.js" as Tart
-import bb.cascades 1.2
 
 Page {
     id: settingsPage
@@ -50,7 +49,9 @@ Page {
         usernameField.enabled = true;
     }
     function onLogoutResult(data) {
-        cacheDeleteToast.body = "Logged out successfully!";
+        settings.loggedIn = false;
+        Global.username = "";
+        cacheDeleteToast.body = data.text;
         cacheDeleteToast.cancel();
         cacheDeleteToast.show();
         profileContainer.visible = false;
@@ -58,9 +59,21 @@ Page {
     }
     
     function onProfileSaved(data) {
-        cacheDeleteToast.body = "Profile saved!";
+        cacheDeleteToast.body = data.text;
         cacheDeleteToast.cancel();
         cacheDeleteToast.show();
+    }
+    
+    function onProfileRetrieved(data) {
+        if (data.email == null) {
+            cacheDeleteToast.body = "Error getting profile! Try logging out";
+            cacheDeleteToast.cancel();
+            cacheDeleteToast.show();
+        }
+        account.bioField.enabled = true;
+        account.emailField.enabled = true;
+        account.emailField.text = data.email;
+        account.bioField.text = data.about;
     }
     content: Container {
         horizontalAlignment: HorizontalAlignment.Fill
@@ -276,7 +289,6 @@ Page {
                     background: background.imagePaint
                     TextField {
                         backgroundVisible: false
-                        textStyle.base: lightStyle.style
                         horizontalAlignment: HorizontalAlignment.Center
                         maxWidth: 500
                         id: usernameField
@@ -290,7 +302,6 @@ Page {
                     background: background.imagePaint
                     TextField {
                         backgroundVisible: false
-                        textStyle.base: lightStyle.style
                         horizontalAlignment: HorizontalAlignment.Center
                         maxWidth: 500
                         id: passwordField
