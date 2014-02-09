@@ -281,6 +281,7 @@ TabbedPane {
             id: switchTimer
             interval: 30000 // 30 second interval
             onTimeout: {
+                onThumbnailed();
                 if (Global.stories[0] != undefined) {
                     //console.log(currStory + "   " + numOfStories);
                     coverTitle = Global.stories[currStory]['title'];

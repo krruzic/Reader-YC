@@ -32,10 +32,11 @@ Page {
     function onCommentPosted(data) {
         console.log("comment posted!!");
         commentEnabled = true;
+        console.log(data.result);
         if (data.result == "true") {
             commentModel.removeAt(commentIndex);
-            commentToast.body = "Comment posted!";
-            commentModel.insert(commentIndex, {
+            mainContainer.commentToast.body = "Comment posted!";
+            mainContainer.commentModel.insert(commentIndex, {
                     type: 'item',
                     poster: settings.username,
                     timePosted: "Just now",
@@ -45,12 +46,11 @@ Page {
                 });
             lastItemType = 'item';
         } else {
-            commentToast.body("Posting comment failed!");
+            //mainContainer.commentToast.body = "Posting comment failed!";
             console.log("Error sending comment!")
         }
-        commentToast.cancel();
-        commentToast.show();
-        return;
+        mainContainer.commentToast.cancel();
+        mainContainer.commentToast.show();
     }
 
     function onCommentError(data) {
@@ -98,7 +98,7 @@ Page {
                     poster: data.comment["author"],
                     timePosted: data.comment["time"],
                     indent: data.comment["indent"],
-                    text: data.comment["text"],
+                    text: "<html>" + data.comment["text"] + "</html>",
                     link: data.comment["id"]
                 });
             lastItemType = 'item';
@@ -123,7 +123,11 @@ Page {
             imageSource: "asset:///images/icons/ic_article.png"
             onTriggered: {
                 var page = webPage.createObject();
-                page.htmlContent = articleLink;
+                if (isAsk == "true") {
+                    page.htmlContent = "https://news.ycombinator.com/item?id=" + commentLink;
+                } else {
+                    page.htmlContent = articleLink;
+                }
                 if (settings.readerMode == true && isAsk != "true")
                     page.htmlContent = readerURL + articleLink;
                 page.text = commentPane.title;
@@ -177,12 +181,8 @@ Page {
         }
     }
     Container {
-        attachedObjects: [
-            SystemToast {
-                id: commentToast
-                body: "COMMENT"
-            }
-        ]
+        id: mainContainer
+
         background: Color.White
         layout: DockLayout {
         }
@@ -214,7 +214,6 @@ Page {
                     if (commentEnabled == false) {
                         return;
                     }
-                    commentList.scrollToItem([ index ], ScrollAnimation.Smooth);
                     console.log("replying to comment at ....");
                     print(index, link);
                     commentEnabled = false;
@@ -225,11 +224,27 @@ Page {
                             'link': link,
                             'text': ""
                         });
+                    commentList.scrollToItem([ index + 1 ], ScrollAnimation.Smooth);
                 }
                 function cancelComment(index) {
                     console.log("Cancelling comment...");
                     commentEnabled = true;
                     commentModel.removeAt(index);
+                }
+                function updateComment(result) {
+                    if (result == "true") {
+                        Application.menuEnabled = true;
+                        commentEnabled = true;
+                        commentModel.removeAt(commentIndex);
+                        commentModel.insert(commentIndex, {
+                                type: 'item',
+                                poster: settings.username,
+                                timePosted: "Just now",
+                                indent: replyIndent,
+                                text: data.comment,
+                                link: ""
+                            });
+                    }
                 }
                 listItemComponents: [
                     ListItemComponent {

@@ -1,6 +1,7 @@
 import bb.cascades 1.2
 import bb.system 1.2
 import "tart.js" as Tart
+import "global.js" as Global
 
 Page {
     id: settingsPage
@@ -42,13 +43,14 @@ Page {
             cacheDeleteToast.body = "Incorrect username/password";
             cacheDeleteToast.cancel();
             cacheDeleteToast.show();
+            loginButton.enabled = true;
         }
-        loading.visible = false;
         passwordField.enabled = true;
         passwordField.text = "";
         usernameField.enabled = true;
     }
     function onLogoutResult(data) {
+        loginButton.enabled = true;
         settings.loggedIn = false;
         Global.username = "";
         cacheDeleteToast.body = data.text;
@@ -57,13 +59,13 @@ Page {
         profileContainer.visible = false;
         cnt2.visible = true;
     }
-    
+
     function onProfileSaved(data) {
         cacheDeleteToast.body = data.text;
         cacheDeleteToast.cancel();
         cacheDeleteToast.show();
     }
-    
+
     function onProfileRetrieved(data) {
         if (data.email == null) {
             cacheDeleteToast.body = "Error getting profile! Try logging out";
@@ -121,23 +123,10 @@ Page {
             selectedOption: option1
         }
         Container {
-            horizontalAlignment: HorizontalAlignment.Center
-            verticalAlignment: VerticalAlignment.Center
-            Container {
-                visible: loading.visible
-                ActivityIndicator {
-                    id: loading
-                    minHeight: 300
-                    minWidth: 300
-                    running: true
-                    visible: false
-                }
-            }
-        }
-        Container {
             id: cnt1
             visible: true
             verticalAlignment: VerticalAlignment.Center
+            horizontalAlignment: HorizontalAlignment.Center
             Container {
                 //preferredWidth: 768
                 leftPadding: 10
@@ -278,6 +267,7 @@ Page {
                 multiline: true
             }
             Container {
+                horizontalAlignment: HorizontalAlignment.Center
                 attachedObjects: [
                     ImagePaintDefinition {
                         imageSource: "asset:///images/text.amd"
@@ -317,7 +307,9 @@ Page {
                     horizontalAlignment: HorizontalAlignment.Center
                     verticalAlignment: VerticalAlignment.Center
                     text: "Login"
+                    id: loginButton
                     onClicked: {
+                        enabled = false;
                         passwordField.enabled = false;
                         usernameField.enabled = false;
                         username = usernameField.text;
@@ -325,7 +317,6 @@ Page {
                                 username: usernameField.text,
                                 password: passwordField.text
                             });
-                        loading.visible = true
                     }
                 }
             }

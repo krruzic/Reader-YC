@@ -17,7 +17,7 @@ def login(username, password):
     try:
         fnid = soup.find('input', attrs=dict(name='fnid'))['value']
     except:
-        print()
+        return "false"
     payload = {
         'fnid': fnid,
         'u': username,
@@ -126,16 +126,20 @@ def postComment(source, comment):
     print("Posting comment!")
 
     comment = cgi.escape(comment)
-
-    r = requests.get('https://news.ycombinator.com/reply?id={0}'.format(source), headers=HEADERS, cookies=cookies)
+    try:
+        r = requests.get('https://news.ycombinator.com/reply?id={0}'.format(source), headers=HEADERS, cookies=cookies)
+    except:
+        return False
     soup = BeautifulSoup(r.content)
     fnid = str(soup.find('input', attrs=dict(name='fnid'))['value'])
     params = {
     'fnid': fnid,
     'text': comment
     }
-
-    r = requests.post('https://news.ycombinator.com/r', params=params, headers=HEADERS, cookies=cookies)
+    try:
+        r = requests.post('https://news.ycombinator.com/r', params=params, headers=HEADERS, cookies=cookies)
+    except:
+        return False
     print(r.url, r.headers, r.history)
     if(r.url == "https://news.ycombinator.com/news"):
         return True

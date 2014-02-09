@@ -22,6 +22,9 @@ Container {
         if (link == "") {
             replyAction.enabled = false;	
         }
+        if (Global.username == "") {
+            replyAction.enabled = false;
+        }
     }
 //    onContextMenuHandlerChanged: {
 //        if (contextMenuHandler) {
@@ -86,7 +89,7 @@ Container {
                 }
                 onTriggered: {
                     var selectedItem = commentItem.ListItem.view.dataModel.data(commentItem.ListItem.indexPath);
-                    data = 'Comment by:  ' + selectedItem.poster + '\n' + selectedItem.link + "\nShared using Reader YC "
+                    data = 'Comment by:  ' + selectedItem.poster + '\n' + "https://news.ycombinator.com/item?id=" + selectedItem.link + "\nShared using Reader YC "
                 }
             }
             ActionItem {
@@ -106,6 +109,7 @@ Container {
                 onTriggered: {
                     // insert new element into listview after selected item
                     // (Reply item)
+                    Application.menuEnabled = false;
                     commentItem.ListItem.view.addComment(commmentContainer.ListItem.indexInSection, link, indent);
                 }
             }
@@ -155,11 +159,11 @@ Container {
                 id: commentBox
                 text: "This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, I know that it's short...."
                 multiline: true
-                textFormat: TextFormat.Html
                 enabled: true
                 textStyle.fontSizeValue: 6
                 textStyle.color: Color.Black
                 textStyle.base: lightStyle.style
+                textFormat: TextFormat.Html
             }
             Divider {
                 topMargin: 0

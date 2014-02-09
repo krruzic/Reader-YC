@@ -1,5 +1,6 @@
 import bb.cascades 1.2
-//import "tart.js" as Tart
+import bb.system 1.2
+import "tart.js" as Tart
 import "global.js" as Global
 Container {
     id: submitItem
@@ -8,11 +9,32 @@ Container {
     onCreationCompleted: {
         Tart.register(submitItem)
     }
+
+    function onCommentPosted(data) {
+        console.log("comment posted!!");
+        console.log(data.result);
+        replyItem.ListItem.view.updateComment(data.result);
+        if (data.result == "true") {
+            commentToast.body = "Comment posted!";
+            lastItemType = 'item';
+        } else {
+            commentToast.body = "Posting comment failed!";
+            console.log("Error sending comment!")
+        }
+        commentToast.cancel();
+        commentToast.show();
+        replyButton.enabled = true;
+    }
+
     background: Color.White
     leftPadding: 10
     rightPadding: 10
     topPadding: 10
     attachedObjects: [
+        SystemToast {
+            id: commentToast
+            body: "COMMENT"
+        },
         TextStyleDefinition {
             id: lightStyle
             base: SystemDefaults.TextStyles.BodyText
@@ -41,7 +63,7 @@ Container {
             text: ""
             id: commentText
             verticalAlignment: VerticalAlignment.Fill
-            hintText: "text surrounded by asterisks will be italized"
+            hintText: "Enter your comment"
 
             onTextChanging: {
                 if (text == "") {
@@ -52,11 +74,27 @@ Container {
             }
         }
     }
-    Label {
-        text: "Posting as: " + Global.username
-        bottomMargin: 0
-        topMargin: 0
-        textStyle.base: lightStyle.style
+    Container {
+        horizontalAlignment: HorizontalAlignment.Right
+        id: helpContainer
+        visible: false
+        Label {
+            textStyle.textAlign: TextAlign.Right
+            text: "Text surrounded by asterisks will be italicized"
+            bottomMargin: 0
+            topMargin: 0
+            textStyle.base: lightStyle.style
+            textStyle.fontStyle: FontStyle.Italic
+        }
+        Label {
+            textStyle.textAlign: TextAlign.Right
+            text: "Posting as: " + "<span style='color:#ff7900'>" + Global.username + "</span>"
+            bottomMargin: 0
+            topMargin: 0
+            textStyle.base: lightStyle.style
+            textFormat: TextFormat.Html
+            textStyle.fontStyle: FontStyle.Italic
+        }
     }
     Container {
         bottomPadding: 10
@@ -81,9 +119,26 @@ Container {
             }
         }
         Button {
+            id: helpButton
+            enabled: true
+            maxWidth: 100
+            horizontalAlignment: HorizontalAlignment.Right
+            rightMargin: 10
+            imageSource: "asset:///images/icons/ic_help_dk.png"
+            onClicked: {
+                if (helpContainer.visible) {
+                    helpContainer.visible = false;
+                } else {
+                    helpContainer.visible = true;
+                }
+            }
+        }
+        Button {
             maxWidth: 100
             imageSource: "asset:///images/icons/ic_cancel_dk.png"
             onClicked: {
+                Application.menuEnabled = true;
+                helpContainer.visible = false;
                 commentText.text = "";
                 replyItem.ListItem.view.cancelComment(submitItem.ListItem.indexInSection)
             }
