@@ -81,6 +81,7 @@ Container {
     }
     contextActions: [
         ActionSet {
+            title: "Share comment by" + ListItemData.poster
             InvokeActionItem {
                 title: "Share Comment"
                 query {
@@ -124,7 +125,7 @@ Container {
 
         Container {
             id: commentLine
-            background: Color.create("#ff7900")
+            background: Color.create("#ff8c00")
             horizontalAlignment: HorizontalAlignment.Fill
             minWidth: 6
             bottomMargin: 0

@@ -187,7 +187,7 @@ Container {
                         horizontalAlignment: HorizontalAlignment.Left
                         text: ListItemData.domain
                         multiline: false
-                        textStyle.color: Color.create("#ff7900")
+                        textStyle.color: Color.create("#ff8c00")
                         textStyle.fontStyle: FontStyle.Italic
                         textStyle.base: lightStyle.style
                         bottomMargin: 0
@@ -252,7 +252,7 @@ Container {
                         textStyle.fontSizeValue: 5
                         text: ListItemData.poster
                         id: labelUsername
-                        textStyle.color: Color.create("#ff7900")
+                        textStyle.color: Color.create("#ff8c00")
                         textStyle.base: lightStyle.style
                         horizontalAlignment: HorizontalAlignment.Right
                     }

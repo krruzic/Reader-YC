@@ -31,23 +31,22 @@ NavigationPane {
         searchField.enabled = true;
         errorLabel.visible = false;
         busy = false;
-        var story = data.story;
         var lastItem = searchModel.size() - 1
         if (lastItemType == 'error' || lastItemType == 'load') {
             searchModel.removeAt(lastItem)
         }
         searchModel.append({
                 type: 'item',
-                title: story[0],
-                poster: story[1],
-                points: story[2],
-                commentCount: story[3],
-                timePosted: story[4],
-                hnid: story[5],
-                domain: story[6],
-                articleURL: story[7],
-                commentsURL: story[8],
-                isAsk: story[9]
+                title: data.story['title'],
+                poster: data.story['poster'],
+                points: data.story['points'],
+                commentCount: data.story['num_comments'],
+                timePosted: data.story['timestamp'],
+                hnid: data.story['id'],
+                domain: data.story['domain'],
+                articleURL: data.story['articleURL'],
+                commentsURL: data.story['commentURL'],
+                isAsk: data.story['isAsk']
             });
         lastItemType = 'item'
         start = start + 1;
@@ -152,7 +151,7 @@ NavigationPane {
                 verticalAlignment: VerticalAlignment.Center
                 Label {
                     id: errorLabel
-                    text: "<b><span style='color:#ff7900'>Try searching for a post!</span></b>"
+                    text: "<b><span style='color:#ff8c00'>Try searching for a post!</span></b>"
                     textStyle.fontSize: FontSize.PointValue
                     textStyle.textAlign: TextAlign.Center
                     textStyle.fontSizeValue: 9
@@ -178,12 +177,12 @@ NavigationPane {
                         ListItemComponent {
                             type: 'item'
                             HNPage {
+                                id: hnItem
                                 property string type: ListItemData.type
                                 postComments: ListItemData.commentCount
                                 postTitle: ListItemData.title
                                 postDomain: ListItemData.domain
                                 postUsername: ListItemData.poster
-                                postTime: ListItemData.timePosted
                                 postArticle: ListItemData.articleURL
                                 askPost: ListItemData.isAsk
                                 commentSource: ListItemData.commentsURL
@@ -196,7 +195,7 @@ NavigationPane {
                                 page.titleDomain = ListItemData.domain;
                                 page.title = ListItemData.title;
                                 page.titlePoster = ListItemData.poster;
-                                page.titleTime = ListItemData.timePosted + "| " + ListItemData.points;
+                                page.titleTime = ListItemData.timePosted;
                                 page.titleDomain = ListItemData.domain;
                                 page.isAsk = ListItemData.isAsk;
                                 page.articleLink = ListItemData.articleURL;
@@ -298,7 +297,7 @@ NavigationPane {
                                     lastItemType = 'load';
                                     Tart.send('requestPage', {
                                             source: search,
-                                            startIndex: (start / 30),
+                                            startIndex: (start),
                                             sentBy: 'searchPage'
                                         });
                                     busy = true;

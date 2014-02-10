@@ -13,9 +13,10 @@ Page {
         text: "Reader YC - Settings"
 
     }
+
     onCreationCompleted: {
         Tart.register(settingsPage);
-        precheckValues(settings.openInBrowser ? true : false, settings.readerMode ? true : false, settings.loggedIn ? true : false, settings.username);
+        precheckValues(settings.openInBrowser ? true : false, settings.readerMode ? true : false, settings.loggedIn ? true : false, settings.username, settings.legacyFetch ? true : false);
     }
     function onCacheDeleted(data) {
         cacheButton.enabled = true;
@@ -23,7 +24,8 @@ Page {
         cacheDeleteToast.cancel();
         cacheDeleteToast.show();
     }
-    function precheckValues(browser, reader, login, user) {
+    function precheckValues(browser, reader, login, user, fetch) {
+        apiToggle.checked = fetch;
         browserToggle.checked = browser;
         readerToggle.checked = reader;
         loggedIn = login;
@@ -38,6 +40,7 @@ Page {
             print(settings.loggedIn);
             profileContainer.visible = true;
             cnt2.visible = false;
+            Global.username = username;
         } else {
             settings.loggedIn = false;
             cacheDeleteToast.body = "Incorrect username/password";
@@ -52,6 +55,7 @@ Page {
     function onLogoutResult(data) {
         loginButton.enabled = true;
         settings.loggedIn = false;
+        settings.username = "";
         Global.username = "";
         cacheDeleteToast.body = data.text;
         cacheDeleteToast.cancel();
@@ -111,7 +115,7 @@ Page {
                     cnt2.visible = false;
                     profileContainer.visible = false;
                 } else if (selectedIndex == 1) {
-                    if (settings.loggedIn) {
+                    if (Global.username != "") {
                         cnt2.visible = false;
                         profileContainer.visible = true;
                     } else {
@@ -152,7 +156,7 @@ Page {
                         text: "Always open in browser"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff7900")
+                        textStyle.color: Color.create("#ff8c00")
                     }
 
                     ToggleButton {
@@ -195,7 +199,7 @@ Page {
                         text: "Display URLs using Readability"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff7900")
+                        textStyle.color: Color.create("#ff8c00")
                     }
 
                     ToggleButton {
@@ -209,6 +213,54 @@ Page {
                             } else {
                                 settings.readerMode = false;
                                 console.log("Reader mode off")
+                            }
+                        }
+                    }
+                }
+                Divider {
+
+                }
+                Container {
+                    layout: DockLayout {
+
+                    }
+                    rightPadding: 0
+                    horizontalAlignment: HorizontalAlignment.Fill // Make full width
+                    Label {
+                        textStyle.base: lightStyle.style
+                        horizontalAlignment: HorizontalAlignment.Left
+                        verticalAlignment: VerticalAlignment.Top
+                        text: "<b>Use Legacy Comment Fetching</b>"
+                        textFormat: TextFormat.Html
+                        textStyle.fontSize: FontSize.PointValue
+                        textStyle.fontSizeValue: 7
+                        textStyle.color: Color.create("#434344")
+                        bottomMargin: 0
+                        topMargin: 0
+                    }
+
+                    Label {
+                        textStyle.base: lightStyle.style
+                        horizontalAlignment: HorizontalAlignment.Left
+                        verticalAlignment: VerticalAlignment.Bottom
+                        text: "Legacy is very slow, but more accurate"
+                        textStyle.fontSize: FontSize.PointValue
+                        textStyle.fontSizeValue: 6
+                        textStyle.color: Color.create("#ff8c00")
+                        bottomMargin: 0
+                        topMargin: 0
+                    }
+                    ToggleButton {
+                        horizontalAlignment: HorizontalAlignment.Right
+
+                        id: apiToggle
+                        onCheckedChanged: {
+                            if (checked == true) {
+                                settings.legacyFetch = true;
+                                console.log("Legacy Fetch on..")
+                            } else {
+                                settings.legacyFetch = false;
+                                console.log("Legacy Fetch off")
                             }
                         }
                     }
@@ -258,7 +310,7 @@ Page {
             Label {
                 textStyle.base: lightStyle.style
                 id: hnLabel
-                text: "<span style='color:#ff7900'>Login to your HN account</span>\nAccounts must be created <a href='https://news.ycombinator.com/newslogin?whence=news'>here </a>"
+                text: "<span style='color:#ff8c00'>Login to your HN account</span>\nAccounts must be created <a href='https://news.ycombinator.com/newslogin?whence=news'>here </a>"
                 textStyle.fontSize: FontSize.PointValue
                 textStyle.textAlign: TextAlign.Center
                 textStyle.fontSizeValue: 9

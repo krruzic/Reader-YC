@@ -252,7 +252,8 @@ TabbedPane {
             openInBrowser: settings.openInBrowser,
             readerMode: settings.readerMode,
             loggedIn: settings.loggedIn,
-            username: settings.username
+            username: settings.username,
+            legacyFetch: settings.legacyFetch
         };
 
         Tart.send('saveSettings', {
@@ -306,6 +307,7 @@ TabbedPane {
             property bool readerMode: false
             property bool loggedIn: false
             property string username: ""
+            property bool legacyFetch: false
             onOpenInBrowserChanged: {
                 settingsChanged();
             }
@@ -313,10 +315,14 @@ TabbedPane {
                 settingsChanged();
             }
             onLoggedInChanged: {
+                console.log("Login value changed: " + loggedIn)
                 settingsChanged();
             }
             onUsernameChanged: {
                 Global.username = username;
+                settingsChanged();
+            }
+            onLegacyFetchChanged: {
                 settingsChanged();
             }
             function restore(data) {
@@ -330,6 +336,8 @@ TabbedPane {
                     loggedIn = data.loggedIn;
                     print('username = ', data.username);
                     username = data.username;
+                    print('legacyFetch =', data.legacyFetch);
+                    legacyFetch = data.legacyFetch;
                 }
             }
         }

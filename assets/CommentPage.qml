@@ -1,6 +1,7 @@
 import bb.cascades 1.2
 import bb.system 1.2
 import "tart.js" as Tart
+import "global.js" as Global
 
 Page {
     objectName: 'commentPage'
@@ -35,7 +36,6 @@ Page {
         console.log(data.result);
         if (data.result == "true") {
             commentModel.removeAt(commentIndex);
-            mainContainer.commentToast.body = "Comment posted!";
             mainContainer.commentModel.insert(commentIndex, {
                     type: 'item',
                     poster: settings.username,
@@ -49,8 +49,6 @@ Page {
             //mainContainer.commentToast.body = "Posting comment failed!";
             console.log("Error sending comment!")
         }
-        mainContainer.commentToast.cancel();
-        mainContainer.commentToast.show();
     }
 
     function onCommentError(data) {
@@ -72,6 +70,10 @@ Page {
     }
 
     function onAddText(data) {
+        if (Global.username != "") {
+            var item = commentAction.createObject();
+            commentPane.addAction(item);
+        }
         commentList.visible = true;
         busy = false;
         titleBar.refreshEnabled = true;
@@ -104,7 +106,26 @@ Page {
             lastItemType = 'item';
         }
     }
-
+    
+    attachedObjects: [
+        ComponentDefinition {
+            id: commentAction
+            ActionItem {
+                title: "Add a Comment"
+                imageSource: "asset:///images/icons/ic_comments.png"
+                ActionBar.placement: ActionBarPlacement.OnBar
+                onTriggered: {
+                    onTriggered:
+                    {
+                        // insert new element into listview after selected item
+                        // (Reply item)
+                        Application.menuEnabled = false;
+                        commentList.addComment(0, commentLink, 0);
+                    }
+                }
+            }
+        }
+    ]
     actions: [
         InvokeActionItem {
             ActionBar.placement: ActionBarPlacement.OnBar
@@ -218,7 +239,7 @@ Page {
                     print(index, link);
                     commentEnabled = false;
                     commentIndex = index + 1;
-                    replyIndent = indent + 20;
+                    replyIndent = indent + 40;
                     commentModel.insert(index + 1, {
                             'type': 'newComment',
                             'link': link,
@@ -231,7 +252,7 @@ Page {
                     commentEnabled = true;
                     commentModel.removeAt(index);
                 }
-                function updateComment(result) {
+                function updateComment(result, data) {
                     if (result == "true") {
                         Application.menuEnabled = true;
                         commentEnabled = true;
@@ -255,7 +276,7 @@ Page {
                             leftPadding: 19
                             rightPadding: 19
                             property string type: ListItemData.type
-                            text: ListItemData.text
+                            bodyText: "<html>" + ListItemData.text + "</html>"
                             commentCount: ListItemData.commentCount
                             points: ListItemData.points
                         }

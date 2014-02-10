@@ -26,16 +26,20 @@ NavigationPane {
         Tart.register(favouritesPage)
     }
     function onFillList(data) {
+        console.log("Filling favourites")
         favouritesModel.clear();
 
-        var stories = data.list
+        var stories = data.results;
+        console.log("DASFASDF" + stories[0]);
         for (var i = 0; i < stories.length; i ++) {
             var story = stories[i];
+            console.log(story);
+
             favouritesModel.append({
                     type: 'item',
                     title: story[0],
                     articleURL: story[1],
-                    timePosted: story[2] + " ",
+                    timePosted: story[2],
                     poster: story[3],
                     commentCount: story[4],
                     isAsk: story[5],
@@ -84,7 +88,7 @@ NavigationPane {
                 verticalAlignment: VerticalAlignment.Center
                 Label {
                     textStyle.base: lightStyle.style
-                    text: "<b><span style='color:#ff7900'>Nothing to see here</span></b>\nTry favouriting a story!"
+                    text: "<b><span style='color:#ff8c00'>Nothing to see here</span></b>\nTry favouriting a story!"
                     textStyle.fontSize: FontSize.PointValue
                     textStyle.textAlign: TextAlign.Center
                     textStyle.fontSizeValue: 9
