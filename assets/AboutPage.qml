@@ -50,7 +50,7 @@ Page {
                                 textFormat: TextFormat.Html
                                 textStyle.fontSize: FontSize.PointValue
                                 textStyle.fontSizeValue: 6
-                                textStyle.color: Color.create("#ff7900")
+                                textStyle.color: Color.create("#ff8c00")
                                 multiline: true
                             }
                             TextArea {
@@ -102,7 +102,7 @@ Page {
                                     textFormat: TextFormat.Html
                                     textStyle.fontSize: FontSize.PointValue
                                     textStyle.fontSizeValue: 6
-                                    textStyle.color: Color.create("#ff7900")
+                                    textStyle.color: Color.create("#ff8c00")
                                     multiline: true
                                     bottomMargin: 0
                                 }
@@ -157,7 +157,7 @@ Page {
                                     textFormat: TextFormat.Html
                                     textStyle.fontSize: FontSize.PointValue
                                     textStyle.fontSizeValue: 6
-                                    textStyle.color: Color.create("#ff7900")
+                                    textStyle.color: Color.create("#ff8c00")
                                     multiline: true
                                     bottomMargin: 0
                                 }
@@ -210,7 +210,7 @@ Page {
                                         textFormat: TextFormat.Html
                                         textStyle.fontSize: FontSize.PointValue
                                         textStyle.fontSizeValue: 6
-                                        textStyle.color: Color.create("#ff7900")
+                                        textStyle.color: Color.create("#ff8c00")
                                         multiline: true
                                         bottomMargin: 0
                                     }

@@ -5,7 +5,7 @@ Container {
     id: headerPane
     leftPadding: 10
     rightPadding: 10
-    property alias text: textBox.text
+    property string bodyText: ""
     property string commentCount: ""
     property string points: ""
     onCreationCompleted: {
@@ -14,7 +14,6 @@ Container {
 
     Container {
         bottomPadding: 25
-
         attachedObjects: [
             ImagePaintDefinition {
                 id: itemBackground
@@ -81,7 +80,7 @@ Container {
                             horizontalAlignment: HorizontalAlignment.Left
                             text: ListItemData.domain
                             multiline: false
-                            textStyle.color: Color.create("#ff7900")
+                            textStyle.color: Color.create("#ff8c00")
                             textStyle.fontStyle: FontStyle.Italic
                             textStyle.base: lightStyle.style
                             bottomMargin: 0
@@ -145,19 +144,22 @@ Container {
                             textStyle.fontSizeValue: 5
                             text: ListItemData.poster
                             id: labelUsername
-                            textStyle.color: Color.create("#ff7900")
+                            textStyle.color: Color.create("#ff8c00")
                             textStyle.base: lightStyle.style
                             horizontalAlignment: HorizontalAlignment.Right
                         }
                     }
                 }
-                TextArea {
-                    editable: false
+                Label {
                     textStyle.base: lightStyle.style
                     id: textBox
                     visible: false
-                    onTextChanging: {
-                        if (text == ""){
+                    text: bodyText
+                    multiline: true
+                    enabled: true
+                    textStyle.fontSizeValue: 6
+                    onTextChanged: {
+                        if (text == "<html></html>"){
                             visible = false;
                         }
                         else {

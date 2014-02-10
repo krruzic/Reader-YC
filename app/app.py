@@ -27,7 +27,8 @@ class App(tart.Application):
             'openInBrowser': 'false',
             'readerMode': 'false',
             'loggedIn': 'false',
-            'username': ''
+            'username': '',
+            'legacyFetch': 'false'
         }
         self.restore_data(self.settings, self.SETTINGS_FILE)
         print("restored: ", self.settings)
@@ -40,6 +41,10 @@ class App(tart.Application):
     def onSaveSettings(self, settings):
         self.settings.update(settings)
         self.save_data(self.settings, self.SETTINGS_FILE)
+
+
+## Handling requests
+
 
     def onRequestPage(self, source, sentBy, askPost="false", deleteComments="false", startIndex=0):
         """ This is really ugly, but it handles all url requests with threading,
@@ -107,6 +112,8 @@ class App(tart.Application):
         self.cache.pop(-1)
 
 
+
+## GET functions
     def story_routine(self, source, sentBy):
         print("source sent:" + source)
         print("sent by: " + sentBy)
@@ -139,16 +146,25 @@ class App(tart.Application):
 
     def comments_routine(self, source, askPost):
         print("source sent:" + source)
-        h = html.parser.HTMLParser() # To decode the HTML entities
 
         try:
-            text, comments = readeryc.getCommentPage(source, askPost)
+            text, comments = readeryc.getCommentPage(source, askPost, self.settings['legacyFetch'])
+            if (text != ""):
+                text = text.replace('rel="nofollow"', '')
+                text = text.replace('<p>', '\n') # Replace unclosed <p>'s with new lines
+
+                text = text.replace('<pre><code>', '<p style="font-family: Monospace; font-size:5pt; font-weight:100;">')
+                text = text.replace('</code></pre>', '</p>')
+                text = text.replace('\\n', '<br />')
+
+
             tart.send('addText', text=text, hnid=source)
             if (comments == []):
                 tart.send('commentError', text="No comments, check back later!", hnid=source)
             for comment in comments:
-                comment['text'] = h.unescape(comment['text'])
+                comment['text'] = comment['text'].replace('rel="nofollow"', '')
                 comment['text'] = comment['text'].replace('<p>', '\n') # Replace unclosed <p>'s with new lines
+                comment['text'] = comment['text'].replace('</p>', '') # Remove the crap BS4 adds
                 comment['text'] = comment['text'].replace('<pre><code>', '<p style="font-family: Monospace; font-size:5pt; font-weight:100;">')
                 comment['text'] = comment['text'].replace('</code></pre>', '</p>')
                 comment['text'] = comment['text'].replace('\\n', '<br />')
@@ -165,9 +181,14 @@ class App(tart.Application):
         try:
             result = readeryc.getSearchResults(startIndex, source)
             for res in result:
-                tart.send('onAddSearchStories', story=res)
+                tart.send('addSearchStories', story=res)
         except requests.exceptions.ConnectionError:
             tart.send('searchError', text="<b><span style='color:#ff7900'>Error getting stories</span></b>\nCheck your connection and try again!")
+
+
+
+
+## POST functions
 
     def onRequestLogin(self, username, password):
         result = readeryc.login(username, password)
@@ -191,7 +212,8 @@ class App(tart.Application):
             tart.send('profileSaved', text="Profile updated!")
 
     def onSendComment(self, source, text):
-        res = readeryc.postComment(source, text)
+        #res = readeryc.postComment(source, text)
+        res = True
         text = text.replace('*', '')
         if (res == True):
             tart.send('commentPosted', result="true", comment=text)
@@ -199,9 +221,15 @@ class App(tart.Application):
         tart.send('commentPosted', result="false", comment="")
 
     def onLogout(self):
-        os.remove(self.COOKIE)
+        try:
+            os.remove(self.COOKIE)
+        except OSError  :
+            tart.send('logoutResult', text="logged out successfully!")
+
         tart.send('logoutResult', text="logged out successfully!")
 
+
+## Saving functions
     def onSaveArticle(self, article):
         res = readeryc.saveArticle(article)
         if(res):
@@ -213,16 +241,19 @@ class App(tart.Application):
     def onDeleteArticle(self, hnid, selected):
         result = readeryc.deleteArticle(hnid, selected)
         # Return information to display a 'deleted' toast
-        if (result == True):
+        if (res):
             tart.send('deleteResult', text="Article removed from favourites", itemToRemove=selected)
         else:
             print("error")
 
 
     def onLoadFavourites(self):
-        list = readeryc.onLoadFavourites()
-        tart.send('fillList', list=list)
+        res = readeryc.loadFavourites()
+        tart.send('fillList', results=res)
 
+
+
+## Misc functions
     def onDeleteCache(self):
         print("PYTHON DELETING CACHE")
         workingDir = os.getcwd() + '/data/cache/'

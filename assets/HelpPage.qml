@@ -45,7 +45,7 @@ Page {
                         text: "Contribute on GitHub!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff7900")
+                        textStyle.color: Color.create("#ff8c00")
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -85,7 +85,7 @@ Page {
                         text: "Email the devs!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff7900")
+                        textStyle.color: Color.create("#ff8c00")
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -125,7 +125,7 @@ Page {
                         text: "Submit an issue!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff7900")
+                        textStyle.color: Color.create("#ff8c00")
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -173,7 +173,7 @@ Page {
                         text: "Leave a Review on BlackBerry World!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff7900")
+                        textStyle.color: Color.create("#ff8c00")
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -217,7 +217,7 @@ Page {
             //                        text: "Invite BBM Friends to download!"
             //                        textStyle.fontSize: FontSize.PointValue
             //                        textStyle.fontSizeValue: 6
-            //                        textStyle.color: Color.create("#ff7900")
+            //                        textStyle.color: Color.create("#ff8c00")
             //                    }
             //                }
             //                Button {

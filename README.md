@@ -45,35 +45,20 @@ Same as above, except specify the `-mrelease` flag after `package`
 NOTE: The bars will be placed in the bin directory after being built.
 
 
-## Features:
 ###Current Features:
 * Get the main hackernews pages in a nice tabbed format
 * Infinite scrolling
 * View articles, comments, and text posts
 * Different sections of the apps accessible by tabs
-* View user pages
 * Threading of all requests
-* Throttling requests on userpages
-* icons, ICONS EVERYWHERE
+* Login, and edit profile
 * View about/help pages, email the dev (me)
-* Comment Caching, YAY!
+* Select method to retrieve comments with
+* Post comments to any story
 * Active frame showing recent stories
 * Settings to always open in browser, and to use reader mode
 * Clear cached stuff (No clue why you'd want to)
 
-
-###Current Issues:
-* Probably a few with the Q version, because I don't own one and can't test. 
-
-###Coming Feature roadmap (dates are really guesses):
-
-
-* V1.6
-    A tutorial that shows when first launched, this will add some flair to the app
-    Collapsable comments, ETA: End of Summer
-
-* Logging in and upvoting/commenting V2.0
-	ETA: Probably never, but I do hope to add this EDIT: IT'S ALMOST DONE!!
 
 ###Thanks:
     Huge thanks to all the developers of The BBPY project (Peter Hansen, Xitij Ritesh Patel, etc.) and special thanks to  Jerónimo Barraco for helping with the comment API.
