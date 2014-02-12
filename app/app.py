@@ -212,8 +212,7 @@ class App(tart.Application):
             tart.send('profileSaved', text="Profile updated!")
 
     def onSendComment(self, source, text):
-        #res = readeryc.postComment(source, text)
-        res = True
+        res = readeryc.postComment(source, text)
         text = text.replace('*', '')
         if (res == True):
             tart.send('commentPosted', result="true", comment=text)
@@ -239,9 +238,9 @@ class App(tart.Application):
 
 
     def onDeleteArticle(self, hnid, selected):
-        result = readeryc.deleteArticle(hnid, selected)
+        result = readeryc.deleteArticle(hnid)
         # Return information to display a 'deleted' toast
-        if (res):
+        if (result):
             tart.send('deleteResult', text="Article removed from favourites", itemToRemove=selected)
         else:
             print("error")

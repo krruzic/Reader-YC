@@ -19,8 +19,7 @@ def pretty_date(time):
     """
 
     from datetime import datetime
-    now = datetime.now()
-    print(time)
+    now = datetime.utcnow()
     if type(time) is int:
         diff = now - datetime.fromtimestamp(time)
     elif isinstance(time,datetime):
@@ -71,15 +70,16 @@ def getSearchResults(startIndex, source):
     print(url)
     r = requests.get(url, headers=HEADERS) # reads the returned data
     print("Page curled")
-    items = json.loads(r.json())
+    items = r.json()
     if items['hits'] == 0:
         raise NoResultsFoundException('No stories were found')
 
     incomplete_iso_8601_format = '%Y-%m-%dT%H:%M:%SZ' # The time is returned in this format
     res = []
     results = items['results']
+    print(results)
     for e in items['results']:
-        if (e['item']['text'] != None): # Javascript uses lowercase for bools...
+        if e['item']['text'] != None: # Javascript uses lowercase for bools...
             isAsk = 'true'
         else:
             isAsk = 'false'
@@ -99,7 +99,20 @@ def getSearchResults(startIndex, source):
             domain = "http://news.ycombinator.com/"
             articleURL = commentURL
         timestamp = pretty_date(datetime.strptime(e['item']['create_ts'], incomplete_iso_8601_format))
-        print(isAsk)
-        result = (title, poster, points, str(num_comments), timestamp, str(_id), domain, articleURL, commentURL, isAsk)
-        print('sending story!')
-        return result
+        result = {
+            'title': title, 
+            'poster': poster, 
+            'points': points, 
+            'num_comments': str(num_comments), 
+            'timestamp': timestamp, 
+            'id': str(_id), 
+            'domain': domain, 
+            'articleURL': articleURL, 
+            'commentURL': commentURL, 
+            'isAsk': isAsk
+            }
+        res.append(result)
+
+    return res
+
+
