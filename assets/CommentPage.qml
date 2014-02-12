@@ -106,7 +106,7 @@ Page {
             lastItemType = 'item';
         }
     }
-    
+
     attachedObjects: [
         ComponentDefinition {
             id: commentAction
@@ -120,7 +120,7 @@ Page {
                         // insert new element into listview after selected item
                         // (Reply item)
                         Application.menuEnabled = false;
-                        commentList.addComment(0, commentLink, 0);
+                        commentList.addComment(0, commentLink, -40);
                     }
                 }
             }
@@ -254,9 +254,13 @@ Page {
                 }
                 function updateComment(result, data) {
                     if (result == "true") {
+
                         Application.menuEnabled = true;
                         commentEnabled = true;
                         commentModel.removeAt(commentIndex);
+                        if (lastItemType = 'error') {
+                            commentModel.removeAt(commentModel.size() - 1);
+                        }
                         commentModel.insert(commentIndex, {
                                 type: 'item',
                                 poster: settings.username,
@@ -309,7 +313,7 @@ Page {
                             id: replyItem
                             property string type: ListItemData.type
                             link: ListItemData.link
-                            text: ""
+                            text: ListItemData.text
                         }
                     }
                 ]

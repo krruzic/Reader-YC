@@ -28,10 +28,10 @@ SceneCover {
 
         }
         Container {
-            maxWidth: 145
-            minWidth: 145
+            topPadding: 120
             leftPadding: 10
-            horizontalAlignment: HorizontalAlignment.Right
+            rightPadding: 10
+            horizontalAlignment: HorizontalAlignment.Fill
             verticalAlignment: VerticalAlignment.Top
             layout: DockLayout {
             }
@@ -45,13 +45,13 @@ SceneCover {
                 textFormat: TextFormat.Plain
                 multiline: true
                 textStyle.fontSizeValue: 6.0
-                autoSize.maxLineCount: 3
+                autoSize.maxLineCount: 2
             }
         }
         Container {
             leftPadding: 10
             rightPadding: 10
-            bottomPadding: 15
+            bottomPadding: 5
             horizontalAlignment: HorizontalAlignment.Fill
             verticalAlignment: VerticalAlignment.Bottom
             layout: StackLayout {

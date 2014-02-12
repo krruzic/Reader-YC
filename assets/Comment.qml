@@ -68,12 +68,6 @@ Container {
         setHighlight(ListItem.selected);
     }
 
-    onLinkChanged: {
-        if (link == "") {
-            replyAction.enabled = false;
-        }
-    }
-
     function onCopyResult(data) {
         copyResultToast.body = "Comment copied!";
         copyResultToast.cancel();
@@ -81,7 +75,8 @@ Container {
     }
     contextActions: [
         ActionSet {
-            title: "Share comment by" + ListItemData.poster
+            title: commentBox.text
+            subtitle: ListItemData.poster
             InvokeActionItem {
                 title: "Share Comment"
                 query {

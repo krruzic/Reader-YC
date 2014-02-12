@@ -75,29 +75,28 @@ Container {
         }
     }
     Container {
-        horizontalAlignment: HorizontalAlignment.Right
         id: helpContainer
-        visible: false
+        visible: true
         Label {
-            textStyle.textAlign: TextAlign.Right
             text: "Text surrounded by asterisks will be italicized"
             bottomMargin: 0
             topMargin: 0
+            textStyle.fontSizeValue: 5
             textStyle.base: lightStyle.style
             textStyle.fontStyle: FontStyle.Italic
         }
         Label {
-            textStyle.textAlign: TextAlign.Right
             text: "Lines starting with 4 spaces will be wrapped in code tags" 
             bottomMargin: 0
             topMargin: 0
+            textStyle.fontSizeValue: 5
             textStyle.base: lightStyle.style
             textStyle.fontStyle: FontStyle.Italic
         }
         Label {
-            textStyle.textAlign: TextAlign.Right
             text: "Posting as: " + "<span style='color:#ff8c00'>" + Global.username + "</span>"
             bottomMargin: 0
+            textStyle.fontSizeValue: 6
             topMargin: 0
             textStyle.base: lightStyle.style
             textFormat: TextFormat.Html
