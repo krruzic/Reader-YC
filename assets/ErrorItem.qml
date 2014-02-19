@@ -12,7 +12,7 @@ Container {
         }
         Label {
             id: errorItem
-            text: "<b><span style='color:#ff8c00'>Error getting stories</span></b>\nCheck your connection and try again!"
+            text: "<b><span style='color:#ff8e00'>Error getting stories</span></b>\nCheck your connection and try again!"
             textStyle.fontSize: FontSize.PointValue
             textStyle.textAlign: TextAlign.Center
             textStyle.fontSizeValue: 7

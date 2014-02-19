@@ -16,10 +16,6 @@ Container {
         bottomPadding: 25
         attachedObjects: [
             ImagePaintDefinition {
-                id: itemBackground
-                imageSource: "asset:///images/unread.amd"
-            },
-            ImagePaintDefinition {
                 id: textBackground
                 imageSource: "asset:///images/text.amd"
                 repeatPattern: RepeatPattern.XY
@@ -36,9 +32,7 @@ Container {
                 TextStyleDefinition {
                     id: lightStyle
                     base: SystemDefaults.TextStyles.BodyText
-                    fontSize: FontSize.PointValue
-                    fontSizeValue: 7
-                    fontWeight: FontWeight.W100
+                    fontWeight: FontWeight.W300
                 },
                 LayoutUpdateHandler {
                     id: mainDimensions
@@ -80,7 +74,7 @@ Container {
                             horizontalAlignment: HorizontalAlignment.Left
                             text: ListItemData.domain
                             multiline: false
-                            textStyle.color: Color.create("#ff8c00")
+                            textStyle.color: Color.create("#ff8e00")
                             textStyle.fontStyle: FontStyle.Italic
                             textStyle.base: lightStyle.style
                             bottomMargin: 0
@@ -144,7 +138,7 @@ Container {
                             textStyle.fontSizeValue: 5
                             text: ListItemData.poster
                             id: labelUsername
-                            textStyle.color: Color.create("#ff8c00")
+                            textStyle.color: Color.create("#ff8e00")
                             textStyle.base: lightStyle.style
                             horizontalAlignment: HorizontalAlignment.Right
                         }

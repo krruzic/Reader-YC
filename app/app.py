@@ -6,6 +6,9 @@ import threading, os, glob
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import requests, requests.utils, pickle, re, html.parser, cgi
+import colorsys
+import math
+
 import tart
 
 import readeryc
@@ -20,15 +23,18 @@ class App(tart.Application):
     HEADERS = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.29 Safari/537.22',
     }
+    gradient = ["ff8e00", "FF8B00", "FA8904", "F68608", "F2840C", "ED8110", "E97F13",  
+                "E57C17", "E07A1A", "DC781D", "D87620", "D37423", "CF7226", "CB7929", 
+                "C66E2B", "C26C2E"]
 
     def __init__(self):
         super().__init__(debug=False)   # set True for some extra debug output
         self.settings = {
-            'openInBrowser': 'false',
-            'readerMode': 'false',
-            'loggedIn': 'false',
+            'openInBrowser': False,
+            'readerMode': False,
+            'loggedIn': False,
             'username': '',
-            'legacyFetch': 'false'
+            'legacyFetch': False
         }
         self.restore_data(self.settings, self.SETTINGS_FILE)
         print("restored: ", self.settings)
@@ -37,6 +43,8 @@ class App(tart.Application):
         print("UI READY!!")
         tart.send('restoreSettings', **self.settings)
         self.onRequestPage("topPage", "topPage")
+        # self.onRequestPage("askPage", "askPage")
+        # self.onRequestPage("newestPage", "newestPage")
 
     def onSaveSettings(self, settings):
         self.settings.update(settings)
@@ -131,11 +139,11 @@ class App(tart.Application):
         try:
             stories, moreLink = readeryc.getStoryPage("https://news.ycombinator.com/" + source)
         except requests.exceptions.ConnectionError:
-            tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#ff7900'>Error getting stories</span></b>\nCheck your connection and try again!")
+            tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#ff8e00'>Error getting stories</span></b>\nCheck your connection and try again!")
             return
         except IndexError:
             print("Expired link?")
-            tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#ff7900'>Link expired</span></b>\nPlease refresh the page")
+            tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#ff8e00'>Link expired</span></b>\nPlease refresh the page")
             return
 
         for story in stories:
@@ -168,13 +176,13 @@ class App(tart.Application):
                 comment['text'] = comment['text'].replace('<pre><code>', '<p style="font-family: Monospace; font-size:5pt; font-weight:100;">')
                 comment['text'] = comment['text'].replace('</code></pre>', '</p>')
                 comment['text'] = comment['text'].replace('\\n', '<br />')
-
+                comment['barColour'] = "#" + self.get_colour(comment["indent"]//40)
                 tart.send('addComments', comment=comment, hnid=source)
 
         except requests.exceptions.ConnectionError:
             print("ERROR GETTING COMMENTS")
             tart.send('addText', text='', hnid=source)
-            tart.send('commentError', text="<b><span style='color:#ff7900'>Error getting comments</span></b>\nCheck your connection and try again!", hnid=source) 
+            tart.send('commentError', text="<b><span style='color:#ff8e00'>Error getting comments</span></b>\nCheck your connection and try again!", hnid=source) 
 
     def search_routine(self, startIndex, source):
         print("Searching for: " + source)
@@ -183,7 +191,7 @@ class App(tart.Application):
             for res in result:
                 tart.send('addSearchStories', story=res)
         except requests.exceptions.ConnectionError:
-            tart.send('searchError', text="<b><span style='color:#ff7900'>Error getting stories</span></b>\nCheck your connection and try again!")
+            tart.send('searchError', text="<b><span style='color:#ff8e00'>Error getting stories</span></b>\nCheck your connection and try again!")
 
 
 
@@ -272,3 +280,11 @@ class App(tart.Application):
         mimeType = 'text/plain'
         c.insert(mimeType, articleLink)
         tart.send('copyResult', text=articleLink + " copied to clipboard!")
+
+    def get_colour(self, location):  
+        print("location given: ", location)
+
+        if location > 16:
+            return "FFFFFF"
+
+        return self.gradient[location]

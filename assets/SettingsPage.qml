@@ -91,7 +91,7 @@ Page {
                 base: SystemDefaults.TextStyles.BodyText
                 fontSize: FontSize.PointValue
                 fontSizeValue: 7
-                fontWeight: FontWeight.W100
+                fontWeight: FontWeight.W300
             },
             SystemToast {
                 id: cacheDeleteToast
@@ -156,7 +156,7 @@ Page {
                         text: "Always open in browser"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff8c00")
+                        textStyle.color: Color.create("#ff8e00")
                     }
 
                     ToggleButton {
@@ -199,7 +199,7 @@ Page {
                         text: "Display URLs using Readability"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff8c00")
+                        textStyle.color: Color.create("#ff8e00")
                     }
 
                     ToggleButton {
@@ -246,7 +246,7 @@ Page {
                         text: "Legacy is very slow, but more accurate"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff8c00")
+                        textStyle.color: Color.create("#ff8e00")
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -310,7 +310,7 @@ Page {
             Label {
                 textStyle.base: lightStyle.style
                 id: hnLabel
-                text: "<span style='color:#ff8c00'>Login to your HN account</span>\nAccounts must be created <a href='https://news.ycombinator.com/newslogin?whence=news'>here </a>"
+                text: "<span style='color:#ff8e00'>Login to your HN account</span>\nAccounts must be created <a href='https://news.ycombinator.com/newslogin?whence=news'>here </a>"
                 textStyle.fontSize: FontSize.PointValue
                 textStyle.textAlign: TextAlign.Center
                 textStyle.fontSizeValue: 9

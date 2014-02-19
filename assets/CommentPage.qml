@@ -20,6 +20,7 @@ Page {
     property string titleComments: ""
     property string titlePoints: ""
     property string readerURL: "http://www.readability.com/m?url="
+    property variant prevItem: null
     property bool commentEnabled: true
     property int commentIndex: 0
     property int replyIndent: 0
@@ -28,6 +29,8 @@ Page {
         busy = true;
         Tart.register(commentPane);
         titleBar.refreshEnabled = false;
+        ActionBarAutoHideBehavior = ActionBarAutoHideBehavior.HideOnScroll;
+        TitleBarScrollBehavior = TitleBarScrollBehavior.NonSticky;
     }
 
     function onCommentPosted(data) {
@@ -101,11 +104,13 @@ Page {
                     timePosted: data.comment["time"],
                     indent: data.comment["indent"],
                     text: "<html>" + data.comment["text"] + "</html>",
-                    link: data.comment["id"]
+                    link: data.comment["id"],
+                    barColour: data.comment["barColour"]
                 });
             lastItemType = 'item';
         }
     }
+    
 
     attachedObjects: [
         ComponentDefinition {
@@ -223,6 +228,7 @@ Page {
             horizontalAlignment: HorizontalAlignment.Center
             verticalAlignment: VerticalAlignment.Center
             ListView {
+                scrollRole: ScrollRole.Main
                 id: commentList
                 dataModel: ArrayDataModel {
                     id: commentModel
@@ -296,6 +302,7 @@ Page {
                             indent: ListItemData.indent
                             text: ListItemData.text
                             link: ListItemData.link
+                            barColour: ListItemData.barColour
                         }
                     },
                     ListItemComponent {
@@ -308,7 +315,7 @@ Page {
                     },
                     ListItemComponent {
                         type: 'newComment'
-                        Reply {
+                        ReplyItem {
                             objectName: "replyItem"
                             id: replyItem
                             property string type: ListItemData.type

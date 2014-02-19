@@ -12,9 +12,9 @@ Page {
             TextStyleDefinition {
                 id: lightStyle
                 base: SystemDefaults.TextStyles.BodyText
-                fontSize: FontSize.PointValue
-                fontSizeValue: 7
-                fontWeight: FontWeight.W100
+//                fontSize: FontSize.PointValue
+//                fontSizeValue: 7
+                fontWeight: FontWeight.W300
             }
         ]
         Container {
@@ -45,7 +45,7 @@ Page {
                         text: "Contribute on GitHub!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff8c00")
+                        textStyle.color: Color.create("#ff8e00")
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -85,7 +85,7 @@ Page {
                         text: "Email the devs!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff8c00")
+                        textStyle.color: Color.create("#ff8e00")
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -125,7 +125,7 @@ Page {
                         text: "Submit an issue!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff8c00")
+                        textStyle.color: Color.create("#ff8e00")
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -173,7 +173,7 @@ Page {
                         text: "Leave a Review on BlackBerry World!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff8c00")
+                        textStyle.color: Color.create("#ff8e00")
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -217,7 +217,7 @@ Page {
             //                        text: "Invite BBM Friends to download!"
             //                        textStyle.fontSize: FontSize.PointValue
             //                        textStyle.fontSizeValue: 6
-            //                        textStyle.color: Color.create("#ff8c00")
+            //                        textStyle.color: Color.create("#ff8e00")
             //                    }
             //                }
             //                Button {
