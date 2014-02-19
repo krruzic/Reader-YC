@@ -8,7 +8,7 @@ SceneCover {
             base: SystemDefaults.TextStyles.BodyText
             fontSize: FontSize.PointValue
             fontSizeValue: 7
-            fontWeight: FontWeight.W100
+            fontWeight: FontWeight.W300
         },
         ImagePaintDefinition {
             id: background

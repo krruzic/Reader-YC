@@ -9,6 +9,10 @@ Page {
     //        Tart.register(webPane);
     //    }
 
+    onCreationCompleted: {
+        TitleBarScrollBehavior = TitleBarScrollBehavior.NonSticky;
+        actionBarAutoHideBehavior = actionBarAutoHideBehavior.HideOnScroll;
+    }
     actions: [
         //        ActionItem {
         //            ActionBar.placement: ActionBarPlacement.OnBar
@@ -103,6 +107,7 @@ Page {
                 // We let the scroll view scroll in both x and y and enable zooming,
                 // max and min content zoom property is set in the WebViews onMinContentScaleChanged
                 // and onMaxContentScaleChanged signal handlers.
+                scrollRole: ScrollRole.Main
                 scrollViewProperties {
                     scrollMode: ScrollMode.Both
                     pinchToZoomEnabled: true
@@ -150,11 +155,6 @@ Page {
                             // If loading failed, fallback a local html file which will also send a java script message
                             progressIndicator.opacity = 0.0
                         }
-                    }
-
-                    // This is the Navigation-requested signal handler so just print to console to illustrate usage.
-                    onNavigationRequested: {
-                        console.debug("NavigationRequested: " + request.url + " navigationType=" + request.navigationType)
                     }
                 }
             } // ScrollView

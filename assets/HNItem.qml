@@ -3,7 +3,7 @@ import bb.system 1.2
 import "tart.js" as Tart
 
 Container {
-    id: saveItem
+    id: hnPage
     property string postArticle: ''
     property string askPost: ''
     property string commentSource: ''
@@ -15,7 +15,7 @@ Container {
     property alias postTime: labelTimePosted.text
     horizontalAlignment: HorizontalAlignment.Fill
     onCreationCompleted: {
-        Tart.register(saveItem);
+        Tart.register(hnPage);
     }
 
     contextActions: [
@@ -30,7 +30,7 @@ Container {
                 }
                 onTriggered: {
                     console.log("Pushing comments page");
-                    saveItem.ListItem.component.openComments(ListItemData);
+                    hnPage.ListItem.component.openComments(ListItemData);
                 }
             }
             ActionItem {
@@ -41,7 +41,7 @@ Container {
                 }
                 onTriggered: {
                     console.log("Pushing Article page");
-                    saveItem.ListItem.component.openArticle(ListItemData);
+                    hnPage.ListItem.component.openArticle(ListItemData);
                 }
             }
             InvokeActionItem {
@@ -89,15 +89,6 @@ Container {
                 onTriggered: {
                     Tart.send('copyLink', {
                             articleLink: ListItemData.articleURL
-                        });
-                }
-            }
-            DeleteActionItem {
-                title: 'Remove from Favourites'
-                onTriggered: {
-                    Tart.send('deleteArticle', {
-                            hnid: ListItemData.hnid,
-                            selected: saveItem.ListItem.indexInSection
                         });
                 }
             }
@@ -214,7 +205,6 @@ Container {
                         }
                         leftPadding: 4
                         ImageView {
-                            rightPadding: 0
                             leftMargin: 0
                             imageSource: "asset:///images/comment.png"
                             maxHeight: 26
@@ -260,7 +250,6 @@ Container {
             }
             Divider {
                 bottomMargin: 0
-                bottomPadding: 0
             }
         }
     }

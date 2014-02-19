@@ -10,6 +10,8 @@ Container {
     property alias indent: commmentContainer.leftPadding
     property alias text: commentBox.text
     property string link: ""
+    property string barColour: "#ff8e00"
+        
     horizontalAlignment: HorizontalAlignment.Fill
     leftPadding: indent
     onCreationCompleted: {
@@ -37,9 +39,7 @@ Container {
         TextStyleDefinition {
             id: lightStyle
             base: SystemDefaults.TextStyles.BodyText
-            fontSize: FontSize.PointValue
-            fontSizeValue: 7
-            fontWeight: FontWeight.W100
+            fontWeight: FontWeight.W300
         },
         LayoutUpdateHandler {
             id: mainDimensions
@@ -85,16 +85,7 @@ Container {
                 }
                 onTriggered: {
                     var selectedItem = commentItem.ListItem.view.dataModel.data(commentItem.ListItem.indexPath);
-                    data = 'Comment by:  ' + selectedItem.poster + '\n' + "https://news.ycombinator.com/item?id=" + selectedItem.link + "\nShared using Reader YC "
-                }
-            }
-            ActionItem {
-                title: "Copy Comment"
-                imageSource: "asset:///images/icons/ic_copy.png"
-                onTriggered: {
-                    Tart.send('copyLink', {
-                            articleLink: commentBox.text
-                        });
+                    data = 'Comment by:  ' + selectedItem.poster + '\n' + "https://news.ycombinator.com/item?id=" + selectedItem.link + "\nShared using Reader YC"
                 }
             }
             ActionItem {
@@ -120,7 +111,7 @@ Container {
 
         Container {
             id: commentLine
-            background: Color.create("#ff8c00")
+            background: Color.create(barColour)
             horizontalAlignment: HorizontalAlignment.Fill
             minWidth: 6
             bottomMargin: 0
@@ -138,6 +129,7 @@ Container {
                 textStyle.base: lightStyle.style
                 textFormat: TextFormat.Html
                 textStyle.color: Color.create("#7e7e7e")
+                textStyle.fontSize: FontSize.PointValue
                 textStyle.fontSizeValue: 5
                 bottomMargin: 0
                 topMargin: 0
@@ -156,7 +148,7 @@ Container {
                 text: "This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, I know that it's short...."
                 multiline: true
                 enabled: true
-                textStyle.fontSizeValue: 6
+//                textStyle.fontSizeValue: 6
                 textStyle.color: Color.Black
                 textStyle.base: lightStyle.style
                 textFormat: TextFormat.Html

@@ -9,6 +9,7 @@ NavigationPane {
     onPopTransitionEnded: {
         page.destroy();
         Application.menuEnabled = ! Application.menuEnabled;
+        ActionBarAutoHideBehavior = ActionBarAutoHideBehavior.HideOnScroll;
     }
 
     onPushTransitionEnded: {
@@ -88,7 +89,7 @@ NavigationPane {
                 verticalAlignment: VerticalAlignment.Center
                 Label {
                     textStyle.base: lightStyle.style
-                    text: "<b><span style='color:#ff8c00'>Nothing to see here</span></b>\nTry favouriting a story!"
+                    text: "<b><span style='color:#ff8e00'>Nothing to see here</span></b>\nTry favouriting a story!"
                     textStyle.fontSize: FontSize.PointValue
                     textStyle.textAlign: TextAlign.Center
                     textStyle.fontSizeValue: 9
@@ -99,6 +100,7 @@ NavigationPane {
             }
             ListView {
                 id: favouritesList
+                scrollRole: ScrollRole.Main
                 horizontalAlignment: HorizontalAlignment.Center
                 verticalAlignment: VerticalAlignment.Center
                 dataModel: ArrayDataModel {
@@ -197,7 +199,7 @@ NavigationPane {
             base: SystemDefaults.TextStyles.BodyText
             fontSize: FontSize.PointValue
             fontSizeValue: 7
-            fontWeight: FontWeight.W100
+            fontWeight: FontWeight.W300
         },
         Invocation {
             id: linkInvocation

@@ -13,6 +13,7 @@ NavigationPane {
     onPopTransitionEnded: {
         page.destroy();
         Application.menuEnabled = ! Application.menuEnabled;
+        ActionBarAutoHideBehavior = ActionBarAutoHideBehavior.HideOnScroll;
     }
 
     onPushTransitionEnded: {
@@ -151,7 +152,7 @@ NavigationPane {
                 verticalAlignment: VerticalAlignment.Center
                 Label {
                     id: errorLabel
-                    text: "<b><span style='color:#ff8c00'>Try searching for a post!</span></b>"
+                    text: "<b><span style='color:#ff8e00'>Try searching for a post!</span></b>"
                     textStyle.fontSize: FontSize.PointValue
                     textStyle.textAlign: TextAlign.Center
                     textStyle.fontSizeValue: 9
@@ -166,6 +167,7 @@ NavigationPane {
                 horizontalAlignment: HorizontalAlignment.Center
                 verticalAlignment: VerticalAlignment.Center
                 ListView {
+                    scrollRole: ScrollRole.Main
                     id: searchList
                     dataModel: ArrayDataModel {
                         id: searchModel
@@ -176,7 +178,7 @@ NavigationPane {
                     listItemComponents: [
                         ListItemComponent {
                             type: 'item'
-                            HNPage {
+                            HNItem {
                                 id: hnItem
                                 property string type: ListItemData.type
                                 postComments: ListItemData.commentCount

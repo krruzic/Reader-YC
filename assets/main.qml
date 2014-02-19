@@ -64,17 +64,6 @@ TabbedPane {
                 Application.menuEnabled = true;
             }
         }
-        onTriggered: {
-            if (top.theModel.isEmpty() && top.busy == false) {
-                top.busy = true;
-                top.loading = true;
-
-                Tart.send('requestPage', {
-                        source: top.whichPage,
-                        sentBy: top.whichPage
-                    });
-            }
-        }
         signal push(variant p)
         onPush: {
             top.push(p);
@@ -95,18 +84,6 @@ TabbedPane {
                 Application.menuEnabled = true;
             }
         }
-        onTriggered: {
-            if (ask.theModel.isEmpty() && ask.busy == false) {
-                ask.busy = true;
-                ask.loading = true;
-
-                Tart.send('requestPage', {
-                        source: ask.whichPage,
-                        sentBy: ask.whichPage
-                    });
-            }
-        }
-
         signal push(variant p)
         onPush: {
             ask.push(p);
@@ -124,16 +101,6 @@ TabbedPane {
             onPopTransitionEnded: {
                 page.destroy();
                 Application.menuEnabled = true;
-            }
-        }
-        onTriggered: {
-            if (newest.theModel.isEmpty() && newest.busy == false) {
-                newest.busy = true;
-                newest.loading = true;
-                Tart.send('requestPage', {
-                        source: newest.whichPage,
-                        sentBy: newest.whichPage
-                    });
             }
         }
         signal push(variant p)
@@ -174,6 +141,24 @@ TabbedPane {
         }
     }
     onActiveTabChanged: {
+        if (activeTab == askTab) {
+            if (ask.theModel.isEmpty()) {
+                console.log("LOADING ASK PAGE")
+                Tart.send('requestPage', {
+                        source: ask.whichPage,
+                        sentBy: ask.whichPage
+                    });
+            }
+        }
+        if (activeTab == newTab) {
+            if (newest.theModel.isEmpty()) {
+
+                Tart.send('requestPage', {
+                        source: newest.whichPage,
+                        sentBy: newest.whichPage
+                    });
+            }
+        }
         if (activeTab == favouritesTab) {
             console.log("Loading favourites")
             Tart.send('loadFavourites', {

@@ -70,6 +70,7 @@ TitleBar {
                     orientation: LayoutOrientation.LeftToRight
                 }
                 ScrollView {
+                    scrollRole: ScrollRole.None
                     verticalAlignment: VerticalAlignment.Center
                     horizontalAlignment: HorizontalAlignment.Fill
                     scrollViewProperties.scrollMode: ScrollMode.Horizontal
