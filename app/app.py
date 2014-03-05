@@ -79,13 +79,12 @@ class App(tart.Application):
             print("Request doesn't exist")
             if len(self.cache) > 5: # If we have 5 reqs going, remove the first one before adding
                 self.cache.pop(0)
-            self.cache.append(currReq)
+            self.cache.append(currReq) # Append it to cache
             t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost))
 
         else: # If the request does exist
             if len(self.cache) == 1: # If it is the only one we make the request (first request added)
                 print("Only request?")
-                #self.cache.append(currReq) # Append it to cache
                 t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost))
             else: # If there are multiple requests
                 print("Checking request")
@@ -159,8 +158,8 @@ class App(tart.Application):
 
                 text = text.replace('<pre><code>', '<p style="font-family: Monospace; font-size:5pt; font-weight:100;">')
                 text = text.replace('</code></pre>', '</p>')
-                text = text.replace('\\n', '<br />')
-
+                text = text.replace('\\n', '\n')
+                text = text.replace('\\t', '\t')
 
             tart.send('addText', text=text, hnid=source)
             if (comments == []):
@@ -171,7 +170,9 @@ class App(tart.Application):
                 comment['text'] = comment['text'].replace('</p>', '') # Remove the crap BS4 adds
                 comment['text'] = comment['text'].replace('<pre><code>', '<p style="font-family: Monospace; font-size:5pt; font-weight:100;">')
                 comment['text'] = comment['text'].replace('</code></pre>', '</p>')
-                comment['text'] = comment['text'].replace('\\n', '<br />')
+                comment['text'] = comment['text'].replace('\\n', '\n')
+                comment['text'] = comment['text'].replace('\\t', '\t')
+
                 comment['barColour'] = "#" + self.get_colour(comment["indent"]//40)
                 tart.send('addComments', comment=comment, hnid=source)
 

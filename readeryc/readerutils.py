@@ -1,4 +1,3 @@
-import os
 class readerutils():
     SETTINGS_FILE = 'data/settings.state'
     COOKIE = os.path.join('data/', 'hackernews.cookie')

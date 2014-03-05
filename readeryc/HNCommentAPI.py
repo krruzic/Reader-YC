@@ -3,8 +3,6 @@ import re, json, os, glob, requests, time, html.parser
 from datetime import *
 from .readerutils import readerutils
 
-
-
 def flatten(comments, level = 0):
     #comments is a list
     h = html.parser.HTMLParser() # To decode the HTML entities
@@ -18,14 +16,9 @@ def flatten(comments, level = 0):
         comment['indent'] = level * 40
         parts = comment['created_at'].split('.')
         dt = datetime.strptime(parts[0], "%Y-%m-%dT%H:%M:%S")
-        comment['time'] = pretty_date(dt) # returns a relative date
-        #comment['text'] = h.unescape(comment['text'])
+        comment['time'] = readerutils.prettyDate(dt) # returns a relative date
 
         #removes the childs from the item (important)
-        comment.pop('created_at', None)
-        comment.pop('points', None)
-        comment.pop('type', None)
-
         childs = comment.pop('children', [])
         #adds the item to the result
         res.append(comment)
