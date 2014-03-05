@@ -4,3 +4,4 @@ from .HNSearchAPI import getSearchResults
 from .HNUserAPI import getUserPage
 from .HNLoginAPI import *
 from .HNFavouriteAPI import *
+from .readerutils import readerutils

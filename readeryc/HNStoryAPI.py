@@ -1,6 +1,6 @@
 import requests, re, time
 from bs4 import BeautifulSoup
-
+from .readerutils import readerutils
 
 def parseStories(page):
     """ Extract all the stories from a story page.
@@ -88,13 +88,9 @@ def parseStories(page):
 
 
 def getStoryPage(source):
-    HEADERS = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.29 Safari/537.22',
-    }
-
     url = source
     print("curling page: " + url)
-    r = requests.get(url=url, headers=HEADERS)
+    r = requests.get(url=url, headers=readerutils.HEADERS)
     page = r.content
     print("page curled")
     stories, moreLink = parseStories(page)

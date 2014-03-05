@@ -18,14 +18,10 @@ class App(tart.Application):
     """
 
     cache = [] #{'ident': None} # Keep track of current request
-    SETTINGS_FILE = 'data/settings.state'
-    COOKIE = os.path.join('data/', 'hackernews.cookie')
-    HEADERS = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.29 Safari/537.22',
-    }
-    gradient = ["ff8e00", "FF8B00", "FA8904", "F68608", "F2840C", "ED8110", "E97F13",  
-                "E57C17", "E07A1A", "DC781D", "D87620", "D37423", "CF7226", "CB7929", 
-                "C66E2B", "C26C2E"]
+    SETTINGS_FILE = readeryc.readerutils.SETTINGS_FILE
+    COOKIE = readeryc.readerutils.COOKIE
+    HEADERS = readeryc.readerutils.HEADERS
+    gradient = readeryc.readerutils.gradient
 
     def __init__(self):
         super().__init__(debug=False)   # set True for some extra debug output

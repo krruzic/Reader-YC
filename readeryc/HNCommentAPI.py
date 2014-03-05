@@ -1,53 +1,7 @@
 from bs4 import BeautifulSoup
 import re, json, os, glob, requests, time, html.parser
 from datetime import *
-
-
-def pretty_date(time):
-    """
-    Get a datetime object or a int() Epoch timestamp and return a
-    pretty string like 'an hour ago', 'Yesterday', '3 months ago',
-    'just now', etc
-    """
-
-    from datetime import datetime
-    now = datetime.utcnow()
-    if type(time) is int:
-        diff = now - datetime.fromtimestamp(time)
-    elif isinstance(time,datetime):
-        diff = now - time
-    elif not time:
-        diff = now - now
-    second_diff = diff.seconds
-    day_diff = diff.days
-
-    if day_diff < 0:
-        return "Just now "
-
-    if day_diff == 0:
-        if second_diff < 10:
-            return "Just now "
-        if second_diff < 60:
-            return str(second_diff) + " seconds ago "
-        if second_diff < 120:
-            return  "1 minute ago "
-        if second_diff < 3600:
-            return str( second_diff // 60 ) + " minutes ago "
-        if second_diff < 7200:
-            return "1 hour ago "
-        if second_diff < 86400:
-            return str( second_diff // 3600 ) + " hours ago "
-    if day_diff == 1:
-        return "Yesterday "
-    if day_diff < 7:
-        return str(day_diff) + " days ago "
-    if day_diff < 31:
-        return str(day_diff // 7) + " weeks ago "
-    if day_diff < 365:
-        return str(day_diff // 30) + " months ago "
-    if str(day_diff // 365) == '1':
-        return str(day_diff // 365) + " year ago "
-    return str(day_diff // 365) + " years ago "
+from .readerutils import readerutils
 
 
 
@@ -205,10 +159,6 @@ def legacyFetch(page, isAsk):
 def getCommentPage(source, isAsk, legacy=False):
     """Gets the comments and text of the post
     """
-    HEADERS = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.29 Safari/537.22',
-    }
-
 
     scrapeURL = 'https://news.ycombinator.com/item?id=%s' % source
     commentsURL = 'http://hn.algolia.com/api/v1/items/{0}'.format(source)
@@ -216,11 +166,11 @@ def getCommentPage(source, isAsk, legacy=False):
 
     if (legacy == True):
         print("scraping to fetch comments")
-        r = requests.get(scrapeURL, headers=HEADERS)
+        r = requests.get(scrapeURL, headers=readerutils.HEADERS)
         text, comments = legacyFetch(r, isAsk)
     elif (legacy == False):
         print("using api to fetch comments")
-        r = requests.get(commentsURL, headers=HEADERS)
+        r = requests.get(commentsURL, headers=readerutils.HEADERS)
         text, comments = apiFetch(r, isAsk)
     print("text is a ", type(text))
     return text, comments

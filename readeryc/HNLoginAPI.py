@@ -1,16 +1,9 @@
 import os, glob
-# from .HNStoryAPI import getStoryPage
-# from .HNCommentAPI import getCommentPage
-# from .HNUserAPI import getUserPage
-# from .HNSearchAPI import getSearchResults
 from bs4 import BeautifulSoup
 import requests, pickle, re, html.parser, cgi
+from .readerutils import readerutils
     
 def login(username, password):
-    COOKIE = os.path.join('data/', 'hackernews.cookie')
-    HEADERS = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.29 Safari/537.22',
-    }
     r = requests.get('https://news.ycombinator.com/newslogin')
     print("SOUPING")
     soup = BeautifulSoup(r.content)
@@ -18,23 +11,17 @@ def login(username, password):
         fnid = soup.find('input', attrs=dict(name='fnid'))['value']
     except:
         return "false"
-    payload = {
-        'fnid': fnid,
-        'u': username,
-        'p': password
-    }
     result = "false"
     sess = requests.session()
-    res = sess.get('https://news.ycombinator.com/newslogin', headers=HEADERS)
+    res = sess.get('https://news.ycombinator.com/newslogin', headers=readerutils.HEADERS)
     fnid = soup.find('input')['value']
     soup = BeautifulSoup(res.content)
     params = {'u': username, 'p': password, 'fnid': fnid}
-    r = sess.post('https://news.ycombinator.com/y', headers=HEADERS, params=params)
-    # assert r.status_code == 200, "Unexpected status code: %s" % r.status_code
+    r = sess.post('https://news.ycombinator.com/y', headers=readerutils.HEADERS, params=params)
     if ("Bad login" not in r.text):
         print("no bad login")
         cookies = sess.cookies
-        f = open(COOKIE, 'wb')
+        f = open(readerutils.COOKIE, 'wb')
         pickle.dump(requests.utils.dict_from_cookiejar(cookies), f)
         f.close()
         username = username
@@ -42,17 +29,12 @@ def login(username, password):
     return result
 
 def getProfile(username):
-    COOKIE = os.path.join('data/', 'hackernews.cookie')
-    HEADERS = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.29 Safari/537.22',
-    }
-
-    f = open(COOKIE, 'rb')
+    f = open(readerutils.COOKIE, 'rb')
     cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
     f.close()
 
     h = html.parser.HTMLParser() # To decode the HTML entities
-    r = requests.get('https://news.ycombinator.com/user?id={0}'.format(username), headers=HEADERS, cookies=cookies)
+    r = requests.get('https://news.ycombinator.com/user?id={0}'.format(username), headers=readerutils.HEADERS, cookies=cookies)
     soup = BeautifulSoup(r.content)
     fnid = str(soup.find('input', attrs=dict(name='fnid'))['value'])
 
@@ -84,11 +66,6 @@ def getProfile(username):
     return [fnid, about, email, showdead, noprocrast, maxvisit, minaway, delay]
 
 def saveProfile(username, email, about):
-    COOKIE = os.path.join('data/', 'hackernews.cookie')
-    HEADERS = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.29 Safari/537.22',
-    }
-
     f = open(COOKIE, 'rb')
     cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
     f.close()
@@ -115,19 +92,14 @@ def saveProfile(username, email, about):
     return True
 
 def postComment(source, comment):
-    COOKIE = os.path.join('data/', 'hackernews.cookie')
-    HEADERS = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.29 Safari/537.22',
-        'Referer': 'https://news.ycombinator.com/reply?id={0}'.format(source)
-    }
-    f = open(COOKIE, 'rb')
+    f = open(readerutils.COOKIE, 'rb')
     cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
     f.close()
     print("Posting comment!")
 
     comment = cgi.escape(comment)
     try:
-        r = requests.get('https://news.ycombinator.com/reply?id={0}'.format(source), headers=HEADERS, cookies=cookies)
+        r = requests.get('https://news.ycombinator.com/reply?id={0}'.format(source), headers=readerutils.COOKIE, cookies=cookies)
     except:
         return False
     soup = BeautifulSoup(r.content)
@@ -137,10 +109,13 @@ def postComment(source, comment):
     'text': comment
     }
     try:
-        r = requests.post('https://news.ycombinator.com/r', params=params, headers=HEADERS, cookies=cookies)
+        r = requests.post('https://news.ycombinator.com/r', params=params, headers=readerutils.HEADERS, cookies=cookies)
     except:
         return False
     print(r.url, r.headers, r.history)
     if(r.url == "https://news.ycombinator.com/news"):
         return True
     return False
+
+# def checkLogin():
+
