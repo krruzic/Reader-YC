@@ -35,7 +35,7 @@ Container {
             }
             ActionItem {
                 title: "View Article"
-                imageSource: "asset:///images/icons/ic_article.png"
+                imageSource: "asset:///images/icons/ic_story.png"
                 enabled: if (ListItemData.articleURL != '') {
                     true
                 }

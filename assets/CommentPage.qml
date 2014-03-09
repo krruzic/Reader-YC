@@ -140,13 +140,13 @@ Page {
                 invokeActionId: "bb.action.SHARE"
             }
             onTriggered: {
-                data = commentPane.title + "\n" + "https://news.ycombinator.com/item?id=" + commentLink + "\n" + " Shared using Reader YC "
+                data = commentPane.title + "\n" + "https://news.ycombinator.com/item?id=" + commentLink + "\n" + "Shared using Reader YC "
             }
         },
         ActionItem {
             ActionBar.placement: ActionBarPlacement.OnBar
             title: "View Article"
-            imageSource: "asset:///images/icons/ic_article.png"
+            imageSource: "asset:///images/icons/ic_story.png"
             onTriggered: {
                 var page = webPage.createObject();
                 if (isAsk == "true") {

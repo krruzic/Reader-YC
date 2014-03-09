@@ -89,6 +89,7 @@ TitleBar {
                         textStyle.base: lightStyle.style
                     }
                 }
+
                 Container {
                     leftPadding: 10
                     leftMargin: 20
@@ -112,6 +113,7 @@ TitleBar {
                         ]
                     }
                 }
+
 
             }
             //                ImageButton {

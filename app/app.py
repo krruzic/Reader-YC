@@ -215,7 +215,6 @@ class App(tart.Application):
         else:
             tart.send('profileSaved', text="Unable to update profile, check connection and try again")
 
-
     def onSendComment(self, source, text):
         res = self.sess.postComment(source, text)
         text = text.replace('*', '')
@@ -224,10 +223,18 @@ class App(tart.Application):
             return
         tart.send('commentPosted', result="false", comment="")
 
+    def onSendStory(self, title, url, text):
+        res = self.sess.postStory(title, url, text)
+        if (res == True):
+            tart.send('storyPosted', result='true')
+        else:
+            tart.send('storyPosted', result='false')
+
     def onLogout(self):
+        self.sess.logout()
         try:
             os.remove(self.COOKIE)
-        except OSError  :
+        except OSError:
             tart.send('logoutResult', text="logged out successfully!")
 
         tart.send('logoutResult', text="logged out successfully!")

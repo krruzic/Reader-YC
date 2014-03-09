@@ -11,9 +11,7 @@ TabbedPane {
     property string coverComments: ""
     property string coverTime: ""
     property int currStory: 0
-
     signal settingsChanged()
-
     Menu.definition: MenuDefinition {
         helpAction: HelpActionItem {
             imageSource: "asset:///images/icons/ic_help.png"
@@ -88,6 +86,7 @@ TabbedPane {
         onPush: {
             ask.push(p);
         }
+        
     }
     Tab {
         title: qsTr("Newest")

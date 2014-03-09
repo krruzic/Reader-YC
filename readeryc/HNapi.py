@@ -36,6 +36,10 @@ class HNapi():
             return True
         return False
 
+    def logout(self):
+        self.loggedIn = False
+        self.username = ''
+
     def getProfile(self, username):
         if(not self.loggedIn):
             raise LoginRequiredException('Not signed in!')
@@ -125,6 +129,29 @@ class HNapi():
     def postStory(self, title, link, text):
         if(not self.loggedIn):
             raise LoginRequiredException('Not signed in!')
+
+        f = open(readerutils.COOKIE, 'rb')
+        cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
+        f.close()
+
+        if text != '':
+            text = cgi.escape(text)
+
+        try:
+            r = self.session.get(readerutils.hnUrl('submit'), headers=readerutils.HEADERS, cookies=cookies)
+        except:
+            return False
+        soup = BeautifulSoup(r.content)
+        fnid = str(soup.find('input', attrs=dict(name='fnid'))['value'])
+        params = {'fnid': fnid, 't': title, 'u': link, 'x': text}
+        try:
+            r = self.session.post(readerutils.hnUrl('r'), params=params, headers=readerutils.HEADERS, cookies=cookies)
+        except:
+            return False
+            
+        if(r.url == "https://news.ycombinator.com/news"):
+            return True
+        return False
 
     def getStories(self, list):
         page = HNStory()
