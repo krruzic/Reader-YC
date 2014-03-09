@@ -1,4 +1,4 @@
-import threading, os, glob
+import threading, os, glob, sqlite3
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import requests, requests.utils, pickle, re, html.parser, cgi
@@ -7,7 +7,7 @@ import math
 
 import tart
 
-from readeryc import HNapi, readerutils, HNFavourites
+from readeryc import HNapi, readerutils
 
 class App(tart.Application):
     """ The class that directly communicates with Tart and Cascades
@@ -29,7 +29,7 @@ class App(tart.Application):
             'legacyFetch': False
         }
         self.restore_data(self.settings, self.SETTINGS_FILE)
-        self.sess = HNapi()
+        self.sess = HNapi(self.settings['username'])
         print("restored: ", self.settings)
 
     def onUiReady(self):
@@ -233,28 +233,54 @@ class App(tart.Application):
         tart.send('logoutResult', text="logged out successfully!")
 
 
-## Saving functions
+## Favouriting functions
     def onSaveArticle(self, article):
-        res = self.sess.saveArticle(article)
-        if(res):
+        conn = sqlite3.connect("data/favourites.db")
+        print(article)
+        article = tuple(article)
+        cursor = conn.cursor()
+        cursor.execute("""CREATE TABLE IF NOT EXISTS articles
+                          (title text, articleURL text, saveTime text,
+                           poster text, numComments text, isAsk text,
+                           domain text, points text, hnid text PRIMARY KEY)
+                       """)
+
+
+        # insert to table
+        try:
+            cursor.execute("INSERT INTO articles VALUES (?,?,?,?,?,?,?,?,?)", article)
+            print("Article saved!")
+            # save data to database
+            conn.commit()
             tart.send('saveResult', text="Article successfully favourited")
-        else: 
+        except sqlite3.IntegrityError:
+            print("Article already saved!")
             tart.send('saveResult', text="Article already favourited")
 
 
-    def onDeleteArticle(self, hnid, selected):
-        result = self.sess.deleteArticle(hnid)
-        # Return information to display a 'deleted' toast
-        if (result):
-            tart.send('deleteResult', text="Article removed from favourites", itemToRemove=selected)
-        else:
-            print("error")
+    def onDeleteArticle(self, hnid):
+        conn = sqlite3.connect("data/favourites.db")
 
+        hnid = str(hnid)
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM articles WHERE hnid=?", (hnid,) )
+
+
+        conn.commit()
+        tart.send('deleteResult', text="Article removed from favourites", itemToRemove=selected)
 
     def onLoadFavourites(self):
-        res = self.sess.loadFavourites()
-        tart.send('fillList', results=res)
+        conn = sqlite3.connect("data/favourites.db")
 
+        cursor = conn.cursor()
+        cursor.execute("""CREATE TABLE IF NOT EXISTS articles
+                  (title text, articleURL text, saveTime text,
+                   poster text, numComments text, isAsk text,
+                   domain text, points text, hnid text PRIMARY KEY)
+                """)
+        cursor.execute('SELECT * FROM articles')
+        a = readerutils.get_rowdicts(cursor)
+        tart.send('fillList', results=a)
 
 
 ## Misc functions

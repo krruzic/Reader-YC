@@ -1,5 +1,5 @@
 import bb.cascades 1.2
-//import "tart.js" as Tart
+import "tart.js" as Tart
 import "global.js" as Global
 Container {
     property alias bioField: bioField
