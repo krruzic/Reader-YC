@@ -1,8 +1,4 @@
 import threading, os, glob
-# from .HNStoryAPI import getStoryPage
-# from .HNCommentAPI import getCommentPage
-# from .HNUserAPI import getUserPage
-# from .HNSearchAPI import getSearchResults
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import requests, requests.utils, pickle, re, html.parser, cgi
@@ -11,17 +7,17 @@ import math
 
 import tart
 
-import readeryc
+from readeryc import HNapi, readerutils, HNFavourites
 
 class App(tart.Application):
     """ The class that directly communicates with Tart and Cascades
     """
 
     cache = [] #{'ident': None} # Keep track of current request
-    SETTINGS_FILE = readeryc.readerutils.SETTINGS_FILE
-    COOKIE = readeryc.readerutils.COOKIE
-    HEADERS = readeryc.readerutils.HEADERS
-    gradient = readeryc.readerutils.gradient
+    SETTINGS_FILE = readerutils.SETTINGS_FILE
+    COOKIE = readerutils.COOKIE
+    HEADERS = readerutils.HEADERS
+    gradient = readerutils.gradient
 
     def __init__(self):
         super().__init__(debug=False)   # set True for some extra debug output
@@ -33,6 +29,7 @@ class App(tart.Application):
             'legacyFetch': False
         }
         self.restore_data(self.settings, self.SETTINGS_FILE)
+        self.sess = HNapi()
         print("restored: ", self.settings)
 
     def onUiReady(self):
@@ -132,7 +129,7 @@ class App(tart.Application):
         if source[0] == '/':
             source = source[1:]
         try:
-            stories, moreLink = readeryc.getStoryPage("https://news.ycombinator.com/" + source)
+            stories, moreLink = self.sess.getStories(source)
         except requests.exceptions.ConnectionError:
             tart.send('{0}ListError'.format(sentByShort), text="<b><span style='color:#ff8e00'>Error getting stories</span></b>\nCheck your connection and try again!")
             return
@@ -151,7 +148,7 @@ class App(tart.Application):
         print("source sent:" + source)
 
         try:
-            text, comments = readeryc.getCommentPage(source, askPost, self.settings['legacyFetch'])
+            text, comments = self.sess.getComments(source, askPost, self.settings['legacyFetch'])
             if (text != ""):
                 text = text.replace('rel="nofollow"', '')
                 text = text.replace('<p>', '\n') # Replace unclosed <p>'s with new lines
@@ -184,7 +181,7 @@ class App(tart.Application):
     def search_routine(self, startIndex, source):
         print("Searching for: " + source)
         try:
-            result = readeryc.getSearchResults(startIndex, source)
+            result = self.sess.getSearchStories(startIndex, source)
             for res in result:
                 tart.send('addSearchStories', story=res)
         except requests.exceptions.ConnectionError:
@@ -196,28 +193,31 @@ class App(tart.Application):
 ## POST functions
 
     def onRequestLogin(self, username, password):
-        result = readeryc.login(username, password)
+        result = self.sess.login(username, password)
         tart.send('loginResult', result=result)
 
     def onGetProfile(self, username):
-        info = readeryc.getProfile(username)
+        info = self.sess.getProfile(username)
         print(info)
-        if (info == []):
+        if (info == False):
             os.remove(self.COOKIE)
             tart.send('logoutResult', text="Unable to get profile, forcing logout...")
         tart.send('profileRetrieved', email=info[2], about=info[1])
 
     def onSaveProfile(self, username, email, about):
         try:
-            res = readeryc.saveProfile(username, email, about)
+            res = self.sess.postProfile(username, email, about)
         except:            
             tart.send('profileSaved', text="Unable to update profile, check connection and try again")
 
         if (res == True):
             tart.send('profileSaved', text="Profile updated!")
+        else:
+            tart.send('profileSaved', text="Unable to update profile, check connection and try again")
+
 
     def onSendComment(self, source, text):
-        res = readeryc.postComment(source, text)
+        res = self.sess.postComment(source, text)
         text = text.replace('*', '')
         if (res == True):
             tart.send('commentPosted', result="true", comment=text)
@@ -235,7 +235,7 @@ class App(tart.Application):
 
 ## Saving functions
     def onSaveArticle(self, article):
-        res = readeryc.saveArticle(article)
+        res = self.sess.saveArticle(article)
         if(res):
             tart.send('saveResult', text="Article successfully favourited")
         else: 
@@ -243,7 +243,7 @@ class App(tart.Application):
 
 
     def onDeleteArticle(self, hnid, selected):
-        result = readeryc.deleteArticle(hnid)
+        result = self.sess.deleteArticle(hnid)
         # Return information to display a 'deleted' toast
         if (result):
             tart.send('deleteResult', text="Article removed from favourites", itemToRemove=selected)
@@ -252,7 +252,7 @@ class App(tart.Application):
 
 
     def onLoadFavourites(self):
-        res = readeryc.loadFavourites()
+        res = self.sess.loadFavourites()
         tart.send('fillList', results=res)
 
 

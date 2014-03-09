@@ -1,3 +1,5 @@
+import os
+
 class readerutils():
     SETTINGS_FILE = 'data/settings.state'
     COOKIE = os.path.join('data/', 'hackernews.cookie')
@@ -7,6 +9,9 @@ class readerutils():
     gradient = ["ff8e00", "FF8B00", "FA8904", "F68608", "F2840C", "ED8110", "E97F13",  
             "E57C17", "E07A1A", "DC781D", "D87620", "D37423", "CF7226", "CB7929", 
             "C66E2B", "C26C2E"]
+
+    def hnUrl(address):
+        return 'https://news.ycombinator.com/{}'.format(address)
 
     def prettyDate(time):
         """ 
@@ -53,3 +58,7 @@ class readerutils():
         if str(day_diff // 365) == '1':
             return str(day_diff // 365) + " year ago "
         return str(day_diff // 365) + " years ago "
+
+        
+    def get_rowdicts(cursor):
+        return list(cursor)
