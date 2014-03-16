@@ -111,8 +111,6 @@ class App(tart.Application):
         print("request complete! Removing...")
         self.cache.pop(-1)
 
-
-
 ## GET functions
     def story_routine(self, source, sentBy):
         print("source sent:" + source)
@@ -123,7 +121,6 @@ class App(tart.Application):
             source = 'ask'
         if source == 'newestPage':
             source = 'newest'
-
         sentByShort = sentBy[0:3]
 
         if source[0] == '/':
@@ -179,9 +176,12 @@ class App(tart.Application):
             tart.send('commentError', text="<b><span style='color:#ff8e00'>Error getting comments</span></b>\nCheck your connection and try again!", hnid=source) 
 
     def search_routine(self, startIndex, source):
-        print("Searching for: " + source)
+        print("Searching for: " + str(source))
         try:
             result = self.sess.getSearchStories(startIndex, source)
+            if result == []:
+                tart.send('searchError', text="<b><span style='color:#ff8e00'>No results found!</span></b>")
+                return
             for res in result:
                 tart.send('addSearchStories', story=res)
         except requests.exceptions.ConnectionError:

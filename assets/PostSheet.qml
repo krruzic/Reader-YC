@@ -71,6 +71,9 @@ Sheet {
                             backgroundVisible: ! enabled
                             onTextChanging: {
                                 if (text != "") {
+                                    bodyField.enabled = false
+                                }
+                                if (text == "") {
                                     bodyField.enabled = true
                                 }
                                 if (text != "" && titleField.text != "") {
@@ -92,6 +95,9 @@ Sheet {
                             onTextChanging: {
                                 if (text != "") {
                                     urlField.enabled = false
+                                }
+                                if (text == "") {
+                                    urlField.enabled = true
                                 }
                                 if (text != "" && titleField.text != "") {
                                     submitButton.enabled = true

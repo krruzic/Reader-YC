@@ -6,6 +6,8 @@ NavigationPane {
     property string search: ""
     property string errorText: ""
     property string lastItemType: ""
+    property string author: ""
+
     property string readerURL: "http://www.readability.com/m?url="
     property bool busy: false
     property int start: 0
@@ -31,6 +33,7 @@ NavigationPane {
         loading.visible = false;
         searchField.enabled = true;
         errorLabel.visible = false;
+        authorField.visible = true;
         busy = false;
         var lastItem = searchModel.size() - 1
         if (lastItemType == 'error' || lastItemType == 'load') {
@@ -50,7 +53,6 @@ NavigationPane {
                 isAsk: data.story['isAsk']
             });
         lastItemType = 'item'
-        start = start + 1;
         searchField.visible = true;
     }
     function onSearchError(data) {
@@ -72,6 +74,8 @@ NavigationPane {
         errorLabel.text = data.text
         searchField.visible = true;
         searchField.enabled = true;
+        authorField.visible = true;
+
         loading.visible = false;
 
     }
@@ -89,6 +93,7 @@ NavigationPane {
                 topPadding: 10
                 leftPadding: 19
                 rightPadding: 19
+                bottomPadding: 5
                 Container {
                     attachedObjects: [
                         ImagePaintDefinition {
@@ -96,9 +101,12 @@ NavigationPane {
                             id: background
                         }
                     ]
-                	background: background.imagePaint
+                    layout: StackLayout {
+                        orientation: LayoutOrientation.LeftToRight
+                    }
+                    background: background.imagePaint
                     TextField {
-                        backgroundVisible: false;
+                        backgroundVisible: false
                         horizontalAlignment: HorizontalAlignment.Center
                         verticalAlignment: verticalAlignment.Top
                         visible: true
@@ -107,7 +115,7 @@ NavigationPane {
                         textStyle.color: Color.create("#262626")
                         textStyle.fontSize: FontSize.Medium
                         layoutProperties: StackLayoutProperties {
-                            spaceQuota: 1
+                            spaceQuota: 2
                         }
                         input {
                             flags: TextInputFlag.AutoCapitalizationOff | TextInputFlag.SpellCheckOff
@@ -117,9 +125,48 @@ NavigationPane {
                         input.onSubmitted: {
                             start = 0;
                             search = searchField.text;
+                            author = authorField.text;
                             searchModel.clear();
                             Tart.send('requestPage', {
-                                    source: searchField.text,
+                                    source: [ search, author ],
+                                    sentBy: 'searchPage',
+                                    startIndex: start
+                            });
+                            //start = start + 30;
+                            errorLabel.visible = false;
+                            loading.visible = true;
+                            searchField.visible = false;
+                            authorField.visible = false;
+                        }
+                        input.submitKey: SubmitKey.Search
+                        rightPadding: 10                        
+                    }
+                    TextField {
+                        leftPadding: 10
+
+                        backgroundVisible: false
+                        horizontalAlignment: HorizontalAlignment.Center
+                        verticalAlignment: verticalAlignment.Top
+                        visible: true
+                        objectName: "authorField"
+                        enabled: true
+                        textStyle.color: Color.create("#262626")
+                        textStyle.fontSize: FontSize.Medium
+                        layoutProperties: StackLayoutProperties {
+                            spaceQuota: 1
+                        }
+                        input {
+                            flags: TextInputFlag.AutoCapitalizationOff | TextInputFlag.SpellCheckOff
+                        }
+                        hintText: qsTr("Posted by")
+                        id: authorField
+                        input.onSubmitted: {
+                            start = 0;
+                            search = searchField.text;
+                            author = authorField.text;
+                            searchModel.clear();
+                            Tart.send('requestPage', {
+                                    source: [ search, author ],
                                     sentBy: 'searchPage',
                                     startIndex: start
                                 });
@@ -127,6 +174,7 @@ NavigationPane {
                             errorLabel.visible = false;
                             loading.visible = true;
                             searchField.visible = false;
+                            authorField.visible = false;
                         }
                         input.submitKey: SubmitKey.Search
                     }
@@ -281,8 +329,7 @@ NavigationPane {
                     attachedObjects: [
                         ListScrollStateHandler {
                             onAtEndChanged: {
-                                console.log("RES: " + searchModel.size() % 30)
-                                if (atEnd == true && searchModel.isEmpty() == false && busy == false && (searchModel.size() % 30) == 0) {
+                                if (atEnd == true && searchModel.isEmpty() == false && busy == false && (searchModel.size() % 20) == 0) {
                                     console.log('end reached!');
                                     var lastItem = searchModel.size() - 1;
                                     if (lastItemType == 'load') {
@@ -298,10 +345,11 @@ NavigationPane {
                                     //searchList.scrollToPosition(ScrollPosition.End, ScrollAnimation.Smooth);
                                     lastItemType = 'load';
                                     Tart.send('requestPage', {
-                                            source: search,
-                                            startIndex: (start),
-                                            sentBy: 'searchPage'
-                                        });
+                                            source: [ search, author ],
+                                            sentBy: 'searchPage',
+                                            startIndex: start
+                                    });
+                                    start = start + 1;
                                     busy = true;
                                 }
                             }

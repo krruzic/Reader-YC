@@ -96,7 +96,6 @@ Page {
     }
 
     function onAddComments(data) {
-        busy = false;
         if (commentLink == data.hnid) {
             commentModel.append({
                     type: 'item',
@@ -109,6 +108,7 @@ Page {
                 });
             lastItemType = 'item';
         }
+        busy = false;
     }
     
 
