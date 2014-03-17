@@ -1,6 +1,7 @@
 import bb.cascades 1.2
 import bb.system 1.0
 import "tart.js" as Tart
+import "global.js" as Global
 
 NavigationPane {
     id: favouritesPage
@@ -27,6 +28,10 @@ NavigationPane {
         Tart.register(favouritesPage)
     }
     function onFillList(data) {
+        if (Global.username != "" && favouritesModel.size() == 0) {
+            var item = postAction.createObject();
+            favourites.addAction(item);
+        }
         console.log("Filling favourites")
         favouritesModel.clear();
 
@@ -38,17 +43,18 @@ NavigationPane {
 
             favouritesModel.append({
                     type: 'item',
-                    title: story[0],
-                    articleURL: story[1],
-                    timePosted: story[2],
-                    poster: story[3],
-                    commentCount: story[4],
-                    isAsk: story[5],
-                    domain: story[6],
-                    points: story[7],
-                    commentsURL: story[8],
-                    hnid: story[8]
+                    title: data.story['title'],
+                    domain: data.story['domain'],
+                    points: data.story['score'],
+                    poster: data.story['author'],
+                    timePosted: data.story['time'],
+                    commentCount: data.story['commentCount'],
+                    articleURL: data.story['link'],
+                    commentsURL: data.story['commentURL'],
+                    hnid: data.story['hnid'],
+                    isAsk: data.story['askPost']
                 });
+                
         }
         if (favouritesModel.isEmpty() == true) {
             emptyContainer.visible = true

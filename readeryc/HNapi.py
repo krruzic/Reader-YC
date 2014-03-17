@@ -15,19 +15,25 @@ class HNapi():
     def __init__(self, username=''):
         if username != '':
             self.loggedIn = True
+        self.stories = HNStory()
+        self.comments = HNComments()
+        self.searchStories = HNSearchStory()
 
         self.username = username
         self.session = requests.session()
 
     def login(self, username, password):
-        res = self.session.get(readerutils.hnUrl('newslogin'), headers=readerutils.HEADERS)
-        fnid = soup.find('input')['value']
+        result = False
+        sess = requests.session()
+        res = sess.get('https://news.ycombinator.com/newslogin', headers=readerutils.HEADERS)
         soup = BeautifulSoup(res.content)
+
+        fnid = soup.find('input')['value']
         params = {'u': username, 'p': password, 'fnid': fnid}
-        r = self.session.post(readerutils.hnUrl('y'), headers=readerutils.HEADERS, params=params)
+        r = sess.post('https://news.ycombinator.com/y', headers=readerutils.HEADERS, params=params)
         if ("Bad login" not in r.text):
             print("no bad login")
-            cookies = r.cookies
+            cookies = sess.cookies
             f = open(readerutils.COOKIE, 'wb')
             pickle.dump(requests.utils.dict_from_cookiejar(cookies), f)
             f.close()
@@ -47,34 +53,20 @@ class HNapi():
         f = open(readerutils.COOKIE, 'rb')
         cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
         f.close()
-
-        h = html.parser.HTMLParser() # To decode the HTML entities
-        r = self.session.get(readerutils.hnUrl('user?id=' + username), headers=readerutils.HEADERS, cookies=cookies)
+        r = self.session.get(readerutils.hnUrl('user?id={}'.format(username)), headers=readerutils.HEADERS, cookies=cookies)
         soup = BeautifulSoup(r.content)
         fnid = str(soup.find('input', attrs=dict(name='fnid'))['value'])
-
-        options = soup.findAll('option')
-        for i in options:
-            if "selected" not in str(i):
-                options.remove(i)
-        print(options)
-        try:
-            showdead = options[0].text        
-            noprocrast = options[2].text
-        except IndexError:
-            return False
-            
-        maxvisit = str(soup.find('input', {'name': 'maxvisit'})['value'])
-        minaway = str(soup.find('input', {'name': 'minaway'})['value'])
-        delay = str(soup.find('input', {'name': 'delay'})['value'])
         about = soup.find('textarea', {'name': 'about'}).get_text() 
-        email = soup.find('input', {'name': 'email'})['value']
-        return [fnid, about, email, showdead, noprocrast, maxvisit, minaway, delay]
+        try:
+            email = soup.find('input', {'name': 'email'})['value']
+        except:
+            email = ""
+        return [fnid, about, email]
 
     def postProfile(self, username, email, about):
         if(not self.loggedIn):
             raise LoginRequiredException('Not signed in!')
-        f = open(COOKIE, 'rb')
+        f = open(readerutils.COOKIE, 'rb')
         cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
         f.close()
 
@@ -89,11 +81,6 @@ class HNapi():
             'fnid': info[0],
             'about': about,
             'email': email,
-            'showdead': info[3],
-            'noprocrast': info[4],
-            'maxvisit': info[5],
-            'minaway': info[6],
-            'delay': info[7]
         }
 
         r = self.session.post(readerutils.hnUrl('x'), headers=readerutils.HEADERS, params=params, cookies=cookies)
@@ -106,7 +93,6 @@ class HNapi():
         f = open(readerutils.COOKIE, 'rb')
         cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
         f.close()
-        print("Posting comment!")
 
         comment = cgi.escape(comment)
         try:
@@ -114,7 +100,7 @@ class HNapi():
         except:
             return False
         soup = BeautifulSoup(r.content)
-        fnid = str(soup.find('input', attrs=dict(name='fnid'))['value'])
+        fnid = soup.find('input')['value']
         params = {'fnid': fnid, 'text': comment}
 
         try:
@@ -154,18 +140,13 @@ class HNapi():
         return False
 
     def getStories(self, list):
-        page = HNStory()
-        if list not in ('newest', 'ask', 'news'):
-            raise IndexError('{} is not a valid list.'.format(list))
-        stories = page.parseStories(readerutils.hnUrl(list))
+        stories = self.stories.parseStories(readerutils.hnUrl(list))
         return stories
 
     def getComments(self, ident, isAsk=False, legacy=False):
-        page = HNComments()
-        text, comments = page.parseComments(ident, isAsk, legacy)
+        text, comments = self.comments.parseComments(ident, isAsk, legacy)
         return text, comments
 
     def getSearchStories(self, startIndex, source):
-        page = HNSearchStory()
-        res = page.parseSearchStories(startIndex, source)
+        res = self.searchStories.parseSearchStories(startIndex, source)
         return res

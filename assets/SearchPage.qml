@@ -1,5 +1,6 @@
 import bb.cascades 1.2
 import "tart.js" as Tart
+import "global.js" as Global
 
 NavigationPane {
     id: searchPage
@@ -81,6 +82,7 @@ NavigationPane {
     }
 
     Page {
+        id: search
         titleBar: HNTitleBar {
             refreshEnabled: false
             id: titleBar

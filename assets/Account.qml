@@ -37,7 +37,7 @@ Container {
                 horizontalAlignment: HorizontalAlignment.Fill
                 textStyle.base: lightStyle.style
                 id: userLabel
-                text: "<span style='color:#ff8e00'>Logged in as:  </span>" + "deft"
+                text: "<span style='color:#ff8e00'>Logged in as:  </span>" + Global.username
                 textStyle.fontSize: FontSize.PointValue
                 textStyle.fontSizeValue: 7
                 textStyle.color: Color.DarkGray

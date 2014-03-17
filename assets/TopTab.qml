@@ -6,7 +6,6 @@ import "global.js" as Global
 
 NavigationPane {
     id: tabNav
-    property alias whichPage: topPage.whichPage
     property alias busy: topPage.busy
     
     onPopTransitionEnded: {
@@ -26,25 +25,6 @@ NavigationPane {
     }
     Page {
         id: top
-        attachedObjects: [
-            PostSheet {
-                id: postSheet
-            },
-            ComponentDefinition {
-                id: postAction
-                ActionItem {
-                    title: "Post Story"
-                    imageSource: "asset:///images/icons/ic_add_story.png"
-                    ActionBar.placement: ActionBarPlacement.InOverflow
-                    onTriggered: {
-                        onTriggered:
-                        {
-                            postSheet.open();
-                        }
-                    }
-                }
-            }
-        ]
         titleBar: HNTitleBar {
             //            visibility: ChromeVisibility.Hidden
             id: titleBar
@@ -72,11 +52,8 @@ NavigationPane {
                 titleBar.refreshEnabled = false;
             }
 
-            function onAddtopStories(data) {
-                if (Global.username != "" && theModel.size() == 0) {
-                    var item = postAction.createObject();
-                    top.addAction(item);
-                }
+            function onAddnewsStories(data) {
+
                 morePage = data.moreLink;
                 topPage.errorLabel.visible = false;
                 var lastItem = theModel.size() - 1
@@ -103,7 +80,7 @@ NavigationPane {
                 titleBar.refreshEnabled = ! topPage.busy;
             }
 
-            function onTopListError(data) {
+            function onNewsListError(data) {
                 if (theModel.isEmpty() != true) {
                     var lastItem = theModel.size() - 1
                     //console.log(lastItemType);

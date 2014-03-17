@@ -5,9 +5,8 @@ import "tart.js" as Tart
 
 NavigationPane {
     id: tabNav
-    property alias whichPage: newPage.whichPage
+    property alias theModel: newPage.theModel
     property alias busy: newPage.busy
-    property variant theModel: newPage.theModel
 
     onPopTransitionEnded: {
         page.destroy();
@@ -27,25 +26,6 @@ NavigationPane {
 
     Page {
         id: newest
-        attachedObjects: [
-            PostSheet {
-                id: postSheet
-            },
-            ComponentDefinition {
-                id: postAction
-                ActionItem {
-                    title: "Post Story"
-                    imageSource: "asset:///images/icons/ic_add_story.png"
-                    ActionBar.placement: ActionBarPlacement.InOverflow
-                    onTriggered: {
-                        onTriggered:
-                        {
-                            postSheet.open();
-                        }
-                    }
-                }
-            }
-        ]
         titleBar: HNTitleBar {
             id: titleBar
             text: "Reader YC - Newest"
@@ -73,11 +53,7 @@ NavigationPane {
             }
 
             id: newPage
-            function onAddnewStories(data) {
-                if (Global.username != "" && theModel.size() == 0) {
-                    var item = postAction.createObject();
-                    newest.addAction(item);
-                }
+            function onAddnewestStories(data) {
                 morePage = data.moreLink;
                 errorLabel.visible = false;
                 var lastItem = theModel.size() - 1
@@ -104,7 +80,7 @@ NavigationPane {
                 titleBar.refreshEnabled = ! busy;
             }
 
-            function onNewListError(data) {
+            function onNewestListError(data) {
                 if (theModel.isEmpty() != true) {
                     var lastItem = theModel.size() - 1
                     //console.log(lastItemType);

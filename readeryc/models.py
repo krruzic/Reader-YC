@@ -1,8 +1,11 @@
 from bs4 import BeautifulSoup
-import re, json, os, requests 
+import re
+import json
+import os
+import requests
 from datetime import *
 from .readerutils import readerutils
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 
 
 class NoResultsFoundException(Exception):
@@ -11,32 +14,38 @@ class NoResultsFoundException(Exception):
 
 class HNComments():
 
-    def flatten(self,comments, level = 0):
-        #comments is a list
+    def flatten(self, comments, level=0):
+        # comments is a list
 
         if not comments:
-            return []#exit case
+            return []  # exit case
 
         res = []
-        #add the level key so you can keep track of the original level
+        # add the level key so you can keep track of the original level
         for comment in comments:
             comment['indent'] = level * 40
-            parts = comment['created_at'].split('.')
-            dt = datetime.strptime(parts[0], "%Y-%m-%dT%H:%M:%S")
-            comment['time'] = readerutils.prettyDate(dt) # returns a relative date
+            if ('created_at' not in comment):
+                comment['text'] = "[deleted]"
+                comment['author'] = "Deleted comment"
+                comment['time'] = ""
+            if ('created_at' in comment):
+                parts = comment['created_at'].split('.')
+                dt = datetime.strptime(parts[0], "%Y-%m-%dT%H:%M:%S")
+                # returns a relative date
+                comment['time'] = readerutils.prettyDate(dt)
 
-            #removes the childs from the item (important)
+            # removes the childs from the item (important)
             childs = comment.pop('children', [])
-            #adds the item to the result
+            # adds the item to the result
             res.append(comment)
-            #and the flattened childs later
-            res += self.flatten(childs, level+1)
-            #in the next loop the next sibling will be added
+            # and the flattened childs later
+            res += self.flatten(childs, level + 1)
+            # in the next loop the next sibling will be added
 
         return res
 
     def apiFetch(self, source, isAsk):
-        #h = html.parser.HTMLParser() # To decode the HTML entities
+        # h = html.parser.HTMLParser() # To decode the HTML entities
 
         toFlatten = source.json()
         text = ""
@@ -49,7 +58,7 @@ class HNComments():
             if (toFlatten['message'] == 'ObjectID does not exist'):
                 return text, []
         comments = self.flatten(toFlatten['children'])
-        return text, comments # possibly zero comments
+        return text, comments  # possibly zero comments
 
     def legacyText(self, soup):
         """ Returns the text of an 'Ask HN' post
@@ -61,12 +70,11 @@ class HNComments():
         text = text_content[textStart:textEnd]
         if ('<form action="/r"' in text):
             return ""
-        text = text.replace('<p>', '\n') # Replace unclosed <p>'s with new lines
-        text = text.replace('</p>', '') # Remove the crap BS4 adds
+        # Replace unclosed <p>'s with new lines
+        text = text.replace('<p>', '\n')
+        text = text.replace('</p>', '')  # Remove the crap BS4 adds
 
         return text
-
-
 
     def legacyFetch(self, page, isAsk):
         """ Extract all the comments from a comments page.
@@ -79,7 +87,7 @@ class HNComments():
             author: 'pg'
             }
         """
-        
+
         #soupStart = time.time()
         soup = BeautifulSoup(page.content)
         #soupEnd = time.time()
@@ -98,7 +106,6 @@ class HNComments():
             return text, []
         del comment_tables[-1]
 
-
         comments = []
         totalTime = 0
         itercomments = iter(comment_tables)
@@ -116,7 +123,7 @@ class HNComments():
             body = soup.find_all('span', 'comment')
             body = list(map(str, body))
 
-            for img in soup.find_all('img', {"src" : "s.gif"}):
+            for img in soup.find_all('img', {"src": "s.gif"}):
                 indent = (img.get('width'))
             if int(indent) % 10 == 0:
                 comment['indent'] = int(indent)
@@ -133,14 +140,14 @@ class HNComments():
             if (comment['author'] == None):
                 comment['author'] = str(head)[authorStart:authorEnd]
 
-
             timeStart = str(head).find('</a>') + 5
             timeEnd = str(head).find(' |')
             if (comment['time'] == None):
                 comment['time'] = str(head)[timeStart:timeEnd]
 
             if (comment['id'] == None):
-                comment['id'] = head[0].find_all('a')[1]['href'].split('item?id=')[1]
+                comment['id'] = head[0].find_all(
+                    'a')[1]['href'].split('item?id=')[1]
 
             textStart = 44
             textEnd = body[0].find('</font>')
@@ -153,8 +160,6 @@ class HNComments():
             #totalTime = totalTime + (endTime - startTime)
         #print("Time to parse ", len(comment_tables), " comments: ", totalTime)
         return text, comments
-
-
 
     def parseComments(self, source, isAsk=False, legacy=False):
         """Gets the comments and text of the post
@@ -173,7 +178,6 @@ class HNComments():
             r = requests.get(commentsURL, headers=readerutils.HEADERS)
             text, comments = self.apiFetch(r, isAsk)
         return text, comments
-
 
 
 class HNStory():
@@ -204,16 +208,18 @@ class HNStory():
         stories = []
 
         for i, m in zip(head, metadata):
-            story ={'title': None, 
-                'domain': None, 
-                'score': None, 
-                'author': None, 
-                'time': None, 
-                'commentCount': None, 
-                'link': None, 
-                'commentURL': 'news.ycombinator.com/item?id=-1', 
-                'hnid': '-1', 
-                'askPost': 'false'}
+            story = {
+                'title': None,
+                'domain': None,
+                'score': None,
+                'author': None,
+                'time': None,
+                'commentCount': None,
+                'link': None,
+                'commentURL': 'news.ycombinator.com/item?id=-1',
+                'hnid': '-1',
+                'askPost': 'false'
+            }
             story['title'] = i.find_all('a')[0].text
             story['link'] = i.find("a")["href"]
             if 'item?id='in story['link']:
@@ -221,28 +227,32 @@ class HNStory():
                 story['askPost'] = "true"
             try:
                 story['domain'] = i.find_all("span")[0].text
-                story['domain'] = re.search(r'\(([^)]*)\)', story['domain']).group(1) # Remove brackets from domain
+                story['domain'] = re.search(r'\(([^)]*)\)', story['domain']).group(
+                    1)  # Remove brackets from domain
             except:
                 story['domain'] = "news.ycombinator.com"
 
             if 'point' in m.text:
-                story_time = re.search(r'by \S+ (\d+.*?)\s+\|', m.text).group(1) + ' '
+                story_time = re.search(
+                    r'by \S+ (\d+.*?)\s+\|', m.text).group(1) + ' '
                 story['time'] = story_time
                 story['score'] = re.search("(\d+)\s+points?", m.text).group(1)
                 story['author'] = m.a.text.strip()
                 story['hnid'] = m.span['id'].split('_')[1]
-                story['commentURL'] = "https://news.ycombinator.com/item?id=" + story['hnid']
-                if 'discuss' in m.text: # Zero comments
+                story['commentURL'] = "https://news.ycombinator.com/item?id=" + \
+                    story['hnid']
+                if 'discuss' in m.text:  # Zero comments
                     story['commentCount'] = '0'
                 else:
                     try:
-                        story['commentCount'] = re.search("(\d+)\s+comments?", m.text).group(1)
+                        story['commentCount'] = re.search(
+                            "(\d+)\s+comments?", m.text).group(1)
                     except AttributeError:
                         # I found an instance where there was just the text
                         # 'comments', without any count. I'm assuming that
                         # even stranger things could happen
                         story['commentCount'] = '0'
-            else: # Jobs post
+            else:  # Jobs post
                 story['time'] = m.text.strip()
                 story['commentCount'] = '0'
                 story['score'] = '0'
@@ -253,7 +263,6 @@ class HNStory():
 
         return stories, head[-1].find_all('a')[0]['href']
 
-
     def parseStories(self, source):
         url = source
         print("curling page: " + url)
@@ -263,57 +272,60 @@ class HNStory():
         stories, moreLink = self.parseData(page)
         return stories, moreLink
 
+
 class HNSearchStory():
-    def parseSearchStories(self, startIndex, source):
+
+    def parseSearchStories(self, pageNumber, source):
         """
         Queries the HNSearch API and returns
         tuples of the results
         """
-        print("STARTING: " + str(startIndex))
-        url = 'http://api.thriftdb.com/api.hnsearch.com/items/_search?filter[fields][title]={0}&start={1}&limit=30&sortby=create_ts+desc'.format(quote(source), startIndex)  # requests the search from the api
-        print(url)
-        r = requests.get(url, headers=readerutils.HEADERS) # reads the returned data
+        author = ""
+        print("STARTING: " + str(pageNumber))
+        if (source[1] != ""):
+            author = ",author_" + source[1]
+        url = "http://hn.algolia.com/api/v1/search_by_date?query={0}&page={1}&tags=story{2}".format(
+            quote(source[0]), pageNumber, author)
+        # reads the returned data
+        r = requests.get(url, headers=readerutils.HEADERS)
         print("Page curled")
         items = r.json()
-        if items['hits'] == 0:
-            raise NoResultsFoundException('No stories were found')
 
-        incomplete_iso_8601_format = '%Y-%m-%dT%H:%M:%SZ' # The time is returned in this format
+        # The time is returned in this format
+        incomplete_iso_8601_format = '%Y-%m-%dT%H:%M:%S.000Z'
         res = []
-        results = items['results']
-        for e in items['results']:
-            if e['item']['text'] != None: # Javascript uses lowercase for bools...
-                isAsk = 'true'
-            else:
-                isAsk = 'false'
-            _id = e['item']['id']
-            title = e['item']['title']
-            points = e['item']['points']
-            if (points == 1):
-                points = str(points)
-            else:
-                points = str(points)
-            num_comments = e['item']['num_comments']
-            domain = e['item']['domain']
-            poster = e['item']['username']
-            articleURL = e['item']['url']
+        for e in items['hits']:
+            _id = e['objectID']
+            title = e['title']
+            points = e['points']
+            articleURL = e['url']
+            parsed_uri = urlparse(articleURL)
+            domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+            num_comments = e['num_comments']
+            parts = articleURL.split('//', 1)
+            poster = e['author']
             commentURL = 'https://news.ycombinator.com/item?id=' + str(_id)
-            if (isAsk == 'true'): # Ask posts don't have a domain or articleURL
+
+            if e['story_text'] != "":  # Javascript uses lowercase for bools...
+                isAsk = 'true'
                 domain = "http://news.ycombinator.com/"
                 articleURL = commentURL
-            timestamp = readerutils.prettyDate(datetime.strptime(e['item']['create_ts'], incomplete_iso_8601_format))
+            else:
+                isAsk = 'false'
+            timestamp = readerutils.prettyDate(
+                datetime.strptime(e['created_at'], incomplete_iso_8601_format))
             result = {
-                'title': title, 
-                'poster': poster, 
-                'points': points, 
-                'num_comments': str(num_comments), 
-                'timestamp': timestamp, 
-                'id': str(_id), 
-                'domain': domain, 
-                'articleURL': articleURL, 
-                'commentURL': commentURL, 
+                'title': title,
+                'poster': poster,
+                'points': points,
+                'num_comments': str(num_comments),
+                'timestamp': timestamp,
+                'id': str(_id),
+                'domain': domain,
+                'articleURL': articleURL,
+                'commentURL': commentURL,
                 'isAsk': isAsk
-                }
+            }
             res.append(result)
 
         return res

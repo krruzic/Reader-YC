@@ -12,6 +12,7 @@ TabbedPane {
     property string coverTime: ""
     property int currStory: 0
     signal settingsChanged()
+
     Menu.definition: MenuDefinition {
         helpAction: HelpActionItem {
             imageSource: "asset:///images/icons/ic_help.png"
@@ -37,10 +38,19 @@ TabbedPane {
             ActionItem {
                 imageSource: "asset:///images/icons/ic_info.png"
                 title: "About"
-
                 onTriggered: {
                     var page = aboutDef.createObject(activeTab.content);
                     activeTab.push(page)
+                    Application.menuEnabled = false;
+                }
+            },
+            ActionItem {
+                imageSource: "asset:///images/icons/ic_add_story.png"
+                title: "Post"
+                id: postMenuAction
+                enabled: settings.loggedIn
+                onTriggered: {
+                    postSheet.open();
                     Application.menuEnabled = false;
                 }
             }
@@ -54,9 +64,6 @@ TabbedPane {
 
         TopTab { // All tab content is a navpPane
             id: top
-            onCreationCompleted: {
-                top.whichPage = 'topPage'
-            }
             onPopTransitionEnded: {
                 page.destroy();
                 Application.menuEnabled = true;
@@ -74,9 +81,6 @@ TabbedPane {
         id: askTab
         AskTab {
             id: ask
-            onCreationCompleted: {
-                ask.whichPage = 'askPage'
-            }
             onPopTransitionEnded: {
                 page.destroy();
                 Application.menuEnabled = true;
@@ -86,7 +90,7 @@ TabbedPane {
         onPush: {
             ask.push(p);
         }
-        
+
     }
     Tab {
         title: qsTr("Newest")
@@ -94,9 +98,6 @@ TabbedPane {
         id: newTab
         NewTab {
             id: newest
-            onCreationCompleted: {
-                newest.whichPage = 'newestPage'
-            }
             onPopTransitionEnded: {
                 page.destroy();
                 Application.menuEnabled = true;
@@ -144,17 +145,16 @@ TabbedPane {
             if (ask.theModel.isEmpty()) {
                 console.log("LOADING ASK PAGE")
                 Tart.send('requestPage', {
-                        source: ask.whichPage,
-                        sentBy: ask.whichPage
+                        source: 'ask',
+                        sentBy: 'ask'
                     });
             }
         }
         if (activeTab == newTab) {
             if (newest.theModel.isEmpty()) {
-
                 Tart.send('requestPage', {
-                        source: newest.whichPage,
-                        sentBy: newest.whichPage
+                        source: 'newest',
+                        sentBy: 'newest'
                     });
             }
         }
@@ -246,6 +246,9 @@ TabbedPane {
     }
 
     attachedObjects: [
+        PostSheet {
+            id: postSheet
+        },
         ComponentDefinition {
             id: aboutDef
             source: "asset:///AboutPage.qml"
@@ -303,7 +306,6 @@ TabbedPane {
                 settingsChanged();
             }
             onUsernameChanged: {
-                Global.username = username;
                 settingsChanged();
             }
             onLegacyFetchChanged: {

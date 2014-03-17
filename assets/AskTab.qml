@@ -6,7 +6,6 @@ import "global.js" as Global
 
 NavigationPane {
     id: tabNav
-    property alias whichPage: askPage.whichPage
     property alias busy: askPage.busy
     property variant theModel:askPage.theModel
     
@@ -31,25 +30,6 @@ NavigationPane {
 
     Page {
         id: ask
-        attachedObjects: [
-            PostSheet {
-                id: postSheet
-            },
-            ComponentDefinition {
-                id: postAction
-                ActionItem {
-                    title: "Post Story"
-                    imageSource: "asset:///images/icons/ic_add_story.png"
-                    ActionBar.placement: ActionBarPlacement.InOverflow
-                    onTriggered: {
-                        onTriggered:
-                        {
-                            postSheet.open();
-                        }
-                    }
-                }
-            }
-        ]
         titleBar: HNTitleBar {
             id: titleBar
             text: "Reader YC - Ask HN"
@@ -78,10 +58,6 @@ NavigationPane {
             id: askPage
             
             function onAddaskStories(data) {
-                if (Global.username != "" && theModel.size() == 0) {
-                    var item = postAction.createObject();
-                    ask.addAction(item);
-                }
                 morePage = data.moreLink;
                 errorLabel.visible = false;
                 var lastItem = theModel.size() - 1

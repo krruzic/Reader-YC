@@ -87,7 +87,7 @@ Container {
                 title: "Copy Article Link"
                 imageSource: "asset:///images/icons/ic_copy_link.png"
                 onTriggered: {
-                    Tart.send('copyLink', {
+                    Tart.send('copy', {
                             articleLink: ListItemData.articleURL
                         });
                 }

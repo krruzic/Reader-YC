@@ -7,18 +7,22 @@ Sheet {
     peekEnabled: false
     ActionBar.placement: ActionBarPlacement.Default
     Page {
+        id: postPage
+        onCreationCompleted: {
+            Tart.register(postPage);
+        }
         function onStoryPosted(data) {
-        	if (data.result == 'true') {
-        	    resultToast.body = "Story successfully posted!"
-        	    resultToast.cancel();
-        	    resultToast.show();
-        	    sheet.close();
-        	}
-        	else {
+            if (data.result == 'true') {
+                resultToast.body = "Story successfully posted!"
+                resultToast.cancel();
+                resultToast.show();
+                Application.menuEnabled = true;
+                sheet.close();
+            } else {
                 resultToast.body = "Story could not be posted, try again!"
                 resultToast.cancel();
                 resultToast.show();
-        	}
+            }
         }
         titleBar: HNTitleBar {
             text: "Reader YC - Post a Story"
@@ -71,13 +75,15 @@ Sheet {
                             backgroundVisible: ! enabled
                             onTextChanging: {
                                 if (text != "") {
-                                    bodyField.enabled = false
+                                    bodyField.enabled = false;
                                 }
                                 if (text == "") {
-                                    bodyField.enabled = true
+                                    bodyField.enabled = true;
                                 }
                                 if (text != "" && titleField.text != "") {
-                                    submitButton.enabled = true
+                                    submitButton.enabled = true;
+                                } else {
+                                    submitButton.enabled = false;
                                 }
                             }
                         }
@@ -87,7 +93,7 @@ Sheet {
                         background: background.imagePaint
                         TextArea {
                             id: bodyField
-                            enabled: false
+                            enabled: true
                             hintText: "Text body "
                             backgroundVisible: ! enabled
                             autoSize.maxLineCount: 10
@@ -101,6 +107,8 @@ Sheet {
                                 }
                                 if (text != "" && titleField.text != "") {
                                     submitButton.enabled = true
+                                } else {
+                                    submitButton.enabled = false;
                                 }
                             }
                         }
@@ -128,6 +136,7 @@ Sheet {
                             horizontalAlignment: HorizontalAlignment.Center
                             text: "Cancel"
                             onClicked: {
+                                Application.menuEnabled = true;
                                 sheet.close();
                             }
                         }

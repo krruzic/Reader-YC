@@ -34,7 +34,7 @@ Page {
     }
 
     function onLoginResult(data) {
-        if (data.result == "true") {
+        if (data.result == true) {
             settings.username = username;
             settings.loggedIn = true;
             print(settings.loggedIn);
@@ -44,6 +44,8 @@ Page {
         } else {
             settings.loggedIn = false;
             cacheDeleteToast.body = "Incorrect username/password";
+            settings.username = "";
+            Global.username = "";
             cacheDeleteToast.cancel();
             cacheDeleteToast.show();
             loginButton.enabled = true;
