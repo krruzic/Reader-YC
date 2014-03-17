@@ -6,6 +6,7 @@ import "global.js" as Global
 
 NavigationPane {
     id: tabNav
+    property alias whichPage: askPage.whichPage
     property alias busy: askPage.busy
     property variant theModel:askPage.theModel
     

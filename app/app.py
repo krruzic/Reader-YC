@@ -117,7 +117,7 @@ class App(tart.Application):
         except requests.exceptions.ConnectionError:
             tart.send('{0}ListError'.format(sentBy), text="<b><span style='color:#ff8e00'>Error getting stories</span></b>\nCheck your connection and try again!")
             return
-        except IndexError:
+        except readeryc.models.ExpiredLinkException::
             print("Expired link?")
             tart.send('{0}ListError'.format(sentBy), text="<b><span style='color:#ff8e00'>Link expired</span></b>\nPlease refresh the page")
             return

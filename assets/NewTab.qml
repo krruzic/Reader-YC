@@ -5,6 +5,7 @@ import "tart.js" as Tart
 
 NavigationPane {
     id: tabNav
+    property alias whichPage: newPage.whichPage
     property alias theModel: newPage.theModel
     property alias busy: newPage.busy
 

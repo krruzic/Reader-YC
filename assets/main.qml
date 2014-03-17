@@ -68,6 +68,9 @@ TabbedPane {
                 page.destroy();
                 Application.menuEnabled = true;
             }
+            onCreationCompleted: {
+                top.whichPage = 'news'
+            }
         }
         signal push(variant p)
         onPush: {
@@ -81,6 +84,9 @@ TabbedPane {
         id: askTab
         AskTab {
             id: ask
+            onCreationCompleted: {
+                ask.whichPage = 'ask'
+            }
             onPopTransitionEnded: {
                 page.destroy();
                 Application.menuEnabled = true;
@@ -98,6 +104,9 @@ TabbedPane {
         id: newTab
         NewTab {
             id: newest
+            onCreationCompleted: {
+                newest.whichPage = 'newest'
+            }
             onPopTransitionEnded: {
                 page.destroy();
                 Application.menuEnabled = true;

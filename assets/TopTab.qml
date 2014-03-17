@@ -7,6 +7,8 @@ import "global.js" as Global
 NavigationPane {
     id: tabNav
     property alias busy: topPage.busy
+    property alias whichPage: topPage.whichPage
+
     
     onPopTransitionEnded: {
         page.destroy();

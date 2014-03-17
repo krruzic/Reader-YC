@@ -11,6 +11,9 @@ from urllib.parse import quote, urlparse
 class NoResultsFoundException(Exception):
     pass
 
+class ExpiredLinkException(Exception):
+    pass
+
 
 class HNComments():
 
@@ -269,7 +272,11 @@ class HNStory():
         r = requests.get(url=url, headers=readerutils.HEADERS)
         page = r.content
         print("page curled")
+        if ("Unknown or expired link." in str(page)):
+            raise ExpiredLinkException("Expired link!")
         stories, moreLink = self.parseData(page)
+        if (moreLink != 'news2'):
+            moreLink = moreLink[1:]
         return stories, moreLink
 
 
