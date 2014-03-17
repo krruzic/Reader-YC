@@ -298,7 +298,7 @@ TabbedPane {
         },
         QtObject {
             id: settings
-
+            objectName: "settings"
             property bool openInBrowser: false
             property bool readerMode: false
             property bool loggedIn: false
@@ -315,6 +315,7 @@ TabbedPane {
                 settingsChanged();
             }
             onUsernameChanged: {
+                Global.username = username;
                 settingsChanged();
             }
             onLegacyFetchChanged: {

@@ -32,20 +32,19 @@ Page {
         username = user;
         console.log(loggedIn);
     }
-
+    onLoggedInChanged: {
+        console.log("Logged in set to: " + loggedIn);
+    }
     function onLoginResult(data) {
         if (data.result == true) {
             settings.username = username;
             settings.loggedIn = true;
-            print(settings.loggedIn);
             profileContainer.visible = true;
             cnt2.visible = false;
-            Global.username = username;
         } else {
             settings.loggedIn = false;
             cacheDeleteToast.body = "Incorrect username/password";
             settings.username = "";
-            Global.username = "";
             cacheDeleteToast.cancel();
             cacheDeleteToast.show();
             loginButton.enabled = true;
@@ -58,7 +57,6 @@ Page {
         loginButton.enabled = true;
         settings.loggedIn = false;
         settings.username = "";
-        Global.username = "";
         cacheDeleteToast.body = data.text;
         cacheDeleteToast.cancel();
         cacheDeleteToast.show();
@@ -117,7 +115,7 @@ Page {
                     cnt2.visible = false;
                     profileContainer.visible = false;
                 } else if (selectedIndex == 1) {
-                    if (Global.username != "") {
+                    if (loggedIn != "") {
                         cnt2.visible = false;
                         profileContainer.visible = true;
                     } else {
@@ -355,6 +353,11 @@ Page {
                         input {
                             flags: TextInputFlag.AutoCapitalizationOff | TextInputFlag.SpellCheckOff
                         }
+                        input.onSubmitted: {
+                            loginButton.clicked();
+                        }
+                        input.submitKey: SubmitKey.Go
+
                     }
                 }
                 Button {

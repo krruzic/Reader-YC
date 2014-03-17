@@ -28,10 +28,6 @@ NavigationPane {
         Tart.register(favouritesPage)
     }
     function onFillList(data) {
-        if (Global.username != "" && favouritesModel.size() == 0) {
-            var item = postAction.createObject();
-            favourites.addAction(item);
-        }
         console.log("Filling favourites")
         favouritesModel.clear();
 

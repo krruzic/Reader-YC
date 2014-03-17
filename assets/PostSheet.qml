@@ -1,6 +1,6 @@
 import bb.cascades 1.2
 import bb.system 1.0
-import "tart.js" as Tart
+//import "tart.js" as Tart
 
 Sheet {
     id: sheet
@@ -113,6 +113,34 @@ Sheet {
                             }
                         }
                         bottomMargin: 20
+                    }
+                    Container {
+                        id: helpContainer
+                        Label {
+                            text: "Text surrounded by asterisks will be italicized"
+                            bottomMargin: 0
+                            topMargin: 0
+                            textStyle.fontSizeValue: 5
+                            textStyle.base: lightStyle.style
+                            textStyle.fontStyle: FontStyle.Italic
+                        }
+                        Label {
+                            text: "Lines starting with 4 spaces will be wrapped in code tags" 
+                            bottomMargin: 0
+                            topMargin: 0
+                            textStyle.fontSizeValue: 5
+                            textStyle.base: lightStyle.style
+                            textStyle.fontStyle: FontStyle.Italic
+                        }
+                        Label {
+                            text: "Posting as: " + "<span style='color:#ff8e00'>" + settings.username + "</span>"
+                            bottomMargin: 0
+                            textStyle.fontSizeValue: 6
+                            topMargin: 0
+                            textStyle.base: lightStyle.style
+                            textFormat: TextFormat.Html
+                            textStyle.fontStyle: FontStyle.Italic
+                        }
                     }
                     Container {
                         layout: StackLayout {

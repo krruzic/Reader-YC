@@ -11,7 +11,7 @@ Container {
     property alias text: commentBox.text
     property string link: ""
     property string barColour: "#ff8e00"
-        
+
     horizontalAlignment: HorizontalAlignment.Fill
     leftPadding: indent
     onCreationCompleted: {
@@ -20,21 +20,23 @@ Container {
             replyAction.enabled = true;
         }
     }
+    
+    
     onContextMenuHandlerChanged: {
         if (link == "") {
-            replyAction.enabled = false;	
+            replyAction.enabled = false;
         }
         if (Global.username == "") {
             replyAction.enabled = false;
         }
     }
-//    onContextMenuHandlerChanged: {
-//        if (contextMenuHandler) {
-//            contextMenuHandlerChanged(contextMenuHandler)
-//            controlAdded(control)
-//            add(controls.)
-//        }
-//    }
+    //    onContextMenuHandlerChanged: {
+    //        if (contextMenuHandler) {
+    //            contextMenuHandlerChanged(contextMenuHandler)
+    //            controlAdded(control)
+    //            add(controls.)
+    //        }
+    //    }
     attachedObjects: [
         TextStyleDefinition {
             id: lightStyle
@@ -50,23 +52,23 @@ Container {
         }
     ]
 
-    function setHighlight(highlighted) {
-        if (highlighted) {
-            comment.background = Color.create("#e0e0e0")
-        } else {
-            comment.background = Color.White
-        }
-    }
-
-    // Connect the onActivedChanged signal to the highlight function
-    ListItem.onActivationChanged: {
-        setHighlight(ListItem.active);
-    }
-
-    // Connect the onSelectedChanged signal to the highlight function
-    ListItem.onSelectionChanged: {
-        setHighlight(ListItem.selected);
-    }
+//    function setHighlight(highlighted) {
+//        if (highlighted) {
+//            comment.background = Color.create("#e0e0e0")
+//        } else {
+//            comment.background = Color.White
+//        }
+//    }
+//
+//    // Connect the onActivedChanged signal to the highlight function
+//    ListItem.onActivationChanged: {
+//        setHighlight(ListItem.active);
+//    }
+//
+//    // Connect the onSelectedChanged signal to the highlight function
+//    ListItem.onSelectionChanged: {
+//        setHighlight(ListItem.selected);
+//    }
 
     function onCopyResult(data) {
         copyResultToast.body = "Comment copied!";
@@ -75,8 +77,7 @@ Container {
     }
     contextActions: [
         ActionSet {
-            title: commentBox.text
-            subtitle: ListItemData.poster
+            title: "Comment By: " + ListItemData.poster
             InvokeActionItem {
                 title: "Share Comment"
                 query {
@@ -140,18 +141,20 @@ Container {
                 }
             ]
             background: Color.White
-            Label {
+            TextArea {
                 translationX: 10
-                bottomMargin: 10
+                bottomMargin: 0
                 topMargin: 0
                 id: commentBox
                 text: "This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, This is a test comment, I know that it's short...."
-                multiline: true
+                //multiline: true
                 enabled: true
-//                textStyle.fontSizeValue: 6
+                //                textStyle.fontSizeValue: 6
+                backgroundVisible: false
                 textStyle.color: Color.Black
                 textStyle.base: lightStyle.style
                 textFormat: TextFormat.Html
+                editable: false
             }
             Divider {
                 topMargin: 0

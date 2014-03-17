@@ -94,7 +94,7 @@ Container {
             textStyle.fontStyle: FontStyle.Italic
         }
         Label {
-            text: "Posting as: " + "<span style='color:#ff8c00'>" + Global.username + "</span>"
+            text: "Posting as: " + "<span style='color:#ff8c00'>" + settings.username + "</span>"
             bottomMargin: 0
             textStyle.fontSizeValue: 6
             topMargin: 0
