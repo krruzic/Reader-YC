@@ -90,7 +90,7 @@ NavigationPane {
             text: "Reader YC - Search HN"
         }
         Container {
-            background: Color.White
+            
             Container {
                 topPadding: 10
                 leftPadding: 19
@@ -126,14 +126,16 @@ NavigationPane {
                         id: searchField
                         input.onSubmitted: {
                             start = 0;
-                            search = searchField.text;
+                            search = text;
                             author = authorField.text;
                             searchModel.clear();
+                            console.log("Search submitted" + text);
                             Tart.send('requestPage', {
-                                    source: [ search, author ],
+                                    source: text,
+                                    author: String(author),
                                     sentBy: 'searchPage',
                                     startIndex: start
-                            });
+                                });
                             //start = start + 30;
                             errorLabel.visible = false;
                             loading.visible = true;
@@ -141,7 +143,7 @@ NavigationPane {
                             authorField.visible = false;
                         }
                         input.submitKey: SubmitKey.Search
-                        rightPadding: 10                        
+                        rightPadding: 10
                     }
                     TextField {
                         leftPadding: 10
@@ -168,7 +170,8 @@ NavigationPane {
                             author = authorField.text;
                             searchModel.clear();
                             Tart.send('requestPage', {
-                                    source: [ search, author ],
+                                    source: searchField.text,
+                                    author: String(author),
                                     sentBy: 'searchPage',
                                     startIndex: start
                                 });
@@ -347,10 +350,11 @@ NavigationPane {
                                     //searchList.scrollToPosition(ScrollPosition.End, ScrollAnimation.Smooth);
                                     lastItemType = 'load';
                                     Tart.send('requestPage', {
-                                            source: [ search, author ],
+                                            source: searchField.text,
+                                            author: String(author),
                                             sentBy: 'searchPage',
                                             startIndex: start
-                                    });
+                                        });
                                     start = start + 1;
                                     busy = true;
                                 }

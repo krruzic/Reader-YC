@@ -153,7 +153,7 @@ Container {
         ]
         visible: true
         id: mainContainer
-        background: Color.White
+        
         horizontalAlignment: HorizontalAlignment.Fill
 
         Container {
@@ -214,7 +214,6 @@ Container {
                         }
                         leftPadding: 4
                         ImageView {
-                            rightPadding: 0
                             leftMargin: 0
                             imageSource: "asset:///images/comment.png"
                             maxHeight: 26

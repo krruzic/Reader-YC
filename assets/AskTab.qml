@@ -41,8 +41,8 @@ NavigationPane {
                     askPage.loading.visible = true;
                     busy = true;
                     Tart.send('requestPage', {
-                            source: 'askPage',
-                            sentBy: 'askPage'
+                            source: 'ask',
+                            sentBy: 'ask'
                         });
                     console.log("pressed")
                     askPage.theModel.clear();

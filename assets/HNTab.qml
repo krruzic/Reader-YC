@@ -23,7 +23,7 @@ Container {
 
     layout: DockLayout {
     }
-    background: Color.White
+    
     horizontalAlignment: HorizontalAlignment.Center
     verticalAlignment: VerticalAlignment.Center
     Container {

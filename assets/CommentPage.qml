@@ -209,7 +209,7 @@ Page {
     Container {
         id: mainContainer
 
-        background: Color.White
+        
         layout: DockLayout {
         }
         Container {

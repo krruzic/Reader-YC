@@ -144,7 +144,7 @@ Container {
         ]
         visible: true
         id: mainContainer
-        background: Color.White
+        
         horizontalAlignment: HorizontalAlignment.Fill
 
         Container {

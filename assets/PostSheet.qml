@@ -1,6 +1,6 @@
 import bb.cascades 1.2
 import bb.system 1.0
-//import "tart.js" as Tart
+import "tart.js" as Tart
 
 Sheet {
     id: sheet

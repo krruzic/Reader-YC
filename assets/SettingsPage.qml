@@ -84,7 +84,7 @@ Page {
     content: Container {
         horizontalAlignment: HorizontalAlignment.Fill
         topPadding: 10
-        background: Color.White
+        
         attachedObjects: [
             TextStyleDefinition {
                 id: lightStyle

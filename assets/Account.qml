@@ -5,7 +5,7 @@ Container {
     property alias bioField: bioField
     property alias emailField: emailField
 
-    background: Color.White
+    
     id: account
     visible: true
     horizontalAlignment: HorizontalAlignment.Fill

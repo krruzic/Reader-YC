@@ -32,23 +32,22 @@ NavigationPane {
         favouritesModel.clear();
 
         var stories = data.results;
-        console.log("DASFASDF" + stories[0]);
         for (var i = 0; i < stories.length; i ++) {
             var story = stories[i];
-            console.log(story);
+            console.log(story['title']);
 
             favouritesModel.append({
                     type: 'item',
-                    title: data.story['title'],
-                    domain: data.story['domain'],
-                    points: data.story['score'],
-                    poster: data.story['author'],
-                    timePosted: data.story['time'],
-                    commentCount: data.story['commentCount'],
-                    articleURL: data.story['link'],
-                    commentsURL: data.story['commentURL'],
-                    hnid: data.story['hnid'],
-                    isAsk: data.story['askPost']
+                    title: story['title'],
+                    domain: story['domain'],
+                    points: story['score'],
+                    poster: story['author'],
+                    timePosted: story['time'],
+                    commentCount: story['commentCount'],
+                    articleURL: story['link'],
+                    commentsURL: story['commentURL'],
+                    hnid: story['hnid'],
+                    isAsk: story['askPost']
                 });
                 
         }
@@ -80,7 +79,7 @@ NavigationPane {
 
         }
         Container {
-            background: Color.White
+            
             horizontalAlignment: HorizontalAlignment.Center
             verticalAlignment: VerticalAlignment.Center
             layout: DockLayout {

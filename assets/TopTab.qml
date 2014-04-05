@@ -37,8 +37,8 @@ NavigationPane {
                     topPage.loading.visible = true;
                     topPage.busy = true;
                     Tart.send('requestPage', {
-                            source: 'topPage',
-                            sentBy: 'topPage'
+                            source: 'news',
+                            sentBy: 'news'
                         });
                     console.log("pressed")
                     topPage.theModel.clear();

@@ -27,7 +27,7 @@ Container {
         replyButton.enabled = true;
     }
 
-    background: Color.White
+    
     leftPadding: 10
     rightPadding: 10
     topPadding: 10

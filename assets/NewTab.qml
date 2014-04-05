@@ -37,8 +37,8 @@ NavigationPane {
                     newPage.loading.visible = true;
                     newPage.busy = true;
                     Tart.send('requestPage', {
-                            source: 'newestPage',
-                            sentBy: 'newestPage'
+                            source: 'newest',
+                            sentBy: 'newest'
                         });
                     console.log("pressed")
                     newPage.theModel.clear();

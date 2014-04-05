@@ -7,7 +7,7 @@ Page {
         refreshEnabled: false
     }
     Container {
-        background: Color.White
+        
         attachedObjects: [
             TextStyleDefinition {
                 id: lightStyle

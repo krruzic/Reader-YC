@@ -46,7 +46,7 @@ class App(tart.Application):
 ## Handling requests
 
 
-    def onRequestPage(self, source, sentBy, askPost="false", deleteComments="false", startIndex=0):
+    def onRequestPage(self, source, sentBy, askPost="false", deleteComments="false", startIndex=0, author=""):
         """ This is really ugly, but it handles all url requests with threading,
             it also prevents the same request from being made twice
         """
@@ -76,12 +76,12 @@ class App(tart.Application):
             if len(self.cache) > 5: # If we have 5 reqs going, remove the first one before adding
                 self.cache.pop(0)
             self.cache.append(currReq) # Append it to cache
-            t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost))
+            t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost, author))
 
         else: # If the request does exist
             if len(self.cache) == 1: # If it is the only one we make the request (first request added)
                 print("Only request?")
-                t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost))
+                t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost, author))
             else: # If there are multiple requests
                 print("Checking request")
                 #ts, src = self.cache[position]['ident'] # Check the time the request was made
@@ -89,21 +89,21 @@ class App(tart.Application):
                     print("Request is the same!")
                     if datetime.now() - ts > timedelta(minutes=5): # Check if cache was made 5 mins ago
                         print("Old enough, request OK")
-                        t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost))
+                        t = threading.Thread(target=self.parseRequest, args=(source, sentBy, startIndex, askPost, author))
                     else:
                         return
         t.daemon = True
         t.start()
 
 
-    def parseRequest(self, source, sentBy, startIndex, askPost):
+    def parseRequest(self, source, sentBy, startIndex, askPost, author):
         print("Parsing request for: " + sentBy)
         if (sentBy in ['news', 'ask', 'newest']):
             self.storyRoutine(source, sentBy)
         elif (sentBy == 'commentPage'):
             self.commentsRoutine(source, askPost)
         elif (sentBy == 'searchPage'):
-            self.searchRoutine(startIndex, source)
+            self.searchRoutine(startIndex, [source, author])
         else:
             print("Error getting page...")
             return
@@ -182,7 +182,6 @@ class App(tart.Application):
             res = self.sess.postProfile(username, email, about)
         except:            
             tart.send('profileSaved', text="Unable to update profile, check connection and try again")
-
         if (res == True):
             tart.send('profileSaved', text="Profile updated!")
         else:
@@ -238,7 +237,7 @@ class App(tart.Application):
             tart.send('saveResult', text="Article already favourited")
 
 
-    def onDeleteArticle(self, hnid):
+    def onDeleteArticle(self, hnid, selected):
         conn = sqlite3.connect("data/favourites.db")
 
         hnid = str(hnid)
