@@ -11,6 +11,7 @@ from urllib.parse import quote, urlparse
 class NoResultsFoundException(Exception):
     pass
 
+
 class ExpiredLinkException(Exception):
     pass
 
@@ -25,22 +26,18 @@ class HNComments():
 
         res = []
         # add the level key so you can keep track of the original level
+
         for comment in comments:
-            comment['indent'] = level * 40
-            if ('created_at' not in comment):
-                comment['text'] = "[deleted]"
-                comment['author'] = "Deleted comment"
-                comment['time'] = ""
             if ('created_at' in comment):
+                comment['indent'] = level * 40
                 parts = comment['created_at'].split('.')
                 dt = datetime.strptime(parts[0], "%Y-%m-%dT%H:%M:%S")
                 # returns a relative date
                 comment['time'] = readerutils.prettyDate(dt)
-
+                # adds the item to the result
+                res.append(comment)
             # removes the childs from the item (important)
             childs = comment.pop('children', [])
-            # adds the item to the result
-            res.append(comment)
             # and the flattened childs later
             res += self.flatten(childs, level + 1)
             # in the next loop the next sibling will be added
@@ -48,14 +45,13 @@ class HNComments():
         return res
 
     def apiFetch(self, source, isAsk):
-        # h = html.parser.HTMLParser() # To decode the HTML entities
 
         toFlatten = source.json()
         text = ""
         if (isAsk == "true"):
             text = toFlatten['text']
 
-        #toFlatten = json.loads(decoded)
+        # toFlatten = json.loads(decoded)
         print("Flattening comments")
         if ('message' in toFlatten):
             if (toFlatten['message'] == 'ObjectID does not exist'):
@@ -91,10 +87,10 @@ class HNComments():
             }
         """
 
-        #soupStart = time.time()
+        # soupStart = time.time()
         soup = BeautifulSoup(page.content)
-        #soupEnd = time.time()
-        #print("Souping: ", soupEnd - soupStart)
+        # soupEnd = time.time()
+        # print("Souping: ", soupEnd - soupStart)
         if (isAsk == "true"):
             print("Getting text...")
             text = self.legacyText(soup)
@@ -113,7 +109,7 @@ class HNComments():
         totalTime = 0
         itercomments = iter(comment_tables)
         for table in itercomments:
-            #startTime = time.time()
+            # startTime = time.time()
             comment = {}
             comment['indent'] = None
             comment['author'] = None
@@ -149,8 +145,7 @@ class HNComments():
                 comment['time'] = str(head)[timeStart:timeEnd]
 
             if (comment['id'] == None):
-                comment['id'] = head[0].find_all(
-                    'a')[1]['href'].split('item?id=')[1]
+                comment['id'] = head[0].find_all('a')[1]['href'].split('item?id=')[1]
 
             textStart = 44
             textEnd = body[0].find('</font>')
@@ -158,10 +153,10 @@ class HNComments():
                 comment['text'] = body[0][textStart:textEnd]
 
             comments.append(comment)
-            #endTime = time.time()
-            #print("Time to parse 1 comment: ", endTime - startTime)
-            #totalTime = totalTime + (endTime - startTime)
-        #print("Time to parse ", len(comment_tables), " comments: ", totalTime)
+            # endTime = time.time()
+            # print("Time to parse 1 comment: ", endTime - startTime)
+            # totalTime = totalTime + (endTime - startTime)
+        # print("Time to parse ", len(comment_tables), " comments: ", totalTime)
         return text, comments
 
     def parseComments(self, source, isAsk=False, legacy=False):
@@ -196,7 +191,7 @@ class HNStory():
         }
         """
         soup = BeautifulSoup(page)
-        #print("Souping: ", soupEnd - soupStart)
+        # print("Souping: ", soupEnd - soupStart)
         story_tables = soup.find_all('table', 0)
         story_tables = list(map(str, story_tables))
 
@@ -212,16 +207,8 @@ class HNStory():
 
         for i, m in zip(head, metadata):
             story = {
-                'title': None,
-                'domain': None,
-                'score': None,
-                'author': None,
-                'time': None,
-                'commentCount': None,
-                'link': None,
-                'commentURL': 'news.ycombinator.com/item?id=-1',
-                'hnid': '-1',
-                'askPost': 'false'
+                'title': None, 'domain': None, 'score': None, 'author': None, 'time': None, 'commentCount': None,
+                'link': None, 'commentURL': 'news.ycombinator.com/item?id=-1', 'hnid': '-1', 'askPost': 'false'
             }
             story['title'] = i.find_all('a')[0].text
             story['link'] = i.find("a")["href"]
@@ -236,8 +223,7 @@ class HNStory():
                 story['domain'] = "news.ycombinator.com"
 
             if 'point' in m.text:
-                story_time = re.search(
-                    r'by \S+ (\d+.*?)\s+\|', m.text).group(1) + ' '
+                story_time = re.search(r'by \S+ (\d+.*?)\s+\|', m.text).group(1) + ' '
                 story['time'] = story_time
                 story['score'] = re.search("(\d+)\s+points?", m.text).group(1)
                 story['author'] = m.a.text.strip()
@@ -261,7 +247,7 @@ class HNStory():
                 story['score'] = '0'
                 story['author'] = 'ycombinator'
 
-            #print("Time to parse 1 story: ", endTime - startTime)
+            # print("Time to parse 1 story: ", endTime - startTime)
             stories.append(story)
 
         return stories, head[-1].find_all('a')[0]['href']

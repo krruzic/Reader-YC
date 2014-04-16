@@ -13,9 +13,11 @@ class readerutils():
 
     def textReplace(text):
         text = text.replace('rel="nofollow"', '')
-        text = text.replace('<p>', '\n') # Replace unclosed <p>'s with new lines
-        text = text.replace('</p>', '') # Remove the crap BS4 adds
-        text = text.replace('<pre><code>', '<p style="font-family: Monospace; font-size:5pt; font-weight:100;">')
+        # Replace unclosed <p>'s with new lines
+        text = text.replace('<p>', '\n')
+        text = text.replace('</p>', '')  # Remove the crap BS4 adds
+        text = text.replace(
+            '<pre><code>', '<p style="font-family: Monospace; font-size:5pt; font-weight:100;">')
         text = text.replace('</code></pre>', '</p>')
         text = text.replace('\\n', '\n')
         text = text.replace('\\t', '\t')
@@ -69,23 +71,23 @@ class readerutils():
 
     def get_rowdicts(cursor):
         results = []
-        for item in list(cursor):
-            res = { 'title': story[0], 'link': story[1], 'time': story[2], 
-                'author': story[3], 'commentCount': story[4], 'askPost': story[5], 'domain': story[6], 
-                'score': story[7], 'commentURL': story[8], 'hnid': story[8]
-            }
+        for story in list(cursor):
+            res = {'title': story[0], 'link': story[1], 'time': story[2],
+                   'author': story[3], 'commentCount': story[4], 'askPost': story[5], 'domain': story[6],
+                   'score': story[7], 'commentURL': story[8], 'hnid': story[8]
+                   }
             results.append(res)
         return results
 
-    def getColour(location):  
+    def getColour(location):
         gradient = [
-        "ff8e00", "FF8B00", "FA8904", "F68608", "F2840C", "ED8110", "E97F13",
-        "E57C17", "E07A1A", "DC781D", "D87620", "D37423", "CF7226", "CB7929",
-        "C66E2B", "C26C2E"
+            "ff8e00", "FF8B00", "FA8904", "F68608", "F2840C", "ED8110", "E97F13",
+            "E57C17", "E07A1A", "DC781D", "D87620", "D37423", "CF7226", "CB7929",
+            "C66E2B", "C26C2E"
         ]
         print("location given: ", location)
 
         if location > 16:
-            return "FFFFFF"
+            return "C26C2E"
 
         return gradient[location]
