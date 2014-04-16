@@ -7,13 +7,13 @@ Page {
         //refreshEnabled: true
     }
     Container {
-        
+
         attachedObjects: [
             TextStyleDefinition {
                 id: lightStyle
                 base: SystemDefaults.TextStyles.BodyText
-//                fontSize: FontSize.PointValue
-//                fontSizeValue: 7
+                //                fontSize: FontSize.PointValue
+                //                fontSizeValue: 7
                 fontWeight: FontWeight.W300
             }
         ]
@@ -74,7 +74,7 @@ Page {
                     }
                     Label {
                         textStyle.base: lightStyle.style
-                        text: "<b>Bug?</b>"
+                        text: "<b>Found a Bug?</b>"
                         textFormat: TextFormat.Html
                         textStyle.color: Color.create("#434344")
                         bottomMargin: 0
@@ -114,7 +114,7 @@ Page {
                     }
                     Label {
                         textStyle.base: lightStyle.style
-                        text: "<b>Feature Request?</b>"
+                        text: "<b>Have a Feature Request?</b>"
                         textFormat: TextFormat.Html
                         textStyle.color: Color.create("#434344")
                         bottomMargin: 0
@@ -194,6 +194,55 @@ Page {
 
                     onClicked: {
                         invoke.trigger("bb.action.OPEN")
+                    }
+                }
+            }
+            Divider {
+
+            }
+            Container {
+                layout: StackLayout {
+                    orientation: LayoutOrientation.LeftToRight
+                }
+                Container {
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 6
+                    }
+                    Label {
+                        textStyle.base: lightStyle.style
+                        text: "<b>Join The Surge Co. BBM Channel</b>"
+                        textFormat: TextFormat.Html
+                        textStyle.color: Color.create("#434344")
+                        bottomMargin: 0
+                        topMargin: 0
+                    }
+                    Label {
+                        textStyle.base: lightStyle.style
+                        text: "The latest news on everything we're working on!"
+                        textStyle.fontSize: FontSize.PointValue
+                        textStyle.fontSizeValue: 6
+                        textStyle.color: Color.create("#ff8e00")
+                        bottomMargin: 0
+                        topMargin: 0
+                    }
+                }
+                Button {
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 1
+                    }
+                    imageSource: "asset:///images/bbChannel.png"
+
+                    attachedObjects: [
+                        Invocation {
+                            id: invokeChannel
+                            query.uri: "bbmc:C001213C9"
+                            query.invokeTargetId: "sys.bbm.channels.card.previewer"
+                            query.invokeActionId: "bb.action.OPENBBMCHANNEL"
+                        }
+                    ]
+
+                    onClicked: {
+                        invokeChannel.trigger("bb.action.OPENBBMCHANNEL")
                     }
                 }
             }
