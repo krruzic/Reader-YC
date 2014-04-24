@@ -70,6 +70,7 @@ Container {
             listItemComponents: [
                 ListItemComponent {
                     type: 'item'
+                    
                     HNItem {
                         id: hnItem
                         property string type: ListItemData.type
@@ -234,10 +235,6 @@ Container {
         ComponentDefinition {
             id: commentPage
             source: "CommentPage.qml"
-        },
-        ComponentDefinition {
-            id: userPage
-            source: "UserPage.qml"
         }
     ]
 }

@@ -115,7 +115,6 @@ Page {
                 WebView {
                     id: webDisplay
 
-                    url: ""
                     // WebView settings, initial scaling and width used by the WebView when displaying its content.
                     settings.viewport: {
                         "width": "device-width",

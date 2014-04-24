@@ -397,10 +397,6 @@ NavigationPane {
         ComponentDefinition {
             id: commentPage
             source: "CommentPage.qml"
-        },
-        ComponentDefinition {
-            id: userPage
-            source: "UserPage.qml"
         }
     ]
 }

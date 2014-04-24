@@ -231,10 +231,6 @@ NavigationPane {
             id: commentPage
             source: "CommentPage.qml"
         },
-        ComponentDefinition {
-            id: userPage
-            source: "UserPage.qml"
-        },
         SystemToast {
             id: deleteResultToast
             body: "Favourite Removed!"
