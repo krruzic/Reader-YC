@@ -5,6 +5,10 @@ import "global.js" as Global
 
 Page {
     id: settingsPage
+
+    property variant baseColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? Color.create("#ffdddddf") : Color.create("#434344")
+    property variant secondaryColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "" : Color.create("#ff8e00")
+
     property bool loggedIn: false
     property string username: ""
     titleBar: HNTitleBar {
@@ -84,7 +88,7 @@ Page {
     content: Container {
         horizontalAlignment: HorizontalAlignment.Fill
         topPadding: 10
-        
+
         attachedObjects: [
             TextStyleDefinition {
                 id: lightStyle
@@ -147,7 +151,7 @@ Page {
                         textFormat: TextFormat.Html
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 7
-                        textStyle.color: Color.create("#434344")
+                        textStyle.color: baseColour
                     }
                     Label {
                         textStyle.base: lightStyle.style
@@ -189,7 +193,7 @@ Page {
                         textFormat: TextFormat.Html
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 7
-                        textStyle.color: Color.create("#434344")
+                        textStyle.color: baseColour
                     }
 
                     Label {
@@ -234,7 +238,7 @@ Page {
                         textFormat: TextFormat.Html
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 7
-                        textStyle.color: Color.create("#434344")
+                        textStyle.color: baseColour
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -266,8 +270,57 @@ Page {
                     }
                 }
                 Divider {
-
+                
                 }
+//                Container {
+//                    layout: DockLayout {
+//
+//                    }
+//                    rightPadding: 0
+//                    horizontalAlignment: HorizontalAlignment.Fill // Make full width
+//                    Label {
+//                        textStyle.base: lightStyle.style
+//                        horizontalAlignment: HorizontalAlignment.Left
+//                        verticalAlignment: VerticalAlignment.Top
+//                        text: "<b>Dark Theme</b>"
+//                        textFormat: TextFormat.Html
+//                        textStyle.fontSize: FontSize.PointValue
+//                        textStyle.fontSizeValue: 7
+//                        textStyle.color: baseColour
+//                        bottomMargin: 0
+//                        topMargin: 0
+//                    }
+//
+//                    Label {
+//                        textStyle.base: lightStyle.style
+//                        horizontalAlignment: HorizontalAlignment.Left
+//                        verticalAlignment: VerticalAlignment.Bottom
+//                        text: "Will take effect next time you start the app"
+//                        textStyle.fontSize: FontSize.PointValue
+//                        textStyle.fontSizeValue: 6
+//                        textStyle.color: Color.create("#ff8e00")
+//                        bottomMargin: 0
+//                        topMargin: 0
+//                        autoSize.maxLineCount: -1
+//                    }
+//                    ToggleButton {
+//                        horizontalAlignment: HorizontalAlignment.Right
+//
+//                        id: themeToggle
+//                        onCheckedChanged: {
+//                            if (checked == true) {
+//                                settings.legacyFetch = true;
+//                                console.log("Legacy Fetch on..")
+//                            } else {
+//                                settings.legacyFetch = false;
+//                                console.log("Legacy Fetch off")
+//                            }
+//                        }
+//                    }
+//                }
+//                Divider {
+//
+//                }
                 Button {
                     verticalAlignment: VerticalAlignment.Top
                     horizontalAlignment: HorizontalAlignment.Center
@@ -283,7 +336,7 @@ Page {
                     textStyle.base: lightStyle.style
                     verticalAlignment: VerticalAlignment.Bottom
                     horizontalAlignment: HorizontalAlignment.Center
-                    text: "This will delete all cached comments and favourited articles"
+                    text: "This will delete all favourited articles"
                     textStyle.fontSize: FontSize.PointValue
                     textStyle.fontSizeValue: 5
                     multiline: true
@@ -314,7 +367,7 @@ Page {
                 textStyle.fontSize: FontSize.PointValue
                 textStyle.textAlign: TextAlign.Center
                 textStyle.fontSizeValue: 9
-                textStyle.color: Color.DarkGray
+                textStyle.color: baseColour
                 textFormat: TextFormat.Html
                 multiline: true
             }
@@ -334,6 +387,8 @@ Page {
                         horizontalAlignment: HorizontalAlignment.Center
                         maxWidth: 500
                         id: usernameField
+                        textStyle.color: Color.create("#262626")
+
                         hintText: "Username"
                         input {
                             flags: TextInputFlag.AutoCapitalizationOff | TextInputFlag.SpellCheckOff
@@ -349,6 +404,8 @@ Page {
                         id: passwordField
                         hintText: "Password"
                         input.masking: TextInputMasking.Masked
+                        textStyle.color: Color.create("#262626")
+
                         inputMode: TextFieldInputMode.Password
                         input {
                             flags: TextInputFlag.AutoCapitalizationOff | TextInputFlag.SpellCheckOff

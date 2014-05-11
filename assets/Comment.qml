@@ -48,14 +48,19 @@ Container {
         SystemToast {
             id: copyResultToast
             body: ""
+        },
+        ImagePaintDefinition {
+            id: background
+            imageSource: "asset:///images/commentBox.png.amd"
+            repeatPattern: RepeatPattern.XY
         }
     ]
 
     function setHighlight(highlighted) {
         if (highlighted) {
-            comment.background = Color.create("#e0e0e0")
+            comment.background = background.imagePaint
         } else {
-            comment.background = Color.White
+            comment.background = null
         }
     }
 
@@ -69,8 +74,8 @@ Container {
         setHighlight(ListItem.selected);
     }
 
-    function onCopyResult(data) {
-        copyResultToast.body = "Comment copied!";
+    function onCommentCopied(data) {
+        copyResultToast.body = "Comment by " + data.poster + " copied!";
         copyResultToast.cancel();
         copyResultToast.show();
     }
@@ -90,7 +95,7 @@ Container {
             }
             ActionItem {
                 id: replyAction
-                title: "Reply to comment"
+                title: "Reply to Comment"
                 imageSource: "asset:///images/icons/ic_comments.png"
                 enabled: false
                 onTriggered: {
@@ -98,6 +103,19 @@ Container {
                     // (Reply item)
                     Application.menuEnabled = false;
                     commentItem.ListItem.view.addComment(commmentContainer.ListItem.indexInSection, link, indent);
+                }
+            }
+            ActionItem {
+                id: copyAction
+                title: "Copy Comment"
+                imageSource: "asset:///images/icons/ic_copy.png"
+                enabled: true
+                onTriggered: {
+                    var selectedItem = commentItem.ListItem.view.dataModel.data(commentItem.ListItem.indexPath);
+                    Tart.send('copyComment', {
+                            'comment': selectedItem.text,
+                            'poster': selectedItem.poster
+                        });
                 }
             }
         }
@@ -122,6 +140,7 @@ Container {
         Container {
             //rightPadding: 10
             id: comment
+            //background: Color.create("#ff5d5d5d")
             Container {
                 background: Color.create(barColour)
                 horizontalAlignment: HorizontalAlignment.Fill
@@ -155,7 +174,7 @@ Container {
                     multiline: true
                     enabled: true
                     //                textStyle.fontSizeValue: 6
-                    textStyle.color: Color.Black
+                    //textStyle.color: Color.Black
                     textStyle.base: lightStyle.style
                     textFormat: TextFormat.Html
                 }

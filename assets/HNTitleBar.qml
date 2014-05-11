@@ -30,7 +30,6 @@ TitleBar {
                 //orientation: LayoutOrientation.LeftToRight
             }
 
-            background: background.imagePaint
             horizontalAlignment: HorizontalAlignment.Fill
             verticalAlignment: VerticalAlignment.Center
             //topPadding: 15
@@ -41,9 +40,9 @@ TitleBar {
                         if (listName) {
                             console.log("GESTURE TRIGGERED!");
                             if (listName.toString().indexOf("QmlScrollView") == -1) { // Checks if the object is a lsitview/scrollview
-                                listName.scrollToPosition(ScrollPosition.Beginning, ScrollAnimation.Smooth);
+                                listName.scrollToPosition(ScrollPosition.Beginning, ScrollAnimation.None);
                             } else {
-                                listName.scrollToPoint(0, 0, ScrollAnimation.Smooth);
+                                listName.scrollToPoint(0, 0, ScrollAnimation.None);
                             }
                         } else {
                             return;
@@ -51,17 +50,7 @@ TitleBar {
                     }
                 }
             ]
-            //            Container { // Header
-            //                id: titleContainer
-            //                layout: DockLayout {
-            //                    //orientation: LayoutOrientation.LeftToRight
-            //                }
-            //                horizontalAlignment: HorizontalAlignment.Fill
-            //                verticalAlignment: VerticalAlignment.Fill
-            //                topPadding: 10
-            //                leftPadding: 15
-            //                rightPadding: 20
-            //                //bottomPadding: 10
+            background: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "" : background.imagePaint
             Container {
                 leftPadding: 15
                 verticalAlignment: VerticalAlignment.Center

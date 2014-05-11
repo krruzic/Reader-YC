@@ -116,7 +116,7 @@ Page {
         ComponentDefinition {
             id: commentAction
             ActionItem {
-                title: "Add a Comment"
+                title: "Comment"
                 imageSource: "asset:///images/icons/ic_comments.png"
                 ActionBar.placement: ActionBarPlacement.OnBar
                 onTriggered: {
@@ -134,7 +134,7 @@ Page {
     actions: [
         InvokeActionItem {
             ActionBar.placement: ActionBarPlacement.OnBar
-            title: "Share Comments"
+            title: "Share"
             query {
                 mimeType: "text/plain"
                 invokeActionId: "bb.action.SHARE"
@@ -145,7 +145,7 @@ Page {
         },
         ActionItem {
             ActionBar.placement: ActionBarPlacement.OnBar
-            title: "View Article"
+            title: "Open Article"
             imageSource: "asset:///images/icons/ic_story.png"
             onTriggered: {
                 var page = webPage.createObject();
@@ -174,7 +174,7 @@ Page {
             }
         },
         ActionItem {
-            title: "Favourite Article"
+            title: "Favourite"
             imageSource: "asset:///images/icons/ic_star_add.png"
             onTriggered: {
                 var date = new Date();

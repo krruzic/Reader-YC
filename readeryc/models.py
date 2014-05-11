@@ -29,6 +29,7 @@ class HNComments():
 
         for comment in comments:
             if ('created_at' in comment):
+                comment['text'] = comment['text'][3:]
                 comment['indent'] = level * 40
                 parts = comment['created_at'].split('.')
                 dt = datetime.strptime(parts[0], "%Y-%m-%dT%H:%M:%S")
@@ -49,7 +50,7 @@ class HNComments():
         toFlatten = source.json()
         text = ""
         if (isAsk == "true"):
-            text = toFlatten['text']
+            text = toFlatten['text'][3:]
 
         # toFlatten = json.loads(decoded)
         print("Flattening comments")
@@ -240,7 +241,7 @@ class HNStory():
                         # I found an instance where there was just the text
                         # 'comments', without any count. I'm assuming that
                         # even stranger things could happen
-                        story['commentCount'] = '0'
+                        story['commentCount'] = '?'
             else:  # Jobs post
                 story['time'] = m.text.strip()
                 story['commentCount'] = '0'

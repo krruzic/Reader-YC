@@ -304,6 +304,14 @@ class App(tart.Application):
             """)
         tart.send('cacheDeleted', text="Cache cleared!")
 
+    def onCopyComment(self, comment, poster):
+        soup = BeautifulSoup(comment)
+        from tart import clipboard
+        c = clipboard.Clipboard()
+        mimeType = 'text/plain'
+        c.insert(mimeType, str(soup.text))
+        tart.send('commentCopied', poster=poster)
+
     def onCopy(self, articleLink):
         from tart import clipboard
         c = clipboard.Clipboard()

@@ -93,8 +93,8 @@ NavigationPane {
             
             Container {
                 topPadding: 10
-                leftPadding: 19
-                rightPadding: 19
+                leftPadding: 15
+                rightPadding: 15
                 bottomPadding: 5
                 Container {
                     attachedObjects: [

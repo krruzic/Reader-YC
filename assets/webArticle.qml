@@ -40,7 +40,7 @@ Page {
         },
         InvokeActionItem {
             ActionBar.placement: ActionBarPlacement.OnBar
-            title: "Share Article"
+            title: "Share"
             query {
                 mimeType: "text/plain"
                 invokeActionId: "bb.action.SHARE"

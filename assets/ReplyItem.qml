@@ -31,6 +31,7 @@ Container {
     leftPadding: 10
     rightPadding: 10
     topPadding: 10
+    bottomPadding: 10
     attachedObjects: [
         SystemToast {
             id: commentToast
@@ -64,6 +65,7 @@ Container {
             text: ""
             id: commentText
             verticalAlignment: VerticalAlignment.Fill
+            textStyle.color: Color.create("#262626")
             hintText: "Enter your comment"
 
             onTextChanging: {
@@ -95,13 +97,14 @@ Container {
             textStyle.fontStyle: FontStyle.Italic
         }
         Label {
-            text: "Posting as: " + "<span style='color:#ff8e00'>" + settings.username + "</span>"
+            text: "Posting as: " + "<span style='color:#ff8e00'>" + Global.username + "</span>"
             bottomMargin: 0
             textStyle.fontSizeValue: 6
             topMargin: 0
             textStyle.base: lightStyle.style
             textFormat: TextFormat.Html
             textStyle.fontStyle: FontStyle.Italic
+            autoSize.maxLineCount: -1
         }
     }
     Container {
@@ -117,7 +120,7 @@ Container {
             maxWidth: 100
             horizontalAlignment: HorizontalAlignment.Right
             rightMargin: 10
-            imageSource: "asset:///images/icons/ic_comments_dk.png"
+            imageSource: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "asset:///images/icons/ic_comments.png" : "asset:///images/icons/ic_comments_dk.png"
             onClicked: {
                 enabled = false;
                 Tart.send('sendComment', {
@@ -132,7 +135,7 @@ Container {
             maxWidth: 100
             horizontalAlignment: HorizontalAlignment.Right
             rightMargin: 10
-            imageSource: "asset:///images/icons/ic_help_dk.png"
+            imageSource: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "asset:///images/icons/ic_help.png" : "asset:///images/icons/ic_help_dk.png"
             onClicked: {
                 if (helpContainer.visible) {
                     helpContainer.visible = false;
@@ -143,7 +146,8 @@ Container {
         }
         Button {
             maxWidth: 100
-            imageSource: "asset:///images/icons/ic_cancel_dk.png"
+            enabled: true
+            imageSource: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "asset:///images/icons/ic_cancel.png" :  "asset:///images/icons/ic_cancel_dk.png"
             onClicked: {
                 Application.menuEnabled = true;
                 helpContainer.visible = false;

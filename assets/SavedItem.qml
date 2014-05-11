@@ -109,9 +109,9 @@ Container {
 
     function setHighlight(highlighted) {
         if (highlighted) {
-            mainContainer.background = Color.create("#e0e0e0")
+            mainContainer.background = background.imagePaint
         } else {
-            mainContainer.background = Color.White
+            mainContainer.background = null
         }
     }
     function onSaveResult(data) {

@@ -2,6 +2,9 @@ import bb.cascades 1.2
 import "tart.js" as Tart
 import "global.js" as Global
 Container {
+    property variant baseColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? Color.create("#ffdddddf") : Color.create("#434344")
+    property variant secondaryColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "" : Color.create("#ff8e00")
+
     property alias bioField: bioField
     property alias emailField: emailField
 
@@ -40,7 +43,7 @@ Container {
                 text: "<span style='color:#ff8e00'>Logged in as:  </span>" + settings.username
                 textStyle.fontSize: FontSize.PointValue
                 textStyle.fontSizeValue: 7
-                textStyle.color: Color.DarkGray
+                textStyle.color: baseColour
                 textFormat: TextFormat.Html
                 multiline: true
             }
@@ -58,7 +61,7 @@ Container {
                     textStyle.fontSize: FontSize.PointValue
                     //        textStyle.textAlign: TextAlign.Center
                     textStyle.fontSizeValue: 7
-                    textStyle.color: Color.DarkGray
+                    textStyle.color: baseColour
                     textFormat: TextFormat.Html
                     multiline: true
                     bottomMargin: 100
@@ -67,6 +70,7 @@ Container {
                 Container {
                     background: background.imagePaint
                     TextField {
+                        textStyle.color: Color.create("#262626")
                         enabled: false
                         backgroundVisible: false
                         verticalAlignment: VerticalAlignment.Center
@@ -79,6 +83,7 @@ Container {
             Container {
                 background: background.imagePaint
                 TextArea {
+                    textStyle.color: Color.create("#262626")
                     autoSize.maxLineCount: 20
                     backgroundVisible: false
                     enabled: false

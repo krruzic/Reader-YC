@@ -40,8 +40,8 @@ Sheet {
                 layout: DockLayout {
                 }
                 horizontalAlignment: HorizontalAlignment.Center
-                leftPadding: 10
-                rightPadding: 10
+                leftPadding: 15
+                rightPadding: 15
                 topPadding: 20
 
                 attachedObjects: [

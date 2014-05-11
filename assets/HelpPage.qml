@@ -1,10 +1,13 @@
 import bb.cascades 1.2
 
 Page {
+    property variant baseColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? Color.create("#ffdddddf") : Color.create("#434344")
+    property variant secondaryColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? Color.create("#ff8e00") : Color.create("#ff8e00")
+
     titleBar: HNTitleBar {
         id: helpTitleBar
         text: "Reader YC - Help"
-        //refreshEnabled: true
+        refreshEnabled: false
     }
     Container {
 
@@ -36,7 +39,7 @@ Page {
                         textStyle.base: lightStyle.style
                         text: "<b>Reader YC is Open Source</b>"
                         textFormat: TextFormat.Html
-                        textStyle.color: Color.create("#434344")
+                        textStyle.color: baseColour
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -45,7 +48,7 @@ Page {
                         text: "Contribute on GitHub!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff8e00")
+                        textStyle.color: secondaryColour
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -54,7 +57,7 @@ Page {
                     layoutProperties: StackLayoutProperties {
                         spaceQuota: 1
                     }
-                    imageSource: "asset:///images/github.png"
+                    imageSource: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "asset:///images/github_lt.png" : "asset:///images/github.png"
                     onClicked: {
                         browserInvocation.query.uri = "https://github.com/krruzic/Reader-YC/"
                         browserInvocation.trigger(browserInvocation.query.invokeActionId);
@@ -76,7 +79,7 @@ Page {
                         textStyle.base: lightStyle.style
                         text: "<b>Found a Bug?</b>"
                         textFormat: TextFormat.Html
-                        textStyle.color: Color.create("#434344")
+                        textStyle.color: baseColour
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -85,7 +88,7 @@ Page {
                         text: "Email the devs!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff8e00")
+                        textStyle.color: secondaryColour
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -94,7 +97,7 @@ Page {
                     layoutProperties: StackLayoutProperties {
                         spaceQuota: 1
                     }
-                    imageSource: "asset:///images/mail.png"
+                    imageSource: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "asset:///images/mail_lt.png" : "asset:///images/mail.png"
 
                     onClicked: {
                         emailInvocation.trigger(emailInvocation.query.invokeActionId);
@@ -116,7 +119,7 @@ Page {
                         textStyle.base: lightStyle.style
                         text: "<b>Have a Feature Request?</b>"
                         textFormat: TextFormat.Html
-                        textStyle.color: Color.create("#434344")
+                        textStyle.color: baseColour
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -125,7 +128,7 @@ Page {
                         text: "Submit an issue!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff8e00")
+                        textStyle.color: secondaryColour
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -134,7 +137,7 @@ Page {
                     layoutProperties: StackLayoutProperties {
                         spaceQuota: 1
                     }
-                    imageSource: "asset:///images/feature.png"
+                    imageSource: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ?  "asset:///images/feature_lt.png" : "asset:///images/feature.png"
                     attachedObjects: [
                         Invocation {
                             id: featureInvocation
@@ -164,7 +167,7 @@ Page {
                         textStyle.base: lightStyle.style
                         text: "<b>Support Reader YC Development</b>"
                         textFormat: TextFormat.Html
-                        textStyle.color: Color.create("#434344")
+                        textStyle.color: baseColour
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -173,7 +176,7 @@ Page {
                         text: "Leave a Review on BlackBerry World!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff8e00")
+                        textStyle.color: secondaryColour
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -182,7 +185,7 @@ Page {
                     layoutProperties: StackLayoutProperties {
                         spaceQuota: 1
                     }
-                    imageSource: "asset:///images/bbWorld.png"
+                    imageSource: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "asset:///images/bbWorld_lt.png": "asset:///images/bbWorld.png"
 
                     attachedObjects: [
                         Invocation {
@@ -212,7 +215,7 @@ Page {
                         textStyle.base: lightStyle.style
                         text: "<b>Join The Surge Co. BBM Channel</b>"
                         textFormat: TextFormat.Html
-                        textStyle.color: Color.create("#434344")
+                        textStyle.color: baseColour
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -221,7 +224,7 @@ Page {
                         text: "The latest news on everything we're working on!"
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.fontSizeValue: 6
-                        textStyle.color: Color.create("#ff8e00")
+                        textStyle.color: secondaryColour
                         bottomMargin: 0
                         topMargin: 0
                     }
@@ -230,7 +233,7 @@ Page {
                     layoutProperties: StackLayoutProperties {
                         spaceQuota: 1
                     }
-                    imageSource: "asset:///images/bbChannel.png"
+                    imageSource: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "asset:///images/channel_lt.png": "asset:///images/channel.png"
 
                     attachedObjects: [
                         Invocation {
@@ -249,40 +252,6 @@ Page {
             Divider {
 
             }
-            //            Container {
-            //                layout: StackLayout {
-            //                    orientation: LayoutOrientation.LeftToRight
-            //                }
-            //                Container {
-            //                    layoutProperties: StackLayoutProperties {
-            //                        spaceQuota: 6
-            //                    }
-            //                    Label {
-            //                        text: "<b>Share the App</b>"
-            //                        textFormat: TextFormat.Html
-            //                        textStyle.color: Color.create("#434344")
-            //                    }
-            //                    Label {
-            //                        text: "Invite BBM Friends to download!"
-            //                        textStyle.fontSize: FontSize.PointValue
-            //                        textStyle.fontSizeValue: 6
-            //                        textStyle.color: Color.create("#ff8e00")
-            //                    }
-            //                }
-            //                Button {
-            //                    layoutProperties: StackLayoutProperties {
-            //                        spaceQuota: 1
-            //                    }
-            //                    imageSource: "asset:///images/BBM.png"
-            //
-            //                    onClicked: {
-            //                        console.log("Invoke BBM Invite HERE")
-            //                    }
-            //                }
-            //            }
-            //            Divider {
-            //
-            //            }
         }
         Label {
             textStyle.base: lightStyle.style
