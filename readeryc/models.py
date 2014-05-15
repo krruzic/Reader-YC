@@ -294,15 +294,14 @@ class HNSearchStory():
             points = e['points']
             articleURL = e['url']
             parsed_uri = urlparse(articleURL)
-            domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+            domain = '{uri.netloc}'.format(uri=parsed_uri)
             num_comments = e['num_comments']
-            parts = articleURL.split('//', 1)
             poster = e['author']
             commentURL = 'https://news.ycombinator.com/item?id=' + str(_id)
 
             if e['story_text'] != "":  # Javascript uses lowercase for bools...
                 isAsk = 'true'
-                domain = "http://news.ycombinator.com/"
+                domain = "news.ycombinator.com"
                 articleURL = commentURL
             else:
                 isAsk = 'false'
