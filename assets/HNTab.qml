@@ -70,7 +70,7 @@ Container {
             listItemComponents: [
                 ListItemComponent {
                     type: 'item'
-                    
+                    id: item
                     HNItem {
                         id: hnItem
                         property string type: ListItemData.type
@@ -85,6 +85,7 @@ Container {
                     }
                     function openComments(ListItemData) {
                         var page = commentPage.createObject();
+                        // replace this header stuff with a request
                         page.commentLink = ListItemData.hnid;
                         page.title = ListItemData.title;
                         page.titlePoster = ListItemData.poster;
@@ -153,25 +154,9 @@ Container {
                 }
                 console.log(selectedItem.isAsk);
                 if (selectedItem.isAsk == "true") {
-                    console.log("Ask post");
-                    var page = commentPage.createObject();
-                    console.log(selectedItem.commentsURL)
-                    page.commentLink = selectedItem.hnid;
-                    page.title = selectedItem.title;
-                    page.titlePoster = selectedItem.poster;
-                    page.titleTime = selectedItem.timePosted;
-                    page.titleDomain = selectedItem.domain;
-                    page.isAsk = selectedItem.isAsk;
-                    page.articleLink = selectedItem.articleURL;
-                    page.titleComments = selectedItem.commentCount;
-                    page.titlePoints = selectedItem.points
-                    tabNav.push(page);
+                    item.openComments(selectedItem);
                 } else {
-                    console.log('Item triggered. ' + selectedItem.articleURL);
-                    var page = webPage.createObject();
-                    page.htmlContent = selectedItem.articleURL;
-                    page.text = selectedItem.title;
-                    tabNav.push(page);
+                    item.openArticle(selectedItem);
                 }
                 return;
             }

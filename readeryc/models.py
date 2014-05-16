@@ -64,16 +64,8 @@ class HNComments():
         """ Returns the text of an 'Ask HN' post
         """
         text = ""
-        text_content = str(soup.findAll("tr")[7])
-        textStart = text_content.find('d><td>') + 6
-        textEnd = text_content.find('</td', textStart)
-        text = text_content[textStart:textEnd]
-        if ('<form action="/r"' in text):
-            return ""
-        # Replace unclosed <p>'s with new lines
-        text = text.replace('<p>', '\n')
-        text = text.replace('</p>', '')  # Remove the crap BS4 adds
-
+        for child in soup.find_all('td')[10].contents:
+            text = text + str(child)
         return text
 
     def legacyFetch(self, page, isAsk):
@@ -88,10 +80,7 @@ class HNComments():
             }
         """
 
-        # soupStart = time.time()
         soup = BeautifulSoup(page.content)
-        # soupEnd = time.time()
-        # print("Souping: ", soupEnd - soupStart)
         if (isAsk == "true"):
             print("Getting text...")
             text = self.legacyText(soup)
@@ -99,7 +88,6 @@ class HNComments():
             text = ''
 
         comment_tables = soup.find_all('table', 0)
-        comment_tables = list(map(str, comment_tables))
 
         del comment_tables[0:4]
         if (len(comment_tables) == 0):
@@ -107,57 +95,26 @@ class HNComments():
         del comment_tables[-1]
 
         comments = []
-        totalTime = 0
         itercomments = iter(comment_tables)
-        for table in itercomments:
+        for table in comment_tables:
             # startTime = time.time()
-            comment = {}
-            comment['indent'] = None
-            comment['author'] = None
-            comment['time'] = None
-            comment['text'] = None
-            comment['id'] = None
+            comment = {'indent': None, 'author': "Deleted",
+                       'time': "???", 'text': "", 'id': ""}
+            head = table.find('span', 'comhead')
+            body = table.find('span', 'comment')
+            for img in table.find_all('img', {"src": "s.gif"}):
+                comment['indent'] = int(img.get('width'))
 
-            soup = BeautifulSoup(table)
-            head = soup.find_all('span', 'comhead')
-            body = soup.find_all('span', 'comment')
-            body = list(map(str, body))
-
-            for img in soup.find_all('img', {"src": "s.gif"}):
-                indent = (img.get('width'))
-            if int(indent) % 10 == 0:
-                comment['indent'] = int(indent)
-            else:
-                next(itercomments)
-                # comment['indent'] = indent
-                # comment['author'] = ''
-                # comment['time'] = ''
-                # comment['text'] = '[deleted]'
-                # comment['id'] = ''
-
-            authorStart = str(head).find('user?id=') + 8
-            authorEnd = str(head).find('">', authorStart)
-            if (comment['author'] == None):
-                comment['author'] = str(head)[authorStart:authorEnd]
-
-            timeStart = str(head).find('</a>') + 5
-            timeEnd = str(head).find(' |')
-            if (comment['time'] == None):
-                comment['time'] = str(head)[timeStart:timeEnd]
-
-            if (comment['id'] == None):
-                comment['id'] = head[0].find_all('a')[1]['href'].split('item?id=')[1]
-
-            textStart = 44
-            textEnd = body[0].find('</font>')
-            if (comment['text'] == None):
-                comment['text'] = body[0][textStart:textEnd]
+            try:
+                comment['author'] = head.find('a').get_text()
+                comment['time'] = head.contents[1][1:-3]
+                comment['id'] = head.find('a', text="link")['href'].split('item?id=')[1]
+                for child in body.find('font').contents:
+                    comment['text'] = comment['text'] + str(child)
+            except:
+                comment['text'] = '[deleted]'
 
             comments.append(comment)
-            # endTime = time.time()
-            # print("Time to parse 1 comment: ", endTime - startTime)
-            # totalTime = totalTime + (endTime - startTime)
-        # print("Time to parse ", len(comment_tables), " comments: ", totalTime)
         return text, comments
 
     def parseComments(self, source, isAsk=False, legacy=False):
@@ -289,15 +246,10 @@ class HNSearchStory():
         incomplete_iso_8601_format = '%Y-%m-%dT%H:%M:%S.000Z'
         res = []
         for e in items['hits']:
-            _id = e['objectID']
-            title = e['title']
-            points = e['points']
+
             articleURL = e['url']
             parsed_uri = urlparse(articleURL)
-            domain = '{uri.netloc}'.format(uri=parsed_uri)
-            num_comments = e['num_comments']
-            poster = e['author']
-            commentURL = 'https://news.ycombinator.com/item?id=' + str(_id)
+            commentURL = 'https://news.ycombinator.com/item?id=' + str(e['objectID'])
 
             if e['story_text'] != "":  # Javascript uses lowercase for bools...
                 isAsk = 'true'
@@ -308,13 +260,13 @@ class HNSearchStory():
             timestamp = readerutils.prettyDate(
                 datetime.strptime(e['created_at'], incomplete_iso_8601_format))
             result = {
-                'title': title,
-                'poster': poster,
-                'points': points,
-                'num_comments': str(num_comments),
+                'title': e['title'],
+                'poster': e['author'],
+                'points': e['points'],
+                'num_comments': str(e['num_comments']),
                 'timestamp': timestamp,
-                'id': str(_id),
-                'domain': domain,
+                'id': str(e['objectID']),
+                'domain': '{uri.netloc}'.format(uri=parsed_uri),
                 'articleURL': articleURL,
                 'commentURL': commentURL,
                 'isAsk': isAsk

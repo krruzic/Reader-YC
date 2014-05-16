@@ -102,7 +102,7 @@ Page {
                                 Label {
                                     textStyle.base: lightStyle.style
                                     bottomMargin: 0
-                                    text: "After getting fed up with 'mobilized' versions of Hacker News and noticing the lack of a good BB10 client, Surge Co. decided to build Reader YC as a pet project. Reader YC is open source and <a href='http://github.com/krruzic/Reader-YC/'>contributions</a> are encouraged."
+                                    text: "After getting fed up with 'mobilized' versions of Hacker News and noticing the lack of a good BlackBerry client, Surge Co. decided to build Reader YC as a pet project. Reader YC is open source and <a href='http://github.com/krruzic/Reader-YC/'>contributions</a> are encouraged."
                                     textStyle.color: baseColour
                                     textFormat: TextFormat.Html
                                     multiline: true
@@ -151,7 +151,7 @@ Page {
                                 Label {
                                     textStyle.base: lightStyle.style
                                     bottomMargin: 0
-                                    text: "Reader YC is the first of many apps to come out of Surge Co. The Co-founders are huge BlackBerry fans and plan to continue supporting BB10 with native, beautiful apps."
+                                    text: "Reader YC is the first of many apps to come out of Surge Co. The Co-founders are huge BlackBerry fans and plan to continue supporting BlackBerry 10 with native, beautiful apps."
                                     textStyle.color: baseColour
                                     multiline: true
                                 }

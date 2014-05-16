@@ -4,22 +4,22 @@ TitleBar {
     property alias text: pageTitle.text
     property alias refreshEnabled: refreshButton.enabled
     property alias showButton: refreshButton.visible
-    property alias buttonImage: refreshButton.imageSource
-    //    /property alias buttonPressedImage: refreshButton.pressedImageSource
     property variant listName: null
     signal refreshPage()
     kind: TitleBarKind.FreeForm
     scrollBehavior: TitleBarScrollBehavior.Sticky
+    appearance: TitleBarAppearance.Plain
     kindProperties: FreeFormTitleBarKindProperties {
 
         Container {
+            //opacity: 0.7
             attachedObjects: [
                 TextStyleDefinition {
                     id: lightStyle
                     base: SystemDefaults.TextStyles.BodyText
                     fontSize: FontSize.PointValue
                     fontSizeValue: 7
-                    fontWeight: FontWeight.W300
+                    fontWeight: FontWeight.W500
                 },
                 LayoutUpdateHandler {
                     id: mainDimensions
@@ -31,7 +31,7 @@ TitleBar {
             }
 
             horizontalAlignment: HorizontalAlignment.Fill
-            verticalAlignment: VerticalAlignment.Center
+            verticalAlignment: VerticalAlignment.Fill
             //topPadding: 15
 
             gestureHandlers: [
@@ -50,15 +50,21 @@ TitleBar {
                     }
                 }
             ]
-            background: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "" : background.imagePaint
+            background: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? Color.create("#ff333333") : Color.create("#fff9f9f9")
             Container {
                 leftPadding: 15
-                verticalAlignment: VerticalAlignment.Center
+                //rightPadding: 15
+                verticalAlignment: VerticalAlignment.Fill
                 horizontalAlignment: HorizontalAlignment.Fill
                 layout: StackLayout {
                     orientation: LayoutOrientation.LeftToRight
                 }
+
                 ScrollView {
+                    rightMargin: 10
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 12
+                    }
                     scrollRole: ScrollRole.None
                     verticalAlignment: VerticalAlignment.Center
                     horizontalAlignment: HorizontalAlignment.Fill
@@ -71,61 +77,73 @@ TitleBar {
                         //textStyle.base: SystemDefaults.TextStyles.BigText
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.textAlign: TextAlign.Left
-                        textStyle.color: Color.White
+                        textStyle.color: Color.create("#ff8e00")
                         textFormat: TextFormat.Plain
                         enabled: false
                         textStyle.fontSizeValue: 8
                         textStyle.base: lightStyle.style
                     }
+                    accessibility.name: pageTitle.text
+
                 }
 
                 Container {
-                    leftPadding: 10
-                    leftMargin: 20
-                    rightPadding: 20
-                    verticalAlignment: VerticalAlignment.Center
-                    horizontalAlignment: HorizontalAlignment.Right
-                    visible: true
-                    ImageView {
-                        id: refreshButton
-                        enabled: true
-                        visible: enabled
-                        imageSource: "asset:///images/refresh.png"
-                        scalingMethod: ScalingMethod.AspectFit
-                        gestureHandlers: [
-                            TapHandler {
-                                onTapped: {
-                                    if (refreshButton.enabled)
-                                        refreshPage();
-                                }
-                            }
-                        ]
+                    rightMargin: 0
+                    leftMargin: 0
+                    topMargin: 0
+                    bottomMargin: 0
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 4
+
+                    }
+                    topPadding: 15
+                    bottomPadding: 15
+                    id: refreshButton
+                    visible: refreshEnabled
+
+                    layout: StackLayout {
+                        orientation: LayoutOrientation.LeftToRight
+                    }
+                    verticalAlignment: VerticalAlignment.Fill
+                    horizontalAlignment: HorizontalAlignment.Fill
+
+                    onTouch: {
+                        refreshPage();
+                    }
+                    Divider {
+                        horizontalAlignment: HorizontalAlignment.Left
+                        verticalAlignment: VerticalAlignment.Center
+                        rotationZ: 90
+                        rightMargin: 0
+                        leftMargin: 0
+                        topMargin: 0
+                        bottomMargin: 0
+                        maxHeight: 5
+
+                        //                    maxWidth: 5
+                        //                        rightPadding: 10
+                        //                        topPadding: 10
+                        //                        bottomPadding: 10
+                    }
+                    Label {
+                        text: "Refresh"
+                        translationX: -30
+                        verticalAlignment: VerticalAlignment.Center
+                        horizontalAlignment: HorizontalAlignment.Center
+                        //textStyle.base: SystemDefaults.TextStyles.BigText
+                        textStyle.fontSize: FontSize.PointValue
+                        textStyle.textAlign: TextAlign.Left
+                        textStyle.color: Color.create("#ff8e00")
+                        textFormat: TextFormat.Plain
+                        enabled: false
+                        textStyle.fontSizeValue: 6
+                        textStyle.base: lightStyle.style
+
                     }
                 }
-
-
             }
-            //                ImageButton {
-            //                    id: refreshButton
-            //                    enabled: false
-            //
-            //                    defaultImageSource: "asset:///images/refresh.png"
-            //                    pressedImageSource: "asset:///images/refresh.png"
-            //                    onClicked: {
-            //                        refreshPage();
-            //                    }
-            //                }
-            //                    minWidth: 86
-            //                    minHeight: 79
-            //                    maxWidth: 86
-            //                    maxHeight: 79
 
         }
-        attachedObjects: [
-            ImagePaintDefinition {
-                id: background
-                imageSource: "asset:///images/titlebar.png"
-            }
-        ]
+
     }
 }

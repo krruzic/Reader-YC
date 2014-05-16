@@ -9,7 +9,6 @@ Page {
     property string isAsk: ""
     property string commentLink: ""
     property string articleLink: ""
-    property string errorText: ""
     property string lastItemType: ""
     property bool busy: false
     property string title: ""
@@ -74,6 +73,7 @@ Page {
 
     function onAddText(data) {
         if (Global.username != "") {
+            commentPane.removeAction(actionAt(4));
             var item = commentAction.createObject();
             commentPane.addAction(item);
         }
@@ -283,8 +283,8 @@ Page {
                         CommentHeader {
                             id: commentHeader
                             topPadding: 10
-                            leftPadding: 19
-                            rightPadding: 19
+                            leftPadding: 20
+                            rightPadding: 20
                             property string type: ListItemData.type
                             bodyText: "<html>" + ListItemData.text + "</html>"
                             commentCount: ListItemData.commentCount
@@ -295,8 +295,8 @@ Page {
                         type: 'item'
                         Comment {
                             id: commentItem
-                            leftPadding: 19
-                            rightPadding: 19
+                            leftPadding: 20
+                            rightPadding: 0
                             property string type: ListItemData.type
                             time: ListItemData.timePosted
                             indent: ListItemData.indent

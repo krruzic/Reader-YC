@@ -81,16 +81,17 @@ Container {
     }
     contextActions: [
         ActionSet {
-            title: "Comment By: " + ListItemData.poster
+            title: "Comment by " + ListItemData.poster
             InvokeActionItem {
                 title: "Share Comment"
                 query {
                     mimeType: "text/plain"
                     invokeActionId: "bb.action.SHARE"
                 }
+                enabled: (commentBox.text == "[deleted]") ? false : true
                 onTriggered: {
                     var selectedItem = commentItem.ListItem.view.dataModel.data(commentItem.ListItem.indexPath);
-                    data = 'Comment by:  ' + selectedItem.poster + '\n' + "https://news.ycombinator.com/item?id=" + selectedItem.link + "\nShared using Reader YC"
+                    data = 'Comment by ' + selectedItem.poster + '\n' + "https://news.ycombinator.com/item?id=" + selectedItem.link + "\nShared using Reader YC"
                 }
             }
             ActionItem {
@@ -101,8 +102,11 @@ Container {
                 onTriggered: {
                     // insert new element into listview after selected item
                     // (Reply item)
-                    Application.menuEnabled = false;
-                    commentItem.ListItem.view.addComment(commmentContainer.ListItem.indexInSection, link, indent);
+                    var selectedItem = commentItem.ListItem.view.dataModel.data(commentItem.ListItem.indexPath);
+                    if (selectedItem.link != "") {
+                        Application.menuEnabled = false;
+                        commentItem.ListItem.view.addComment(commmentContainer.ListItem.indexInSection, link, indent);
+                    }
                 }
             }
             ActionItem {
@@ -145,10 +149,15 @@ Container {
                 background: Color.create(barColour)
                 horizontalAlignment: HorizontalAlignment.Fill
                 minHeight: 45
+                layout: DockLayout {
+
+                }
+                rightPadding: 10
+                leftPadding: 10
                 Label {
                     id: posterLabel
-                    translationX: 10
-                    text: ListItemData.poster + "  " + time
+                    horizontalAlignment: HorizontalAlignment.Left
+                    text: ListItemData.poster
                     textStyle.base: lightStyle.style
                     textFormat: TextFormat.Html
                     textStyle.color: Color.White
@@ -157,6 +166,17 @@ Container {
                     bottomMargin: 0
                     topMargin: 0
                 }
+                Label {
+                    textStyle.base: lightStyle.style
+                    textFormat: TextFormat.Html
+                    textStyle.color: Color.White
+                    textStyle.fontSize: FontSize.PointValue
+                    textStyle.fontSizeValue: 7
+                    bottomMargin: 0
+                    topMargin: 0
+                    text: time
+                    horizontalAlignment: HorizontalAlignment.Right
+                }
             }
             attachedObjects: [
                 LayoutUpdateHandler {
@@ -164,9 +184,9 @@ Container {
                 }
             ]
             Container {
-                rightPadding: 10
+                rightPadding: 20
+                leftPadding: 10
                 Label {
-                    translationX: 10
                     bottomMargin: 10
                     topMargin: 0
                     id: commentBox
@@ -178,9 +198,9 @@ Container {
                     textStyle.base: lightStyle.style
                     textFormat: TextFormat.Html
                 }
-                Divider {
-                    topMargin: 0
-                }
+            }
+            Divider {
+                topMargin: 0
             }
 
         }

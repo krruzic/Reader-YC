@@ -50,7 +50,8 @@ TabbedPane {
                 id: postMenuAction
                 enabled: settings.loggedIn
                 onTriggered: {
-                    postSheet.open();
+                    var page = postDef.createObject(activeTab.content);
+                    activeTab.push(page)
                     Application.menuEnabled = false;
                 }
             }
@@ -255,9 +256,6 @@ TabbedPane {
     }
 
     attachedObjects: [
-        PostSheet {
-            id: postSheet
-        },
         ComponentDefinition {
             id: aboutDef
             source: "asset:///AboutPage.qml"
@@ -273,6 +271,10 @@ TabbedPane {
         ComponentDefinition {
             id: settingsDef
             source: "SettingsPage.qml"
+        },
+        ComponentDefinition {
+            id: postDef
+            source: "PostPage.qml"
         },
         QTimer {
             id: switchTimer

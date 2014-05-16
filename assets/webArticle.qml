@@ -32,7 +32,7 @@ Page {
             id: browserQuery
             //query.mimeType: "text/plain"
             query.invokeActionId: "bb.action.OPEN"
-            query.uri: webDisplay.url
+            query.uri: htmlContent
             query.invokeTargetId: "sys.browser"
             query.onQueryChanged: {
                 browserQuery.query.updateQuery();
@@ -46,18 +46,9 @@ Page {
                 invokeActionId: "bb.action.SHARE"
             }
             onTriggered: {
-                data = text + "\n" + htmlContent + "\n" + " Shared using Reader YC ";
+                data = text + "\n" + htmlContent + "\n" + "Shared using Reader YC ";
             }
         },
-        //        ActionItem {
-        //            ActionBar.placement: ActionBarPlacement.OnBar
-        //            title: "Reader Mode"
-        //            onTriggered: {
-        //                Tart.send('webviewRequest', {
-        //                        url: webDisplay.url
-        //                });
-        //            }
-        //        },
         ActionItem {
             ActionBar.placement: ActionBarPlacement.InOverflow
             imageSource: "asset:///images/icons/ic_previous.png"
@@ -77,10 +68,6 @@ Page {
             }
         }
     ]
-
-    //    function onReaderData(data) {
-    //        webDisplay.html = data.html;
-    //    }
     titleBar: HNTitleBar {
         id: titleBar
         listName: scrollView

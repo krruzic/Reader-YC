@@ -17,11 +17,12 @@ Container {
     onCreationCompleted: {
         Tart.register(hnPage);
     }
+    
 
     contextActions: [
         ActionSet {
             title: ListItemData.title
-            subtitle: ListItemData.poster + " | " + ListItemData.points
+            subtitle: ListItemData.poster
             ActionItem {
                 imageSource: "asset:///images/icons/ic_comments.png"
                 title: "Open Comments"
@@ -144,7 +145,7 @@ Container {
         ]
         visible: true
         id: mainContainer
-        
+
         horizontalAlignment: HorizontalAlignment.Fill
 
         Container {
@@ -252,6 +253,70 @@ Container {
                 bottomMargin: 0
             }
         }
+        //        Container {
+        //            background: Color.create("#ff373737")
+        //            horizontalAlignment: HorizontalAlignment.Fill
+        //            minHeight: 110
+        //            maxHeight: 110
+        //            layout: DockLayout {
+        //
+        //            }
+        //            Container {
+        //                horizontalAlignment: HorizontalAlignment.Center
+        //                verticalAlignment: VerticalAlignment.Fill
+        //                layout: StackLayout {
+        //                    orientation: LayoutOrientation.LeftToRight
+        //                }
+        //                ImageButton {
+        //                    rightMargin: 20
+        //                    leftMargin: 20
+        //                    defaultImageSource: "asset:///images/icons/open_link_cr.png"
+        //                    pressedImageSource: "asset:///images/icons/open_link_crp.png"
+        //                    horizontalAlignment: HorizontalAlignment.Center
+        //                    verticalAlignment: VerticalAlignment.Center
+        //                    maxHeight: 90
+        //                    maxWidth: 90
+        //                }
+        //                ImageButton {
+        //                    rightMargin: 20
+        //                    leftMargin: 20
+        //                    defaultImageSource: "asset:///images/icons/open_link_cr.png"
+        //                    pressedImageSource: "asset:///images/icons/open_link_crp.png"
+        //                    horizontalAlignment: HorizontalAlignment.Center
+        //                    verticalAlignment: VerticalAlignment.Center
+        //                    maxHeight: 90
+        //                    maxWidth: 90
+        //                }
+        //                ImageButton {
+        //                    rightMargin: 20
+        //                    leftMargin: 20
+        //                    defaultImageSource: "asset:///images/icons/open_link_cr.png"
+        //                    pressedImageSource: "asset:///images/icons/open_link_crp.png"
+        //                    horizontalAlignment: HorizontalAlignment.Center
+        //                    verticalAlignment: VerticalAlignment.Center
+        //                    maxHeight: 90
+        //                    maxWidth: 90
+        //                }
+        //                ImageButton {
+        //                    rightMargin: 20
+        //                    leftMargin: 20
+        //                    defaultImageSource: "asset:///images/icons/open_link_cr.png"
+        //                    pressedImageSource: "asset:///images/icons/open_link_crp.png"
+        //                    horizontalAlignment: HorizontalAlignment.Center
+        //                    verticalAlignment: VerticalAlignment.Center
+        //                    maxHeight: 90
+        //                    maxWidth: 90
+        //                }
+        //                ImageButton {
+        //                    rightMargin: 20
+        //                    leftMargin: 20
+        //                    defaultImageSource: "asset:///images/icons/open_link_cr.png"
+        //                    pressedImageSource: "asset:///images/icons/open_link_crp.png"
+        //                    horizontalAlignment: HorizontalAlignment.Center
+        //                    verticalAlignment: VerticalAlignment.Center
+        //                    maxHeight: 90
+        //                    maxWidth: 90
+        //                }
     }
     attachedObjects: [
         SystemToast {
