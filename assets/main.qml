@@ -216,15 +216,6 @@ TabbedPane {
         Application.cover = null;
     }
 
-    //    function onInvisible() {
-    //        console.log("INVISIBlE!!!");
-    //        switchTimer.stop();
-    //    }
-
-    //    function onVisible() {
-    //        console.log("VISIBLE!!!!");
-    //        switchTimer.start();
-    //    }
 
     function onAddCoverStories(data) {
         numOfStories = data.stories.length;

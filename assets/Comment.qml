@@ -5,11 +5,13 @@ import "global.js" as Global
 
 Container {
     id: commmentContainer
-    visible: true
     property string time: ""
     property alias indent: commmentContainer.leftPadding
     property alias text: commentBox.text
     property string link: ""
+    property alias poster: posterLabel.text
+    property bool textVisible: true
+    property bool commentVisible: true
     property string barColour: "#ff8e00"
 
     horizontalAlignment: HorizontalAlignment.Fill
@@ -29,13 +31,7 @@ Container {
             replyAction.enabled = false;
         }
     }
-    //    onContextMenuHandlerChanged: {
-    //        if (contextMenuHandler) {
-    //            contextMenuHandlerChanged(contextMenuHandler)
-    //            controlAdded(control)
-    //            add(controls.)
-    //        }
-    //    }
+
     attachedObjects: [
         TextStyleDefinition {
             id: lightStyle
@@ -81,7 +77,7 @@ Container {
     }
     contextActions: [
         ActionSet {
-            title: "Comment by " + ListItemData.poster
+            title: "Comment by " + ListItemData.poster.toString().split(" ")[0]
             InvokeActionItem {
                 title: "Share Comment"
                 query {
@@ -122,25 +118,39 @@ Container {
                         });
                 }
             }
+            ActionItem {
+                id: hideAction
+                title: "Hide Children"
+                imageSource: "asset:///images/icons/ic_hide.png"
+                enabled: true
+                onTriggered: {
+                    if (hideAction.title == "Hide Children") {
+                        hideAction.title = "Show Children";
+                        hideAction.imageSource = "asset:///images/icons/ic_show.png";
+                        console.log("hiding children");
+                        commentItem.ListItem.view.hideChildren(commmentContainer.ListItem.indexInSection);
+                    }
+                    else {
+                        hideAction.title = "Hide Children";
+                        hideAction.imageSource = "asset:///images/icons/ic_hide.png";
+                        console.log("showing children");
+                        commentItem.ListItem.view.showChildren(commmentContainer.ListItem.indexInSection);
+
+                    }
+                    
+                }
+
+            }
         }
     ]
     Container {
+        visible: ListItemData.visible
         bottomPadding: 10
         leftPadding: 20
         layout: StackLayout {
             orientation: LayoutOrientation.LeftToRight
         }
 
-        //        Container {
-        //            id: commentLine
-        //            background: Color.create(barColour)
-        //            horizontalAlignment: HorizontalAlignment.Fill
-        //            minWidth: 6
-        //            bottomMargin: 0
-        //            topMargin: 0
-        //            minHeight: bodyDimensions.layoutFrame.height
-        //            visible: true
-        //        }
         Container {
             //rightPadding: 10
             id: comment
@@ -184,9 +194,10 @@ Container {
                 }
             ]
             Container {
-                rightPadding: 20
+                //rightPadding: 20
                 leftPadding: 10
                 Label {
+                    visible: ListItemData.textVisible
                     bottomMargin: 10
                     topMargin: 0
                     id: commentBox
@@ -199,6 +210,7 @@ Container {
                     textFormat: TextFormat.Html
                 }
             }
+
             Divider {
                 topMargin: 0
             }

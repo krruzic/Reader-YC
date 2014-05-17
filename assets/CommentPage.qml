@@ -110,7 +110,6 @@ Page {
         }
         busy = false;
     }
-    
 
     attachedObjects: [
         ComponentDefinition {
@@ -209,7 +208,6 @@ Page {
     Container {
         id: mainContainer
 
-        
         layout: DockLayout {
         }
         Container {
@@ -277,6 +275,44 @@ Page {
                             });
                     }
                 }
+                function hideChildren(index) {
+                    // in order to change the listitems, we need to replace them
+                    // all the properties you change MUST be defined in the listItemComponent
+                    var children = 0;
+                    var selectedItem = commentModel.data([ index ]);
+                    for (var i = index + 1; i < commentModel.size() - 1; i ++) {
+                        var currentItem = commentModel.data([ i ]);
+                        console.log(currentItem.indent);
+
+                        if (currentItem.indent > selectedItem.indent) {
+                            children ++;
+                            currentItem.visible = false;
+                            commentModel.replace(i, currentItem);
+                        } else {
+                            break;
+                        }
+                    }
+                    selectedItem.textVisible = false;
+                    selectedItem.poster = selectedItem.poster + " (" + children + " children)";
+                    commentModel.replace(index, selectedItem);
+
+                }
+                function showChildren(index) {
+                    var selectedItem = commentModel.data([ index ]);
+                    selectedItem.textVisible = true;
+                    selectedItem.poster = selectedItem.poster.toString().split(" ")[0];
+                    commentModel.replace(index, selectedItem);
+
+                    for (var i = index + 1; i < commentModel.size() - 1; i ++) {
+                        var currentItem = commentModel.data([ i ]);
+                        if (currentItem.indent > selectedItem.indent) {
+                            currentItem.visible = true;
+                            commentModel.replace(i, currentItem);
+                        } else {
+                            break;
+                        }
+                    }
+                }
                 listItemComponents: [
                     ListItemComponent {
                         type: 'header'
@@ -302,6 +338,8 @@ Page {
                             indent: ListItemData.indent
                             text: ListItemData.text
                             link: ListItemData.link
+                            textVisible: true
+                            visible: true
                             barColour: ListItemData.barColour
                         }
                     },
@@ -324,30 +362,7 @@ Page {
                         }
                     }
                 ]
-                function hideChildren(index) {
-                    for (var i = index + 1; i < commentModel.size() - 1; i ++) {
-                        var sentItem = commentModel.value(index)
-                        var currentItem = commentModel.value(i)
-                        console.log(currentItem.indent)
-                        if (currentItem.indent > sentItem.indent) {
-                            currentItem.commentContainer.visible = false;
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                function showChildren(index) {
-                    for (var i = index + 1; i < commentModel.size() - 1; i ++) {
-                        var sentItem = commentModel.value(index)
-                        var currentItem = commentModel.value(i)
-                        console.log(currentItem.indent)
-                        if (currentItem.indent > sentItem.indent) {
-                            currentItem.commentContatiner.visible = true;
-                        } else {
-                            break;
-                        }
-                    }
-                }
+
                 function pushPage(pageToPush) {
                     console.log(pageToPush)
                     var page = eval(pageToPush).createObject();
