@@ -6,6 +6,7 @@ import "global.js" as Global
 Page {
     objectName: 'commentPage'
     id: commentPane
+    property string bodyText: ""
     property string isAsk: ""
     property string commentLink: ""
     property string articleLink: ""
@@ -72,10 +73,12 @@ Page {
     }
 
     function onAddText(data) {
+        if (data.text != "") {
+            bodyText = data.text;
+            commentPane.addAction(copyAction);
+        }
         if (Global.username != "") {
-            commentPane.removeAction(actionAt(4));
-            var item = commentAction.createObject();
-            commentPane.addAction(item);
+            commentPane.addAction(commentAction);
         }
         commentList.visible = true;
         busy = false;
@@ -111,24 +114,45 @@ Page {
         busy = false;
     }
 
+    function onContentCopied(data) {
+        copyResultToast.body = "Text by " + data.meta + " copied!";
+        copyResultToast.cancel();
+        copyResultToast.show();
+    }
+
     attachedObjects: [
-        ComponentDefinition {
+        ActionItem {
             id: commentAction
-            ActionItem {
-                title: "Comment"
-                imageSource: "asset:///images/icons/ic_comments.png"
-                ActionBar.placement: ActionBarPlacement.OnBar
-                onTriggered: {
-                    onTriggered:
-                    {
-                        // insert new element into listview after selected item
-                        // (Reply item)
-                        Application.menuEnabled = false;
-                        commentList.addComment(0, commentLink, -40);
-                    }
+            title: "Comment"
+            imageSource: "asset:///images/icons/ic_comments.png"
+            ActionBar.placement: ActionBarPlacement.OnBar
+            onTriggered: {
+                onTriggered:
+                {
+                    // insert new element into listview after selected item
+                    // (Reply item)
+                    Application.menuEnabled = false;
+                    commentList.addComment(0, commentLink, -40);
                 }
             }
+        },
+        ActionItem {
+            id: copyAction
+            title: "Copy Text"
+            imageSource: "asset:///images/icons/ic_copy.png"
+            ActionBar.placement: ActionBarPlacement.InOverflow
+            onTriggered: {
+                Tart.send('copyHTML', {
+                        content: bodyText,
+                        meta: commentModel.data([ 0 ]).poster
+                    });
+            }
+        },
+        SystemToast {
+            id: copyResultToast
+            body: ""
         }
+
     ]
     actions: [
         InvokeActionItem {
@@ -240,7 +264,6 @@ Page {
                         return;
                     }
                     console.log("replying to comment at ....");
-                    print(index, link);
                     commentEnabled = false;
                     commentIndex = index + 1;
                     replyIndent = indent + 40;

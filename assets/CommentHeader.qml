@@ -1,11 +1,13 @@
 import bb.cascades 1.2
+import bb.system 1.2
 import "tart.js" as Tart
 
 Container {
     id: headerPane
     leftPadding: 10
     rightPadding: 10
-    property string bodyText: ""
+    property alias poster: labelUsername.text
+    property alias bodyText: textBox.text
     property string commentCount: ""
     property string points: ""
     onCreationCompleted: {
@@ -40,7 +42,7 @@ Container {
             ]
             visible: true
             id: mainContainer
-            
+
             horizontalAlignment: HorizontalAlignment.Fill
 
             Container {
@@ -148,15 +150,13 @@ Container {
                     textStyle.base: lightStyle.style
                     id: textBox
                     visible: false
-                    text: bodyText
                     multiline: true
                     enabled: true
                     textStyle.fontSizeValue: 6
                     onTextChanged: {
-                        if (text == "<html></html>"){
+                        if (text == "<html></html>") {
                             visible = false;
-                        }
-                        else {
+                        } else {
                             visible = true;
                         }
                     }

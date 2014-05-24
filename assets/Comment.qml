@@ -19,20 +19,33 @@ Container {
     onCreationCompleted: {
         Tart.register(commmentContainer);
         if (Global.username != "") {
-            replyAction.enabled = true;
+            actionSet.add(replyAction);
         }
+
     }
 
     onContextMenuHandlerChanged: {
         if (link == "") {
             replyAction.enabled = false;
         }
-        if (Global.username == "") {
-            replyAction.enabled = false;
-        }
     }
 
     attachedObjects: [
+        ActionItem {
+            id: replyAction
+            title: "Reply to Comment"
+            imageSource: "asset:///images/icons/ic_comments.png"
+            enabled: true
+            onTriggered: {
+                // insert new element into listview after selected item
+                // (Reply item)
+                var selectedItem = commentItem.ListItem.view.dataModel.data(commentItem.ListItem.indexPath);
+                if (selectedItem.link != "") {
+                    Application.menuEnabled = false;
+                    commentItem.ListItem.view.addComment(commmentContainer.ListItem.indexInSection, link, indent);
+                }
+            }
+        },
         TextStyleDefinition {
             id: lightStyle
             base: SystemDefaults.TextStyles.BodyText
@@ -70,13 +83,14 @@ Container {
         setHighlight(ListItem.selected);
     }
 
-    function onCommentCopied(data) {
-        copyResultToast.body = "Comment by " + data.poster + " copied!";
+    function onContenttCopied(data) {
+        copyResultToast.body = "Comment by " + data.meta.toString().split(" ")[0] + " copied!";
         copyResultToast.cancel();
         copyResultToast.show();
     }
     contextActions: [
         ActionSet {
+            id: actionSet
             title: "Comment by " + ListItemData.poster.toString().split(" ")[0]
             InvokeActionItem {
                 title: "Share Comment"
@@ -91,30 +105,15 @@ Container {
                 }
             }
             ActionItem {
-                id: replyAction
-                title: "Reply to Comment"
-                imageSource: "asset:///images/icons/ic_comments.png"
-                enabled: false
-                onTriggered: {
-                    // insert new element into listview after selected item
-                    // (Reply item)
-                    var selectedItem = commentItem.ListItem.view.dataModel.data(commentItem.ListItem.indexPath);
-                    if (selectedItem.link != "") {
-                        Application.menuEnabled = false;
-                        commentItem.ListItem.view.addComment(commmentContainer.ListItem.indexInSection, link, indent);
-                    }
-                }
-            }
-            ActionItem {
                 id: copyAction
                 title: "Copy Comment"
                 imageSource: "asset:///images/icons/ic_copy.png"
                 enabled: true
                 onTriggered: {
                     var selectedItem = commentItem.ListItem.view.dataModel.data(commentItem.ListItem.indexPath);
-                    Tart.send('copyComment', {
-                            'comment': selectedItem.text,
-                            'poster': selectedItem.poster
+                    Tart.send('copyHTML', {
+                            'content': selectedItem.text,
+                            'meta': selectedItem.poster
                         });
                 }
             }
@@ -124,20 +123,20 @@ Container {
                 imageSource: "asset:///images/icons/ic_hide.png"
                 enabled: true
                 onTriggered: {
-                    if (hideAction.title == "Hide Children") {
+                    console.log(poster.toString().split(" ").pop());
+                    if (poster.toString().split(" ").pop() != ("children)")) {
                         hideAction.title = "Show Children";
                         hideAction.imageSource = "asset:///images/icons/ic_show.png";
                         console.log("hiding children");
                         commentItem.ListItem.view.hideChildren(commmentContainer.ListItem.indexInSection);
-                    }
-                    else {
+                    } else {
                         hideAction.title = "Hide Children";
                         hideAction.imageSource = "asset:///images/icons/ic_hide.png";
                         console.log("showing children");
                         commentItem.ListItem.view.showChildren(commmentContainer.ListItem.indexInSection);
 
                     }
-                    
+
                 }
 
             }
@@ -194,7 +193,7 @@ Container {
                 }
             ]
             Container {
-                //rightPadding: 20
+                rightPadding: 10
                 leftPadding: 10
                 Label {
                     visible: ListItemData.textVisible

@@ -32,7 +32,8 @@ TitleBar {
 
             horizontalAlignment: HorizontalAlignment.Fill
             verticalAlignment: VerticalAlignment.Fill
-            //topPadding: 15
+            topPadding: 15
+            bottomPadding: 15
 
             gestureHandlers: [
                 DoubleTapHandler {
@@ -52,87 +53,76 @@ TitleBar {
             ]
             background: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? Color.create("#ff333333") : Color.create("#fff9f9f9")
             Container {
-                leftPadding: 15
-                //rightPadding: 15
                 verticalAlignment: VerticalAlignment.Fill
                 horizontalAlignment: HorizontalAlignment.Fill
                 layout: StackLayout {
                     orientation: LayoutOrientation.LeftToRight
                 }
-
-                ScrollView {
-                    rightMargin: 10
-                    layoutProperties: StackLayoutProperties {
-                        spaceQuota: 12
-                    }
-                    scrollRole: ScrollRole.None
-                    verticalAlignment: VerticalAlignment.Center
-                    horizontalAlignment: HorizontalAlignment.Fill
-                    scrollViewProperties.scrollMode: ScrollMode.Horizontal
-                    scrollViewProperties.pinchToZoomEnabled: false
-                    scrollViewProperties.overScrollEffectMode: OverScrollEffectMode.OnScroll
-                    Label {
-                        id: pageTitle
-                        text: "Reader YC - Top Postsgk jgjhgkjgk jgk jjkkgj kgj kgj "
-                        //textStyle.base: SystemDefaults.TextStyles.BigText
-                        textStyle.fontSize: FontSize.PointValue
-                        textStyle.textAlign: TextAlign.Left
-                        textStyle.color: Color.create("#ff8e00")
-                        textFormat: TextFormat.Plain
-                        enabled: false
-                        textStyle.fontSizeValue: 8
-                        textStyle.base: lightStyle.style
-                    }
-                    accessibility.name: pageTitle.text
-
-                }
-
                 Container {
-                    rightMargin: 0
-                    leftMargin: 0
-                    topMargin: 0
-                    bottomMargin: 0
+                    rightPadding: 10
+                    leftPadding: 10
                     layoutProperties: StackLayoutProperties {
-                        spaceQuota: 4
+                        spaceQuota: 5
+                    }
+                    horizontalAlignment: HorizontalAlignment.Left
+                    verticalAlignment: VerticalAlignment.Center
+                    ScrollView {
+                        rightMargin: 100
+                        scrollRole: ScrollRole.None
+                        verticalAlignment: VerticalAlignment.Center
+                        horizontalAlignment: HorizontalAlignment.Fill
+                        scrollViewProperties.scrollMode: ScrollMode.Horizontal
+                        scrollViewProperties.pinchToZoomEnabled: false
+                        scrollViewProperties.overScrollEffectMode: OverScrollEffectMode.OnScroll
+                        Label {
+                            id: pageTitle
+                            text: "Reader YC - Top Postsgk jgjhgkjgk jgk jjkkgj kgj kgj "
+                            //textStyle.base: SystemDefaults.TextStyles.BigText
+                            textStyle.fontSize: FontSize.PointValue
+                            textStyle.textAlign: TextAlign.Left
+                            textStyle.color: Color.create("#ff8e00")
+                            textFormat: TextFormat.Plain
+                            enabled: false
+                            textStyle.fontSizeValue: 8
+                            textStyle.base: lightStyle.style
+                        }
+                        accessibility.name: pageTitle.text
 
                     }
-                    topPadding: 15
-                    bottomPadding: 15
+                }
+                Container {
+                    layoutProperties: StackLayoutProperties {
+                        spaceQuota: 1
+                    }
                     id: refreshButton
                     visible: refreshEnabled
-
-                    layout: StackLayout {
-                        orientation: LayoutOrientation.LeftToRight
-                    }
-                    verticalAlignment: VerticalAlignment.Fill
-                    horizontalAlignment: HorizontalAlignment.Fill
+                    verticalAlignment: VerticalAlignment.Center
+                    horizontalAlignment: HorizontalAlignment.Center
 
                     onTouch: {
                         refreshPage();
                     }
-                    Divider {
-                        horizontalAlignment: HorizontalAlignment.Left
+                    layout: DockLayout {
+                    }
+                    Container {
                         verticalAlignment: VerticalAlignment.Center
-                        rotationZ: 90
+                        horizontalAlignment: HorizontalAlignment.Left
+                        minWidth: 1
+                        maxWidth: 1
+                        background: Color.LightGray
+                        minHeight: 100
                         rightMargin: 0
                         leftMargin: 0
-                        topMargin: 0
-                        bottomMargin: 0
-                        maxHeight: 5
-
-                        //                    maxWidth: 5
-                        //                        rightPadding: 10
-                        //                        topPadding: 10
-                        //                        bottomPadding: 10
                     }
                     Label {
+                        rightMargin: 0
+                        leftMargin: 0
                         text: "Refresh"
-                        translationX: -30
                         verticalAlignment: VerticalAlignment.Center
                         horizontalAlignment: HorizontalAlignment.Center
                         //textStyle.base: SystemDefaults.TextStyles.BigText
                         textStyle.fontSize: FontSize.PointValue
-                        textStyle.textAlign: TextAlign.Left
+                        textStyle.textAlign: TextAlign.Center
                         textStyle.color: Color.create("#ff8e00")
                         textFormat: TextFormat.Plain
                         enabled: false
