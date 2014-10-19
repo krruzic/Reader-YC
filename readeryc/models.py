@@ -151,18 +151,16 @@ class HNStory():
         soup = BeautifulSoup(page)
         # print("Souping: ", soupEnd - soupStart)
         story_tables = soup.find_all('table', 0)
-        story_tables = list(map(str, story_tables))
-
+        #story_tables = list(map(str, story_tables))
         del story_tables[0:2]
         del story_tables[-1]
+        # for i in story_tables:
+        #     print(i)
 
-        for st in story_tables:
-            metadata = soup.find_all("td", "subtext")
-
-        head = soup.find_all("td", "title", valign=False)
-
+        metadata = story_tables[0].find_all("td", "subtext")
+        head = story_tables[0].find_all("td", "title", align=False)
+        #print(metadata, head)
         stories = []
-
         for i, m in zip(head, metadata):
             story = {
                 'title': None, 'domain': None, 'score': None, 'author': None, 'time': None, 'commentCount': None,
@@ -174,16 +172,15 @@ class HNStory():
                 story['link'] = 'https://news.ycombinator.com/' + story['link']
                 story['askPost'] = "true"
             try:
-                story['domain'] = i.find_all("span")[0].text
+                story['domain'] = i.find("span").text
                 story['domain'] = re.search(r'\(([^)]*)\)', story['domain']).group(
                     1)  # Remove brackets from domain
             except:
                 story['domain'] = "news.ycombinator.com"
 
             if 'point' in m.text:
-                story_time = re.search(r'by \S+ (\d+.*?)\s+\|', m.text).group(1) + ' '
-                story['time'] = story_time
-                story['score'] = re.search("(\d+)\s+points?", m.text).group(1)
+                story['time'] = m.contents[3][1:-3]
+                story['score'] = m.find("span").contents[0].split()[0]
                 story['author'] = m.a.text.strip()
                 story['hnid'] = m.span['id'].split('_')[1]
                 story['commentURL'] = "https://news.ycombinator.com/item?id=" + \
@@ -192,13 +189,9 @@ class HNStory():
                     story['commentCount'] = '0'
                 else:
                     try:
-                        story['commentCount'] = re.search(
-                            "(\d+)\s+comments?", m.text).group(1)
+                        story['commentCount'] = m.find_all("a")[1].text.split()[0]
                     except AttributeError:
-                        # I found an instance where there was just the text
-                        # 'comments', without any count. I'm assuming that
-                        # even stranger things could happen
-                        story['commentCount'] = '?'
+                            story['commentCount'] = '?'
             else:  # Jobs post
                 story['time'] = m.text.strip()
                 story['commentCount'] = '0'
@@ -207,7 +200,7 @@ class HNStory():
 
             # print("Time to parse 1 story: ", endTime - startTime)
             stories.append(story)
-
+        print(head[-1].find_all('a')[0]['href'])
         return stories, head[-1].find_all('a')[0]['href']
 
     def parseStories(self, source):
@@ -219,8 +212,6 @@ class HNStory():
         if ("Unknown or expired link." in str(page)):
             raise ExpiredLinkException("Expired link!")
         stories, moreLink = self.parseData(page)
-        if (moreLink != 'news2'):
-            moreLink = moreLink[1:]
         return stories, moreLink
 
 
@@ -260,16 +251,9 @@ class HNSearchStory():
             timestamp = readerutils.prettyDate(
                 datetime.strptime(e['created_at'], incomplete_iso_8601_format))
             result = {
-                'title': e['title'],
-                'poster': e['author'],
-                'points': e['points'],
-                'num_comments': str(e['num_comments']),
-                'timestamp': timestamp,
-                'id': str(e['objectID']),
-                'domain': '{uri.netloc}'.format(uri=parsed_uri),
-                'articleURL': articleURL,
-                'commentURL': commentURL,
-                'isAsk': isAsk
+                'title': e['title'], 'poster': e['author'], 'points': e['points'], 'num_comments': str(e['num_comments']),
+                'timestamp': timestamp, 'id': str(e['objectID']), 'domain': '{uri.netloc}'.format(uri=parsed_uri),
+                'articleURL': articleURL, 'commentURL': commentURL, 'isAsk': isAsk
             }
             res.append(result)
 

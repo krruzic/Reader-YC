@@ -12,7 +12,7 @@ class readerutils():
         return 'https://news.ycombinator.com/{}'.format(address)
 
     def textReplace(text):
-        text = text.replace('rel="nofollow"', '')
+        #text = text.replace('rel="nofollow"', '')
         # Replace unclosed <p>'s with new lines
         text = text.replace('<p>', '\n')
         text = text.replace('</p>', '')  # Remove the crap BS4 adds
@@ -61,12 +61,16 @@ class readerutils():
             return "Yesterday "
         if day_diff < 7:
             return str(day_diff) + " days ago "
+        if day_diff == 7:
+            return "1 week ago "
         if day_diff < 31:
             return str(day_diff // 7) + " weeks ago "
+        if day_diff == 31:
+            return "1 month ago "
         if day_diff < 365:
             return str(day_diff // 30) + " months ago "
-        if str(day_diff // 365) == '1':
-            return str(day_diff // 365) + " year ago "
+        if day_diff == 365:
+            return "1 year ago "
         return str(day_diff // 365) + " years ago "
 
     def get_rowdicts(cursor):

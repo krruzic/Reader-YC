@@ -35,13 +35,14 @@ class HNapi():
     def login(self, username, password):
         result = False
         sess = requests.session()
-        res = sess.get(
-            'https://news.ycombinator.com/newslogin', headers=readerutils.HEADERS)
+        res = sess.get(readerutils.hnUrl('login'), headers=readerutils.HEADERS)
         soup = BeautifulSoup(res.content)
 
-        fnid = soup.find('input')['value']
-        params = {'u': username, 'p': password, 'fnid': fnid}
-        r = sess.post('https://news.ycombinator.com/y',
+        endpoint = soup.find('form', {'method': 'post'})['action']
+        endpoint = endpoint.replace("/", "")
+
+        params = {'acct': username, 'pw': password}
+        r = sess.post(readerutils.hnUrl(endpoint),
                       headers=readerutils.HEADERS, params=params)
         if ("Bad login" not in r.text):
             print("no bad login")
@@ -68,13 +69,16 @@ class HNapi():
         r = self.session.get(
             readerutils.hnUrl('user?id={}'.format(username)), headers=readerutils.HEADERS, cookies=cookies)
         soup = BeautifulSoup(r.content)
-        fnid = str(soup.find('input', attrs=dict(name='fnid'))['value'])
+        fnid = soup.find('input', {'name': 'fnid'})['value']
         about = soup.find('textarea', {'name': 'about'}).get_text()
+        endpoint = soup.find('form', {'method': 'post'})['action']
+        endpoint = endpoint.replace("/", "")
+
         try:
             email = soup.find('input', {'name': 'email'})['value']
         except:
             email = ""
-        return [fnid, about, email]
+        return [fnid, about, email, endpoint]
 
     def postProfile(self, username, email, about):
         if(not self.loggedIn):
@@ -97,7 +101,7 @@ class HNapi():
         }
 
         r = self.session.post(
-            readerutils.hnUrl('x'), headers=readerutils.HEADERS, params=params, cookies=cookies)
+            readerutils.hnUrl(info[3]), headers=readerutils.HEADERS, params=params, cookies=cookies)
         return True
 
     def postComment(self, source, comment):
@@ -115,15 +119,17 @@ class HNapi():
         except:
             return False
         soup = BeautifulSoup(r.content)
-        fnid = soup.find('input')['value']
-        params = {'fnid': fnid, 'text': comment}
+        hmac = soup.find('input', {'name': 'hmac'})['value']
+        endpoint = soup.find('form', {'method': 'post'})['action']
+        endpoint = endpoint.replace("/", "")
+        params = {'hmac': hmac, 'text': comment, 'parent': source, 'whence': 'news'}
 
         try:
             r = self.session.post(
-                readerutils.hnUrl('r'), params=params, headers=readerutils.HEADERS, cookies=cookies)
-        except:
+                readerutils.hnUrl(endpoint), params=params, headers=readerutils.HEADERS, cookies=cookies)
+        except Exception:
+            print(Exception)
             return False
-
         if(r.url == "https://news.ycombinator.com/news"):
             return True
         return False
@@ -145,11 +151,14 @@ class HNapi():
         except:
             return False
         soup = BeautifulSoup(r.content)
-        fnid = str(soup.find('input', attrs=dict(name='fnid'))['value'])
+        fnid = soup.find('input', {'name': 'fnid'})['value']
+        endpoint = soup.find('form', {'method': 'post'})['action']
+        endpoint = endpoint.replace("/", "")
+
         params = {'fnid': fnid, 't': title, 'u': link, 'x': text}
         try:
             r = self.session.post(
-                readerutils.hnUrl('r'), params=params, headers=readerutils.HEADERS, cookies=cookies)
+                readerutils.hnUrl(endpoint), params=params, headers=readerutils.HEADERS, cookies=cookies)
         except:
             return False
 
