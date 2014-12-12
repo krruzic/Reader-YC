@@ -6,7 +6,7 @@ app UUID: 425c7891-ab84-4cb4-a628-6cfeaec6fd1b
 
 Reader YC is a native hackernews client built with Cascades and Python (using Blackberry-tart). Instead of using often unstable APIs, this app directly scrapes Hackernews for posts, and optionally comments, to ensure maximum uptime. Currently the app is at V1.5.4 (don't usually update the readme), and is available on BlackBerry World
 
-The post scraping is based heavily off of Dimillian's Sublime plugin found [here](https://github.com/Dimillian/Sublime-Hacker-News-Reader) (This is no longe
+The post scraping is based heavily off of Dimillian's Sublime plugin found [here](https://github.com/Dimillian/Sublime-Hacker-News-Reader)
 
 To fetch comments, the user has a choice to either use BeautifulSoup scraping or the [HN Search API](https://hn.algolia.com). The api is much faster, so I recommend it. However it can be unreliable, and doesn't sort comments properly until a few days after the post was submitted. 
 Since 1.5, the scraping is faster and works better. A setting to enable Legacy Scraping can be found within the app.
