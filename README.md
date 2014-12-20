@@ -1,7 +1,5 @@
 Reader YC
 ==
-app UUID: 425c7891-ab84-4cb4-a628-6cfeaec6fd1b
-
 
 
 Reader YC is a native hackernews client built with Cascades and Python (using Blackberry-tart). Instead of using often unstable APIs, this app directly scrapes Hackernews for posts, and optionally comments, to ensure maximum uptime. Currently the app is at V1.5.4 (don't usually update the readme), and is available on BlackBerry World
