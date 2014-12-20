@@ -3,7 +3,7 @@ import "tart.js" as Tart
 import "global.js" as Global
 Container {
     property variant baseColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? Color.create("#ffdddddf") : Color.create("#434344")
-    property variant secondaryColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "" : Color.create("#ff8e00")
+    property variant secondaryColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "" : Color.create("#f99925")
 
     property alias bioField: bioField
     property alias emailField: emailField
@@ -40,7 +40,7 @@ Container {
                 horizontalAlignment: HorizontalAlignment.Fill
                 textStyle.base: lightStyle.style
                 id: userLabel
-                text: "<span style='color:#ff8e00'>Logged in as:  </span>" + settings.username
+                text: "<span style='color:#f99925'>Logged in as:  </span>" + settings.username
                 textStyle.fontSize: FontSize.PointValue
                 textStyle.fontSizeValue: 7
                 textStyle.color: baseColour

@@ -2,7 +2,7 @@ import bb.cascades 1.2
 
 Page {
     property variant baseColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? Color.create("#ffdddddf") : Color.create("#434344")
-    property variant secondaryColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? Color.create("#ff8e00") : Color.create("#ff8e00")
+    property variant secondaryColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? Color.create("#f99925") : Color.create("#f99925")
 
     titleBar: HNTitleBar {
         id: helpTitleBar

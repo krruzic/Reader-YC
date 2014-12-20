@@ -6,15 +6,16 @@ import "global.js" as Global
 
 NavigationPane {
     id: tabNav
-    property alias busy: topPage.busy
-    property alias whichPage: topPage.whichPage
+    property alias busy: showPage.busy
+    property alias whichPage: showPage.whichPage
+    property variant theModel: showPage.theModel
 
     
     onPopTransitionEnded: {
         page.destroy();
         Application.menuEnabled = ! Application.menuEnabled;
     }
-
+    
     onPushTransitionEnded: {
         if (page.objectName == 'commentPage') {
             Tart.send('requestPage', {
@@ -22,42 +23,42 @@ NavigationPane {
                     sentBy: 'commentPage',
                     askPost: page.isAsk,
                     deleteComments: "False"
-                });
+            });
         }
     }
     Page {
-        id: top
+        id: show
         titleBar: HNTitleBar {
             //            visibility: ChromeVisibility.Hidden
             id: titleBar
-            text: "Reader YC - Top"
-            listName: topPage.theList
+            text: "Reader YC - Show"
+            listName: showPage.theList
             onRefreshPage: {
-                if (topPage.busy != true) {
-                    topPage.loading.visible = true;
-                    topPage.busy = true;
+                if (showPage.busy != true) {
+                    showPage.loading.visible = true;
+                    showPage.busy = true;
                     Tart.send('requestPage', {
-                            source: 'news',
-                            sentBy: 'news'
-                        });
-                    console.log("pressed")
-                    topPage.theModel.clear();
-                    refreshEnabled = ! topPage.busy;
+                            source: 'show',
+                            sentBy: 'show'
+                    });
+                console.log("pressed")
+                showPage.theModel.clear();
+                refreshEnabled = ! showPage.busy;
                 }
             }
         }
-
+        
         HNTab {
-            id: topPage
+            id: showPage
             onCreationCompleted: {
-                Tart.register(topPage);
+                Tart.register(showPage);
                 titleBar.refreshEnabled = false;
             }
-
-            function onAddnewsStories(data) {
-
+            
+            function onAddshowStories(data) {
+                
                 morePage = data.moreLink;
-                topPage.errorLabel.visible = false;
+                showPage.errorLabel.visible = false;
                 var lastItem = theModel.size() - 1
                 //console.log("LAST ITEM: " + lastItemType);
                 if (lastItemType == 'error' || lastItemType == 'load') {
@@ -76,13 +77,13 @@ NavigationPane {
                         commentsURL: data.story['commentURL'],
                         hnid: data.story['hnid'],
                         isAsk: data.story['askPost']
-                    });
-                topPage.busy = false;
-                loading.visible = false;
-                titleBar.refreshEnabled = ! topPage.busy;
+                });
+            showPage.busy = false;
+            loading.visible = false;
+            titleBar.refreshEnabled = ! showPage.busy;
             }
-
-            function onNewsListError(data) {
+            
+            function onShowListError(data) {
                 if (theModel.isEmpty() != true) {
                     var lastItem = theModel.size() - 1
                     //console.log(lastItemType);
@@ -92,15 +93,15 @@ NavigationPane {
                     theModel.append({
                             type: 'error',
                             title: data.text
-                        });
+                    });
                 } else {
                     errorLabel.text = data.text
                     errorLabel.visible = true;
                 }
                 lastItemType = 'error'
-                topPage.busy = false;
+                showPage.busy = false;
                 loading.visible = false;
-                titleBar.refreshEnabled = ! topPage.busy;
+                titleBar.refreshEnabled = ! showPage.busy;
             }
         }
     }

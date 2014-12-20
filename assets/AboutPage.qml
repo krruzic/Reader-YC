@@ -2,7 +2,7 @@ import bb.cascades 1.2
 
 Page {
     property variant baseColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? Color.create("#ffdddddf") : Color.create("#434344")
-    property variant secondaryColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "" : Color.create("#ff8e00")
+    property variant secondaryColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "" : Color.create("#f99925")
 
     titleBar: HNTitleBar {
         id: aboutTitleBar
@@ -49,7 +49,7 @@ Page {
                                 bottomMargin: 0
                                 text: '[from the Hacker News <a href="http://ycombinator.com/newswelcome.html"> welcome page</a>]'
                                 textFormat: TextFormat.Html
-                                textStyle.color: Color.create("#ff8e00")
+                                textStyle.color: Color.create("#f99925")
                                 multiline: true
                             }
                             Label {
@@ -95,7 +95,7 @@ Page {
                                     textStyle.base: lightStyle.style
                                     text: 'Reader YC is client for Hacker News, allowing you to browse HN on your BlackBerry 10 device'
                                     textFormat: TextFormat.Html
-                                    textStyle.color: Color.create("#ff8e00")
+                                    textStyle.color: Color.create("#f99925")
                                     multiline: true
                                     bottomMargin: 0
                                 }
@@ -144,7 +144,7 @@ Page {
                                     bottomMargin: 0
                                     text: 'Surge Co. is a small group of developers founded by David Dryden and Kristopher Ruzic'
                                     textFormat: TextFormat.Html
-                                    textStyle.color: Color.create("#ff8e00")
+                                    textStyle.color: Color.create("#f99925")
                                     multiline: true
                                     topMargin: 0
                                 }
@@ -192,7 +192,7 @@ Page {
                                         textStyle.base: lightStyle.style
                                         text: 'Everything you wanted to know about private stuff'
                                         textFormat: TextFormat.Html
-                                        textStyle.color: Color.create("#ff8e00")
+                                        textStyle.color: Color.create("#f99925")
                                         multiline: true
                                         bottomMargin: 0
                                         topMargin: 0

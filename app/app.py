@@ -95,9 +95,6 @@ class App(tart.Application):
                     source, sentBy, startIndex, askPost, author))
             else:  # If there are multiple requests
                 print("Checking request")
-                # ts, src = self.cache[position]['ident'] # Check the time the
-                # request was made
-                # If the cache source is the same as current request
                 if src == source:
                     print("Request is the same!")
                     # Check if cache was made 5 mins ago
@@ -112,7 +109,7 @@ class App(tart.Application):
 
     def parseRequest(self, source, sentBy, startIndex, askPost, author):
         print("Parsing request for: " + sentBy)
-        if (sentBy in ['news', 'ask', 'newest']):
+        if (sentBy in ['news', 'ask', 'newest', 'show']):
             self.storyRoutine(source, sentBy)
         elif (sentBy == 'commentPage'):
             self.commentsRoutine(source, askPost)
@@ -130,12 +127,12 @@ class App(tart.Application):
             stories, moreLink = self.sess.getStories(source)
         except requests.exceptions.ConnectionError:
             tart.send('{0}ListError'.format(sentBy),
-                      text="<b><span style='color:#ff8e00'>Error getting stories</span></b>\nCheck your connection and try again!")
+                      text="<b><span style='color:#f99925'>Error getting stories</span></b>\nCheck your connection and try again!")
             return
-        except readeryc.models.ExpiredLinkException:
+        except IndexError:
             print("Expired link?")
             tart.send('{0}ListError'.format(sentBy),
-                      text="<b><span style='color:#ff8e00'>Link expired</span></b>\nPlease refresh the page")
+                      text="<b><span style='color:#f99925'>Link expired</span></b>\nPlease refresh the page")
             return
 
         for story in stories:
@@ -167,12 +164,12 @@ class App(tart.Application):
             print("ERROR GETTING COMMENTS")
             tart.send('addText', text='', hnid=source)
             tart.send(
-                'commentError', text="<b><span style='color:#ff8e00'>Error getting comments</span></b>\nCheck your connection and try again!", hnid=source)
+                'commentError', text="<b><span style='color:#f99925'>Error getting comments</span></b>\nCheck your connection and try again!", hnid=source)
         except SocketError:
             print("ERROR GETTING COMMENTS")
             tart.send('addText', text='', hnid=source)
             tart.send(
-                'commentError', text="<b><span style='color:#ff8e00'>Error getting comments</span></b>\nCheck your connection and try again!", hnid=source)
+                'commentError', text="<b><span style='color:#f99925'>Error getting comments</span></b>\nCheck your connection and try again!", hnid=source)
 
     def searchRoutine(self, startIndex, source):
         print("Searching for: " + str(source))
@@ -180,16 +177,16 @@ class App(tart.Application):
             result = self.sess.getSearchStories(startIndex, source)
             if result == []:
                 tart.send(
-                    'searchError', text="<b><span style='color:#ff8e00'>No results found!</span></b>")
+                    'searchError', text="<b><span style='color:#f99925'>No results found!</span></b>")
                 return
             for res in result:
                 tart.send('addSearchStories', story=res)
         except requests.exceptions.ConnectionError:
             tart.send(
-                'searchError', text="<b><span style='color:#ff8e00'>Error getting stories</span></b>\nCheck your connection and try again!")
+                'searchError', text="<b><span style='color:#f99925'>Error getting stories</span></b>\nCheck your connection and try again!")
         except SocketError:
             tart.send(
-                'searchError', text="<b><span style='color:#ff8e00'>Error getting stories</span></b>\nCheck your connection and try again!")
+                'searchError', text="<b><span style='color:#f99925'>Error getting stories</span></b>\nCheck your connection and try again!")
 
 # POST functions
     def onRequestLogin(self, username, password):
@@ -304,13 +301,15 @@ class App(tart.Application):
             """)
         tart.send('cacheDeleted', text="Cache cleared!")
 
-    def onCopyComment(self, comment, poster):
-        soup = BeautifulSoup(comment)
+    def onCopyHTML(self, content, meta):
+        print(content)
+        print(meta)
+        soup = BeautifulSoup(content)
         from tart import clipboard
         c = clipboard.Clipboard()
         mimeType = 'text/plain'
         c.insert(mimeType, str(soup.text))
-        tart.send('commentCopied', poster=poster)
+        tart.send('contentCopied', meta=meta)
 
     def onCopy(self, articleLink):
         from tart import clipboard

@@ -90,7 +90,7 @@ NavigationPane {
                 verticalAlignment: VerticalAlignment.Center
                 Label {
                     textStyle.base: lightStyle.style
-                    text: "<b><span style='color:#ff8e00'>Nothing to see here</span></b>\nTry favouriting a story!"
+                    text: "<b><span style='color:#f99925'>Nothing to see here</span></b>\nTry favouriting a story!"
                     textStyle.fontSize: FontSize.PointValue
                     textStyle.textAlign: TextAlign.Center
                     textStyle.fontSizeValue: 9

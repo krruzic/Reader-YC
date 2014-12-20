@@ -33,7 +33,7 @@ NavigationPane {
         id: ask
         titleBar: HNTitleBar {
             id: titleBar
-            text: "Reader YC - Ask HN"
+            text: "Reader YC - Ask"
             listName: askPage.theList
             onRefreshPage: {
                 console.log("We are busy: " + busy)

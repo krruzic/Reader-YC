@@ -135,8 +135,6 @@ Container {
             TextStyleDefinition {
                 id: lightStyle
                 base: SystemDefaults.TextStyles.BodyText
-                fontSize: FontSize.PointValue
-                fontSizeValue: 7
                 fontWeight: FontWeight.W300
             },
             LayoutUpdateHandler {
@@ -162,8 +160,6 @@ Container {
                 text: ListItemData.title
                 bottomMargin: 1
                 multiline: true
-                autoSize.maxLineCount: 2
-                textStyle.fontSizeValue: 7
                 textStyle.base: lightStyle.style
             }
             Container {
@@ -178,13 +174,17 @@ Container {
                         id: labelPostDomain
                         horizontalAlignment: HorizontalAlignment.Left
                         text: ListItemData.domain
+                        textStyle.fontSize: FontSize.PointValue
+                        textStyle.fontSizeValue: 5
                         multiline: false
-                        textStyle.color: Color.create("#ff8e00")
+                        textStyle.color: Color.create("#f99925")
                         textStyle.fontStyle: FontStyle.Italic
                         textStyle.base: lightStyle.style
                         bottomMargin: 0
                     }
                     Label {
+                        textStyle.fontSize: FontSize.PointValue
+
                         topMargin: 5
                         text: ListItemData.timePosted
                         id: labelTimePosted
@@ -215,6 +215,7 @@ Container {
                             horizontalAlignment: HorizontalAlignment.Right
                         }
                         Label {
+                            
                             leftMargin: 0
                             rightMargin: 0
                             text: "<html><i>" + ListItemData.commentCount + "</i></html>"
@@ -222,7 +223,7 @@ Container {
                             textStyle.fontSizeValue: 5
                             horizontalAlignment: HorizontalAlignment.Right
                             verticalAlignment: VerticalAlignment.Center
-                            textStyle.color: Color.create("#7e7e7e")
+                            textStyle.color: Color.create("#646464")
                             textStyle.base: lightStyle.style
                             textFormat: TextFormat.Html
                         }
@@ -233,17 +234,19 @@ Container {
                             textStyle.fontSizeValue: 5
                             horizontalAlignment: HorizontalAlignment.Right
                             verticalAlignment: VerticalAlignment.Center
-                            textStyle.color: Color.create("#7e7e7e")
+                            textStyle.color: Color.create("#646464")
                             textStyle.base: lightStyle.style
                             textFormat: TextFormat.Html
                         }
                     }
                     Label {
+                        textStyle.fontSize: FontSize.PointValue
+
                         topMargin: 0
                         textStyle.fontSizeValue: 5
                         text: ListItemData.poster
                         id: labelUsername
-                        textStyle.color: Color.create("#ff8e00")
+                        textStyle.color: Color.create("#f99925")
                         textStyle.base: lightStyle.style
                         horizontalAlignment: HorizontalAlignment.Right
                     }
@@ -253,70 +256,7 @@ Container {
                 bottomMargin: 0
             }
         }
-        //        Container {
-        //            background: Color.create("#ff373737")
-        //            horizontalAlignment: HorizontalAlignment.Fill
-        //            minHeight: 110
-        //            maxHeight: 110
-        //            layout: DockLayout {
-        //
-        //            }
-        //            Container {
-        //                horizontalAlignment: HorizontalAlignment.Center
-        //                verticalAlignment: VerticalAlignment.Fill
-        //                layout: StackLayout {
-        //                    orientation: LayoutOrientation.LeftToRight
-        //                }
-        //                ImageButton {
-        //                    rightMargin: 20
-        //                    leftMargin: 20
-        //                    defaultImageSource: "asset:///images/icons/open_link_cr.png"
-        //                    pressedImageSource: "asset:///images/icons/open_link_crp.png"
-        //                    horizontalAlignment: HorizontalAlignment.Center
-        //                    verticalAlignment: VerticalAlignment.Center
-        //                    maxHeight: 90
-        //                    maxWidth: 90
-        //                }
-        //                ImageButton {
-        //                    rightMargin: 20
-        //                    leftMargin: 20
-        //                    defaultImageSource: "asset:///images/icons/open_link_cr.png"
-        //                    pressedImageSource: "asset:///images/icons/open_link_crp.png"
-        //                    horizontalAlignment: HorizontalAlignment.Center
-        //                    verticalAlignment: VerticalAlignment.Center
-        //                    maxHeight: 90
-        //                    maxWidth: 90
-        //                }
-        //                ImageButton {
-        //                    rightMargin: 20
-        //                    leftMargin: 20
-        //                    defaultImageSource: "asset:///images/icons/open_link_cr.png"
-        //                    pressedImageSource: "asset:///images/icons/open_link_crp.png"
-        //                    horizontalAlignment: HorizontalAlignment.Center
-        //                    verticalAlignment: VerticalAlignment.Center
-        //                    maxHeight: 90
-        //                    maxWidth: 90
-        //                }
-        //                ImageButton {
-        //                    rightMargin: 20
-        //                    leftMargin: 20
-        //                    defaultImageSource: "asset:///images/icons/open_link_cr.png"
-        //                    pressedImageSource: "asset:///images/icons/open_link_crp.png"
-        //                    horizontalAlignment: HorizontalAlignment.Center
-        //                    verticalAlignment: VerticalAlignment.Center
-        //                    maxHeight: 90
-        //                    maxWidth: 90
-        //                }
-        //                ImageButton {
-        //                    rightMargin: 20
-        //                    leftMargin: 20
-        //                    defaultImageSource: "asset:///images/icons/open_link_cr.png"
-        //                    pressedImageSource: "asset:///images/icons/open_link_crp.png"
-        //                    horizontalAlignment: HorizontalAlignment.Center
-        //                    verticalAlignment: VerticalAlignment.Center
-        //                    maxHeight: 90
-        //                    maxWidth: 90
-        //                }
+
     }
     attachedObjects: [
         SystemToast {

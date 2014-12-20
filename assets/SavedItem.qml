@@ -187,7 +187,7 @@ Container {
                         horizontalAlignment: HorizontalAlignment.Left
                         text: ListItemData.domain
                         multiline: false
-                        textStyle.color: Color.create("#ff8e00")
+                        textStyle.color: Color.create("#f99925")
                         textStyle.fontStyle: FontStyle.Italic
                         textStyle.base: lightStyle.style
                         bottomMargin: 0
@@ -230,7 +230,7 @@ Container {
                             textStyle.fontSizeValue: 5
                             horizontalAlignment: HorizontalAlignment.Right
                             verticalAlignment: VerticalAlignment.Center
-                            textStyle.color: Color.create("#7e7e7e")
+                            textStyle.color: Color.create("#646464")
                             textStyle.base: lightStyle.style
                             textFormat: TextFormat.Html
                         }
@@ -241,7 +241,7 @@ Container {
                             textStyle.fontSizeValue: 5
                             horizontalAlignment: HorizontalAlignment.Right
                             verticalAlignment: VerticalAlignment.Center
-                            textStyle.color: Color.create("#7e7e7e")
+                            textStyle.color: Color.create("#646464")
                             textStyle.base: lightStyle.style
                             textFormat: TextFormat.Html
                         }
@@ -251,7 +251,7 @@ Container {
                         textStyle.fontSizeValue: 5
                         text: ListItemData.poster
                         id: labelUsername
-                        textStyle.color: Color.create("#ff8e00")
+                        textStyle.color: Color.create("#f99925")
                         textStyle.base: lightStyle.style
                         horizontalAlignment: HorizontalAlignment.Right
                     }

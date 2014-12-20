@@ -32,7 +32,7 @@ Container {
         verticalAlignment: VerticalAlignment.Center
         Label {
             id: errorLabel
-            text: "<b><span style='color:#ff8e00'>Error getting stories</span></b>\nCheck your connection and try again!"
+            text: "<b><span style='color:#f99925'>Error getting stories</span></b>\nCheck your connection and try again!"
             textStyle.fontSize: FontSize.PointValue
             textStyle.textAlign: TextAlign.Center
             textStyle.fontSizeValue: 9
@@ -97,6 +97,7 @@ Container {
                         page.titlePoints = ListItemData.points;
                         tabNav.push(page);
                     }
+                    // TODO: when opening straight to article, default to second item in horizontal listview
                     function openArticle(ListItemData) {
                         var page = webPage.createObject();
                         page.htmlContent = ListItemData.articleURL;

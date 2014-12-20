@@ -12,7 +12,7 @@ Container {
     property alias poster: posterLabel.text
     property bool textVisible: true
     property bool commentVisible: true
-    property string barColour: "#ff8e00"
+    property string barColour: "#f99925"
 
     horizontalAlignment: HorizontalAlignment.Fill
     leftPadding: indent
@@ -80,7 +80,7 @@ Container {
 
     // Connect the onSelectedChanged signal to the highlight function
     ListItem.onSelectionChanged: {
-        setHighlight(ListItem.selected);
+        setHighlight(ListItem.selelicted);
     }
 
     function onContenttCopied(data) {
@@ -126,7 +126,7 @@ Container {
                     console.log(poster.toString().split(" ").pop());
                     if (poster.toString().split(" ").pop() != ("children)")) {
                         hideAction.title = "Show Children";
-                        hideAction.imageSource = "asset:///images/icons/ic_show.png";
+                        hideAction.imageSource = "asset:///images/icons/ic_showC.png";
                         console.log("hiding children");
                         commentItem.ListItem.view.hideChildren(commmentContainer.ListItem.indexInSection);
                     } else {
@@ -144,8 +144,10 @@ Container {
     ]
     Container {
         visible: ListItemData.visible
+        topPadding: 10
         bottomPadding: 10
-        leftPadding: 20
+        leftPadding: 15
+        rightPadding: 10
         layout: StackLayout {
             orientation: LayoutOrientation.LeftToRight
         }
@@ -153,7 +155,7 @@ Container {
         Container {
             //rightPadding: 10
             id: comment
-            //background: Color.create("#ff5d5d5d")
+            background: Color.create("#ffffff")
             Container {
                 background: Color.create(barColour)
                 horizontalAlignment: HorizontalAlignment.Fill
@@ -209,7 +211,6 @@ Container {
                     textFormat: TextFormat.Html
                 }
             }
-
             Divider {
                 topMargin: 0
             }

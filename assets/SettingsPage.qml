@@ -7,7 +7,7 @@ Page {
     id: settingsPage
 
     property variant baseColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? Color.create("#ffdddddf") : Color.create("#434344")
-    property variant secondaryColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "" : Color.create("#ff8e00")
+    property variant secondaryColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "" : Color.create("#f99925")
 
     property bool loggedIn: false
     property string username: ""
@@ -163,7 +163,7 @@ Page {
                             text: "Always open in browser"
                             textStyle.fontSize: FontSize.PointValue
                             textStyle.fontSizeValue: 6
-                            textStyle.color: Color.create("#ff8e00")
+                            textStyle.color: Color.create("#f99925")
                         }
 
                         ToggleButton {
@@ -206,7 +206,7 @@ Page {
                             text: "Display URLs using Readability"
                             textStyle.fontSize: FontSize.PointValue
                             textStyle.fontSizeValue: 6
-                            textStyle.color: Color.create("#ff8e00")
+                            textStyle.color: Color.create("#f99925")
                         }
 
                         ToggleButton {
@@ -250,10 +250,10 @@ Page {
                             textStyle.base: lightStyle.style
                             horizontalAlignment: HorizontalAlignment.Left
                             verticalAlignment: VerticalAlignment.Bottom
-                            text: "Legacy is very slow, but more accurate"
+                            text: "Legacy is slower, but more accurate"
                             textStyle.fontSize: FontSize.PointValue
                             textStyle.fontSizeValue: 6
-                            textStyle.color: Color.create("#ff8e00")
+                            textStyle.color: Color.create("#f99925")
                             bottomMargin: 0
                             topMargin: 0
                         }
@@ -301,7 +301,7 @@ Page {
                     //                        text: "Will take effect next time you start the app"
                     //                        textStyle.fontSize: FontSize.PointValue
                     //                        textStyle.fontSizeValue: 6
-                    //                        textStyle.color: Color.create("#ff8e00")
+                    //                        textStyle.color: Color.create("#f99925")
                     //                        bottomMargin: 0
                     //                        topMargin: 0
                     //                        autoSize.maxLineCount: -1
@@ -366,7 +366,7 @@ Page {
                 Label {
                     textStyle.base: lightStyle.style
                     id: hnLabel
-                    text: "<span style='color:#ff8e00'>Login to your HN account</span>\nAccounts must be created <a href='https://news.ycombinator.com/newslogin?whence=news'>here </a>"
+                    text: "<span style='color:#f99925'>Login to your HN account</span>\nAccounts must be created <a href='https://news.ycombinator.com/newslogin?whence=news'>here </a>"
                     textStyle.fontSize: FontSize.PointValue
                     textStyle.textAlign: TextAlign.Center
                     textStyle.fontSizeValue: 9

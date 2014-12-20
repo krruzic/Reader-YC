@@ -24,7 +24,6 @@ Page {
     property bool commentEnabled: true
     property int commentIndex: 0
     property int replyIndent: 0
-
     onCreationCompleted: {
         busy = true;
         Tart.register(commentPane);
@@ -105,7 +104,7 @@ Page {
                     poster: data.comment["author"],
                     timePosted: data.comment["time"],
                     indent: data.comment["indent"],
-                    text: "<html>" + data.comment["text"] + "</html>",
+                    text: data.comment["text"],
                     link: data.comment["id"],
                     barColour: data.comment["barColour"]
                 });
@@ -231,7 +230,6 @@ Page {
     }
     Container {
         id: mainContainer
-
         layout: DockLayout {
         }
         Container {
@@ -303,7 +301,7 @@ Page {
                     // all the properties you change MUST be defined in the listItemComponent
                     var children = 0;
                     var selectedItem = commentModel.data([ index ]);
-                    for (var i = index + 1; i < commentModel.size() - 1; i ++) {
+                    for (var i = index + 1; i < commentModel.size(); i ++) {
                         var currentItem = commentModel.data([ i ]);
                         console.log(currentItem.indent);
 
@@ -326,7 +324,7 @@ Page {
                     selectedItem.poster = selectedItem.poster.toString().split(" ")[0];
                     commentModel.replace(index, selectedItem);
 
-                    for (var i = index + 1; i < commentModel.size() - 1; i ++) {
+                    for (var i = index + 1; i < commentModel.size(); i ++) {
                         var currentItem = commentModel.data([ i ]);
                         if (currentItem.indent > selectedItem.indent) {
                             currentItem.visible = true;

@@ -80,7 +80,7 @@ TitleBar {
                             //textStyle.base: SystemDefaults.TextStyles.BigText
                             textStyle.fontSize: FontSize.PointValue
                             textStyle.textAlign: TextAlign.Left
-                            textStyle.color: Color.create("#ff8e00")
+                            textStyle.color: Color.create("#f99925")
                             textFormat: TextFormat.Plain
                             enabled: false
                             textStyle.fontSizeValue: 8
@@ -123,7 +123,7 @@ TitleBar {
                         //textStyle.base: SystemDefaults.TextStyles.BigText
                         textStyle.fontSize: FontSize.PointValue
                         textStyle.textAlign: TextAlign.Center
-                        textStyle.color: Color.create("#ff8e00")
+                        textStyle.color: Color.create("#f99925")
                         textFormat: TextFormat.Plain
                         enabled: false
                         textStyle.fontSizeValue: 6

@@ -60,7 +60,7 @@ TabbedPane {
 
     Tab {
         id: topTab
-        title: qsTr("Top Posts")
+        title: qsTr("Top")
         imageSource: "asset:///images/icons/ic_top.png"
 
         TopTab { // All tab content is a navpPane
@@ -80,27 +80,7 @@ TabbedPane {
 
     }
     Tab {
-        title: qsTr("Ask HN")
-        imageSource: "asset:///images/icons/ic_ask.png"
-        id: askTab
-        AskTab {
-            id: ask
-            onCreationCompleted: {
-                ask.whichPage = 'ask'
-            }
-            onPopTransitionEnded: {
-                page.destroy();
-                Application.menuEnabled = true;
-            }
-        }
-        signal push(variant p)
-        onPush: {
-            ask.push(p);
-        }
-
-    }
-    Tab {
-        title: qsTr("Newest")
+        title: qsTr("New")
         imageSource: "asset:///images/icons/ic_new.png"
         id: newTab
         NewTab {
@@ -119,10 +99,49 @@ TabbedPane {
         }
     }
     Tab {
-        title: qsTr("Search HN")
+        title: qsTr("Ask")
+        imageSource: "asset:///images/icons/ic_ask.png"
+        id: askTab
+        AskTab {
+            id: ask
+            onCreationCompleted: {
+                ask.whichPage = 'ask'
+            }
+            onPopTransitionEnded: {
+                page.destroy();
+                Application.menuEnabled = true;
+            }
+        }
+        signal push(variant p)
+        onPush: {
+            ask.push(p);
+        }
+    }
+    Tab {
+        title: qsTr("Show")
+        imageSource: "asset:///images/icons/ic_show.png"
+        id: showTab
+        ShowTab {
+            id: show
+            onCreationCompleted: {
+                show.whichPage = 'show'
+            }
+            onPopTransitionEnded: {
+                page.destroy();
+                Application.menuEnabled = true;
+            }
+        }
+        signal push(variant p)
+        onPush: {
+            show.push(p);
+        }
+    }
+
+    Tab {
+        title: qsTr("Search")
         imageSource: "asset:///images/icons/ic_search.png"
         id: searchTab
-        SearchPage {
+        SearchTab {
             id: search
             onPopTransitionEnded: {
                 page.destroy();
@@ -157,6 +176,15 @@ TabbedPane {
                 Tart.send('requestPage', {
                         source: 'ask',
                         sentBy: 'ask'
+                    });
+            }
+        }
+        if (activeTab == showTab) {
+            if (show.theModel.isEmpty()) {
+                console.log("LOADING SHOW PAGE")
+                Tart.send('requestPage', {
+                        source: 'show',
+                        sentBy: 'show'
                     });
             }
         }
@@ -216,7 +244,6 @@ TabbedPane {
         Application.cover = null;
     }
 
-
     function onAddCoverStories(data) {
         numOfStories = data.stories.length;
         Global.stories = data.stories;
@@ -270,7 +297,7 @@ TabbedPane {
         QTimer {
             id: switchTimer
             interval: 30000 // 30 second interval
-            
+
             onTimeout: {
                 if (Global.stories[0] != undefined) {
                     //console.log(currStory + "   " + numOfStories);
