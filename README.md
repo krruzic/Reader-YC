@@ -8,7 +8,8 @@ Reader YC is a native hackernews client built with Cascades and Python (using Bl
 
 The post scraping is based heavily off of Dimillian's Sublime plugin found [here](https://github.com/Dimillian/Sublime-Hacker-News-Reader)
 
-To fetch comments, the user has a choice to either use BeautifulSoup scraping or the [HN Search API](https://hn.algolia.com). The api is much faster, so I recommend it. However it can be unreliable, and doesn't sort comments properly until a few days after the post was submitted.
+To fetch comments, the user has a choice to either use BeautifulSoup scraping or the [HN Search API](https://hn.algolia.com). The api is much faster, so I recommend it. However it can be unreliable, and doesn't sort comments properly until a few days after the post was submitted. 
+Since 1.5, the scraping is faster and works better. A setting to enable Legacy Scraping can be found within the app.
 
 
 Here is a current screenshot of the main page:
