@@ -175,7 +175,7 @@ Container {
                         horizontalAlignment: HorizontalAlignment.Left
                         text: ListItemData.domain
                         textStyle.fontSize: FontSize.PointValue
-                        textStyle.fontSizeValue: 5
+                        textStyle.fontSizeValue: 6
                         multiline: false
                         textStyle.color: Color.create("#f99925")
                         textStyle.fontStyle: FontStyle.Italic
@@ -188,7 +188,7 @@ Container {
                         topMargin: 5
                         text: ListItemData.timePosted
                         id: labelTimePosted
-                        textStyle.fontSizeValue: 5
+                        textStyle.fontSizeValue: 6
                         textStyle.base: lightStyle.style
                     }
                 }
