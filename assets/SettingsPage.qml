@@ -20,7 +20,9 @@ Page {
 
     onCreationCompleted: {
         Tart.register(settingsPage);
-        precheckValues(settings.openInBrowser ? true : false, settings.readerMode ? true : false, settings.loggedIn ? true : false, settings.username, settings.legacyFetch ? true : false);
+        precheckValues(settings.openInBrowser ? true : false, settings.readerMode ? true : false,
+                    settings.loggedIn ? true : false, settings.username,
+                    settings.legacyFetch ? true : false, settings.darkTheme ? true : false);
     }
     function onCacheDeleted(data) {
         cacheButton.enabled = true;
@@ -28,12 +30,13 @@ Page {
         cacheDeleteToast.cancel();
         cacheDeleteToast.show();
     }
-    function precheckValues(browser, reader, login, user, fetch) {
+    function precheckValues(browser, reader, login, user, fetch, theme) {
         apiToggle.checked = fetch;
         browserToggle.checked = browser;
         readerToggle.checked = reader;
         loggedIn = login;
         username = user;
+        darkThemeToggle.checked = theme;
         console.log(loggedIn);
     }
     onLoggedInChanged: {
@@ -250,7 +253,7 @@ Page {
                             textStyle.base: lightStyle.style
                             horizontalAlignment: HorizontalAlignment.Left
                             verticalAlignment: VerticalAlignment.Bottom
-                            text: "Legacy is slower, but more accurate"
+                            text: "Scrapes HN for comments"
                             textStyle.fontSize: FontSize.PointValue
                             textStyle.fontSizeValue: 6
                             textStyle.color: Color.create("#f99925")
@@ -275,55 +278,57 @@ Page {
                     Divider {
 
                     }
-                    //                Container {
-                    //                    layout: DockLayout {
-                    //
-                    //                    }
-                    //                    rightPadding: 0
-                    //                    horizontalAlignment: HorizontalAlignment.Fill // Make full width
-                    //                    Label {
-                    //                        textStyle.base: lightStyle.style
-                    //                        horizontalAlignment: HorizontalAlignment.Left
-                    //                        verticalAlignment: VerticalAlignment.Top
-                    //                        text: "<b>Dark Theme</b>"
-                    //                        textFormat: TextFormat.Html
-                    //                        textStyle.fontSize: FontSize.PointValue
-                    //                        textStyle.fontSizeValue: 7
-                    //                        textStyle.color: baseColour
-                    //                        bottomMargin: 0
-                    //                        topMargin: 0
-                    //                    }
-                    //
-                    //                    Label {
-                    //                        textStyle.base: lightStyle.style
-                    //                        horizontalAlignment: HorizontalAlignment.Left
-                    //                        verticalAlignment: VerticalAlignment.Bottom
-                    //                        text: "Will take effect next time you start the app"
-                    //                        textStyle.fontSize: FontSize.PointValue
-                    //                        textStyle.fontSizeValue: 6
-                    //                        textStyle.color: Color.create("#f99925")
-                    //                        bottomMargin: 0
-                    //                        topMargin: 0
-                    //                        autoSize.maxLineCount: -1
-                    //                    }
-                    //                    ToggleButton {
-                    //                        horizontalAlignment: HorizontalAlignment.Right
-                    //
-                    //                        id: themeToggle
-                    //                        onCheckedChanged: {
-                    //                            if (checked == true) {
-                    //                                settings.legacyFetch = true;
-                    //                                console.log("Legacy Fetch on..")
-                    //                            } else {
-                    //                                settings.legacyFetch = false;
-                    //                                console.log("Legacy Fetch off")
-                    //                            }
-                    //                        }
-                    //                    }
-                    //                }
-                    //                Divider {
-                    //
-                    //                }
+                   Container {
+                       layout: DockLayout {
+
+                       }
+                       rightPadding: 0
+                       horizontalAlignment: HorizontalAlignment.Fill // Make full width
+                       Label {
+                           textStyle.base: lightStyle.style
+                           horizontalAlignment: HorizontalAlignment.Left
+                           verticalAlignment: VerticalAlignment.Top
+                           text: "<b>Dark Theme</b>"
+                           textFormat: TextFormat.Html
+                           textStyle.fontSize: FontSize.PointValue
+                           textStyle.fontSizeValue: 7
+                           textStyle.color: baseColour
+                           bottomMargin: 0
+                           topMargin: 0
+                       }
+
+                       Label {
+                           textStyle.base: lightStyle.style
+                           horizontalAlignment: HorizontalAlignment.Left
+                           verticalAlignment: VerticalAlignment.Bottom
+                           text: "Use a dark theme throughout the app (restart needed)"
+                           textStyle.fontSize: FontSize.PointValue
+                           textStyle.fontSizeValue: 6
+                           textStyle.color: Color.create("#f99925")
+                           bottomMargin: 0
+                           topMargin: 0
+                           autoSize.maxLineCount: -1
+                       }
+                       ToggleButton {
+                           horizontalAlignment: HorizontalAlignment.Right
+
+                           id: themeToggle
+                           onCheckedChanged: {
+                               if (checked == true) {
+                                    Application.themeSupport.setVisualStyle(VisualStyle.Dark);
+                                   settings.darkTheme = true;
+                                   console.log("Dark Theme on..")
+                               } else {
+                                    Application.themeSupport.setVisualStyle(VisualStyle.Bright);
+                                   settings.darkTheme = false;
+                                   console.log("Dark Theme off")
+                               }
+                           }
+                       }
+                   }
+                   Divider {
+
+                   }
                     Button {
                         verticalAlignment: VerticalAlignment.Top
                         horizontalAlignment: HorizontalAlignment.Center

@@ -36,6 +36,7 @@ class App(tart.Application):
             'loggedIn': False,
             'username': '',
             'legacyFetch': False
+            'darkTheme': False
         }
         self.restore_data(self.settings, self.SETTINGS_FILE)
         self.sess = HNapi(self.settings['username'])
