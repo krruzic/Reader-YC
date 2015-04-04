@@ -88,7 +88,6 @@ class HNComments():
             text = ''
 
         comment_tables = soup.find_all('table', 0)
-
         del comment_tables[0:4]
         if (len(comment_tables) == 0):
             return text, []
@@ -104,16 +103,15 @@ class HNComments():
             body = table.find('span', 'comment')
             for img in table.find_all('img', {"src": "s.gif"}):
                 comment['indent'] = int(img.get('width'))
-
             try:
-                comment['author'] = head.find('a').get_text()
-                comment['time'] = head.contents[1][1:-3]
-                comment['id'] = head.find('a', text="link")['href'].split('item?id=')[1]
+                hrefs = head.find_all('a')
+                comment['author'] = hrefs[0].get_text()
+                comment['time'] = hrefs[1].get_text()
+                comment['id'] = hrefs[1]['href'].split('item?id=')[1]
                 for child in body.find('font').contents:
                     comment['text'] = comment['text'] + str(child)
             except:
                 comment['text'] = '[deleted]'
-
             comments.append(comment)
         return text, comments
 
@@ -149,17 +147,12 @@ class HNStory():
         }
         """
         soup = BeautifulSoup(page)
-        # print("Souping: ", soupEnd - soupStart)
         story_tables = soup.find_all('table', 0)
-        #story_tables = list(map(str, story_tables))
         del story_tables[0:2]
         del story_tables[-1]
-        # for i in story_tables:
-        #     print(i)
 
         metadata = story_tables[0].find_all("td", "subtext")
         head = story_tables[0].find_all("td", "title", align=False)
-        #print(metadata, head)
         stories = []
         for i, m in zip(head, metadata):
             story = {
@@ -172,16 +165,16 @@ class HNStory():
                 story['link'] = 'https://news.ycombinator.com/' + story['link']
                 story['askPost'] = "true"
             try:
-                story['domain'] = i.find("span").text
+                story['domain'] = i.find("span", "sitebit comhead").text
                 story['domain'] = re.search(r'\(([^)]*)\)', story['domain']).group(
                     1)  # Remove brackets from domain
             except:
                 story['domain'] = "news.ycombinator.com"
-
             if 'point' in m.text:
-                story['time'] = m.contents[3][1:-3]
-                story['score'] = m.find("span").contents[0].split()[0]
-                story['author'] = m.a.text.strip()
+                hrefs = m.find_all('a')
+                story['author'] = hrefs[0].get_text()
+                story['time'] = hrefs[1].get_text()
+                story['score'] = m.find('span').get_text().split()[0]
                 story['hnid'] = m.span['id'].split('_')[1]
                 story['commentURL'] = "https://news.ycombinator.com/item?id=" + \
                     story['hnid']
@@ -189,18 +182,15 @@ class HNStory():
                     story['commentCount'] = '0'
                 else:
                     try:
-                        story['commentCount'] = m.find_all("a")[1].text.split()[0]
+                        story['commentCount'] = hrefs[2].get_text().split()[0]
                     except AttributeError:
-                            story['commentCount'] = '?'
+                        story['commentCount'] = '?'
             else:  # Jobs post
                 story['time'] = m.text.strip()
                 story['commentCount'] = '0'
                 story['score'] = '0'
                 story['author'] = 'ycombinator'
-
-            # print("Time to parse 1 story: ", endTime - startTime)
             stories.append(story)
-        print(head[-1].find_all('a')[0]['href'])
         return stories, head[-1].find_all('a')[0]['href']
 
     def parseStories(self, source):
@@ -241,18 +231,18 @@ class HNSearchStory():
             articleURL = e['url']
             parsed_uri = urlparse(articleURL)
             commentURL = 'https://news.ycombinator.com/item?id=' + str(e['objectID'])
-
             if e['story_text'] != "":  # Javascript uses lowercase for bools...
                 isAsk = 'true'
                 domain = "news.ycombinator.com"
                 articleURL = commentURL
             else:
                 isAsk = 'false'
+                domain = '{uri.netloc}'.format(uri=parsed_uri)
             timestamp = readerutils.prettyDate(
                 datetime.strptime(e['created_at'], incomplete_iso_8601_format))
             result = {
                 'title': e['title'], 'poster': e['author'], 'points': e['points'], 'num_comments': str(e['num_comments']),
-                'timestamp': timestamp, 'id': str(e['objectID']), 'domain': '{uri.netloc}'.format(uri=parsed_uri),
+                'timestamp': timestamp, 'id': str(e['objectID']), 'domain': domain,
                 'articleURL': articleURL, 'commentURL': commentURL, 'isAsk': isAsk
             }
             res.append(result)
