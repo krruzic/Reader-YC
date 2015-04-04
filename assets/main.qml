@@ -265,7 +265,8 @@ TabbedPane {
             readerMode: settings.readerMode,
             loggedIn: settings.loggedIn,
             username: settings.username,
-            legacyFetch: settings.legacyFetch
+            legacyFetch: settings.legacyFetch,
+            darkTheme: settings.darkTheme
         };
 
         Tart.send('saveSettings', {
@@ -325,6 +326,7 @@ TabbedPane {
             property bool loggedIn: false
             property string username: ""
             property bool legacyFetch: false
+            property bool darkTheme: false
             onOpenInBrowserChanged: {
                 settingsChanged();
             }
@@ -341,6 +343,9 @@ TabbedPane {
             }
             onLegacyFetchChanged: {
                 settingsChanged();
+            }            
+            onDarkThemeChanged: {
+                settingsChanged();
             }
             function restore(data) {
                 print('restoring', Object.keys(data));
@@ -354,7 +359,15 @@ TabbedPane {
                     print('username = ', data.username);
                     username = data.username;
                     print('legacyFetch =', data.legacyFetch);
-                    legacyFetch = data.legacyFetch;
+                    legacyFetch = data.legacyFetch;                    
+                    print('darkTheme =', data.darkTheme);
+                    if (data.darkTheme) {
+                        Application.themeSupport.setVisualStyle(VisualStyle.Dark);
+                    } else {
+                        Application.themeSupport.setVisualStyle(VisualStyle.Bright);
+                    }
+
+                    darkTheme = data.darkTheme;
                 }
             }
         }

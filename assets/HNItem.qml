@@ -1,4 +1,4 @@
-import bb.cascades 1.2
+import bb.cascades 1.3
 import bb.system 1.2
 import "tart.js" as Tart
 
@@ -211,6 +211,7 @@ Container {
                             maxHeight: 26
                             maxWidth: 26
                             translationY: 2
+                            filterColor: ui.palette.primarySoft     
                             verticalAlignment: VerticalAlignment.Center
                             horizontalAlignment: HorizontalAlignment.Right
                         }
@@ -223,18 +224,18 @@ Container {
                             textStyle.fontSizeValue: 5
                             horizontalAlignment: HorizontalAlignment.Right
                             verticalAlignment: VerticalAlignment.Center
-                            textStyle.color: Color.create("#646464")
+                            textStyle.color: ui.palette.primarySoft     
                             textStyle.base: lightStyle.style
                             textFormat: TextFormat.Html
                         }
                         Label {
                             leftMargin: 0
-                            text: "<html><i> | ▲ </i></html>" + ListItemData.points
+                            text: "<html><i> | ▲ " + ListItemData.points + "</i></html>"
                             textStyle.fontSize: FontSize.PointValue
                             textStyle.fontSizeValue: 5
                             horizontalAlignment: HorizontalAlignment.Right
                             verticalAlignment: VerticalAlignment.Center
-                            textStyle.color: Color.create("#646464")
+                            textStyle.color: ui.palette.primarySoft     
                             textStyle.base: lightStyle.style
                             textFormat: TextFormat.Html
                         }

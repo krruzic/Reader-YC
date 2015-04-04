@@ -155,7 +155,7 @@ Container {
         Container {
             //rightPadding: 10
             id: comment
-            background: Color.create("#ffffff")
+            // background: Color.create("#ffffff")
             Container {
                 background: Color.create(barColour)
                 horizontalAlignment: HorizontalAlignment.Fill

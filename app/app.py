@@ -35,7 +35,7 @@ class App(tart.Application):
             'readerMode': False,
             'loggedIn': False,
             'username': '',
-            'legacyFetch': False
+            'legacyFetch': False,
             'darkTheme': False
         }
         self.restore_data(self.settings, self.SETTINGS_FILE)

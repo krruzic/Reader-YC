@@ -12,7 +12,7 @@ class readerutils():
         return 'https://news.ycombinator.com/{}'.format(address)
 
     def textReplace(text):
-        #text = text.replace('rel="nofollow"', '')
+        text = text.replace('rel="nofollow"', '')
         # Replace unclosed <p>'s with new lines
         text = text.replace('<p>', '\n')
         text = text.replace('</p>', '')  # Remove the crap BS4 adds

@@ -36,7 +36,7 @@ Page {
         readerToggle.checked = reader;
         loggedIn = login;
         username = user;
-        darkThemeToggle.checked = theme;
+        themeToggle.checked = theme;
         console.log(loggedIn);
     }
     onLoggedInChanged: {
@@ -301,7 +301,7 @@ Page {
                            textStyle.base: lightStyle.style
                            horizontalAlignment: HorizontalAlignment.Left
                            verticalAlignment: VerticalAlignment.Bottom
-                           text: "Use a dark theme throughout the app (restart needed)"
+                           text: "Use a dark theme throughout the app"
                            textStyle.fontSize: FontSize.PointValue
                            textStyle.fontSizeValue: 6
                            textStyle.color: Color.create("#f99925")
@@ -316,12 +316,12 @@ Page {
                            onCheckedChanged: {
                                if (checked == true) {
                                     Application.themeSupport.setVisualStyle(VisualStyle.Dark);
-                                   settings.darkTheme = true;
-                                   console.log("Dark Theme on..")
+                                    settings.darkTheme = true;
+                                    console.log("Dark Theme on..")
                                } else {
                                     Application.themeSupport.setVisualStyle(VisualStyle.Bright);
-                                   settings.darkTheme = false;
-                                   console.log("Dark Theme off")
+                                    settings.darkTheme = false;
+                                    console.log("Dark Theme off")
                                }
                            }
                        }
