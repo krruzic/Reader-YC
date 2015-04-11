@@ -15,10 +15,15 @@ Here is a current screenshot of the main page:
 
 An up to date signed BAR file is almost always available at this repo.
 ## Requirements:
+I recommend you use virtualenv for this, makes the process much easier
 BeautifulSoup4
     `pip install bs4`
 Requests
     `pip install requests`
+Tartutil
+    `pip install /path/to/tartutil/`
+
+The tartutil package isn't up yet but I'm working on it. The build steps should be a lot simpler too
 
 ## Steps to build:
 Since the release of tart V1.1, I have switched to the recommended method of building described [here](http://hg.microcode.ca/blackberry-py/wiki/Building%20HelloWorld)

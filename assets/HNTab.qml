@@ -23,7 +23,7 @@ Container {
 
     layout: DockLayout {
     }
-    
+
     horizontalAlignment: HorizontalAlignment.Center
     verticalAlignment: VerticalAlignment.Center
     Container {
@@ -58,7 +58,10 @@ Container {
         }
     }
     Container {
+        layout: DockLayout {
+        }
         ListView {
+            horizontalAlignment: HorizontalAlignment.Fill
             scrollRole: ScrollRole.Main
             id: theList
             dataModel: ArrayDataModel {
@@ -114,7 +117,7 @@ Container {
                         layout: DockLayout {
 
                         }
-                        horizontalAlignment: HorizontalAlignment.Center
+                        horizontalAlignment: HorizontalAlignment.Fill
                         verticalAlignment: VerticalAlignment.Center
                         ErrorItem {
                             id: errorItem
@@ -125,9 +128,8 @@ Container {
                 ListItemComponent {
                     type: 'load'
                     LoadItem {
+                        horizontalAlignment: HorizontalAlignment.Fill
                         id: loadItem
-                        horizontalAlignment: HorizontalAlignment.Center
-                        verticalAlignment: VerticalAlignment.Center
                         property string type: ListItemData.type
                     }
                 }

@@ -31,6 +31,7 @@ Page {
     ]
     actionBarVisibility: ChromeVisibility.Visible
     ScrollView {
+        
         scrollViewProperties.scrollMode: ScrollMode.Vertical
         Container {
             layout: DockLayout {
@@ -39,7 +40,6 @@ Page {
             leftPadding: 15
             rightPadding: 15
             topPadding: 20
-
             attachedObjects: [
                 TextStyleDefinition {
                     id: lightStyle

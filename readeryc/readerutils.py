@@ -16,9 +16,10 @@ class readerutils():
         # Replace unclosed <p>'s with new lines
         text = text.replace('<p>', '\n')
         text = text.replace('</p>', '')  # Remove the crap BS4 adds
-        text = text.replace(
-            '<pre><code>', '<p style="font-family: Monospace; font-size:5pt; font-weight:100;">')
-        text = text.replace('</code></pre>', '</p>')
+        # text = text.replace(
+        #     '<pre><code>', '<p style="font-family: Monospace; font-size:5pt; font-weight:100;">')
+        # text = text.replace('</code></pre>', '</p><p>')
+        # print(text)
         text = text.replace('\\n', '\n')
         text = text.replace('\\t', '\t')
         return text
