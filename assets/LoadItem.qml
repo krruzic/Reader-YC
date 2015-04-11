@@ -3,9 +3,7 @@ Container {
     topPadding: 10
     layout: DockLayout {
     }
-    minWidth: 720
-    preferredWidth: 768
-    horizontalAlignment: HorizontalAlignment.Center
+    horizontalAlignment: HorizontalAlignment.Fill
     Container {
         minHeight: 10
         maxHeight: 10

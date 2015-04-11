@@ -33,26 +33,20 @@ class HNapi():
         self.session = requests.session()
 
     def login(self, username, password):
-        result = False
-        sess = requests.session()
-        res = sess.get(readerutils.hnUrl('login'), headers=readerutils.HEADERS)
-        soup = BeautifulSoup(res.content)
-
-        endpoint = soup.find('form', {'method': 'post'})['action']
-        endpoint = endpoint.replace("/", "")
-
-        params = {'acct': username, 'pw': password}
-        r = sess.post(readerutils.hnUrl(endpoint),
-                      headers=readerutils.HEADERS, params=params)
+        params = {'acct': username, 'pw': password, 'goto': 'item?id=9358480'} # random goto value to save some time
+        r = self.session.post('https://news.ycombinator.com/login?goto=item?id=9358480',
+                      headers=readerutils.HEADERS, data=params)
         if ("Bad login" not in r.text):
             print("no bad login")
-            cookies = sess.cookies
+            cookies = self.session.cookies
             f = open(readerutils.COOKIE, 'wb')
             pickle.dump(requests.utils.dict_from_cookiejar(cookies), f)
+            print(cookies)
             f.close()
             self.username = username
             self.loggedIn = True
             return True
+        r = self.session.get(readerutils.hnUrl('user?id={}'.format(username)), cookies=self.session.cookies)
         return False
 
     def logout(self):
@@ -66,10 +60,12 @@ class HNapi():
         f = open(readerutils.COOKIE, 'rb')
         cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
         f.close()
+
         r = self.session.get(
-            readerutils.hnUrl('user?id={}'.format(username)), headers=readerutils.HEADERS, cookies=cookies)
+            readerutils.hnUrl('user?id={}'.format(username)), cookies=cookies)
         soup = BeautifulSoup(r.content)
         fnid = soup.find('input', {'name': 'fnid'})['value']
+        fnop = soup.find('input', {'name': 'fnop'})['value']
         about = soup.find('textarea', {'name': 'about'}).get_text()
         endpoint = soup.find('form', {'method': 'post'})['action']
         endpoint = endpoint.replace("/", "")
@@ -78,7 +74,7 @@ class HNapi():
             email = soup.find('input', {'name': 'email'})['value']
         except:
             email = ""
-        return [fnid, about, email, endpoint]
+        return [fnop, fnid, about, email, endpoint]
 
     def postProfile(self, username, email, about):
         if(not self.loggedIn):
@@ -95,13 +91,13 @@ class HNapi():
             return False
 
         params = {
-            'fnid': info[0],
+            'fnop': info[0],
+            'fnid': info[1],
             'about': about,
             'email': email,
         }
 
-        r = self.session.post(
-            readerutils.hnUrl(info[3]), headers=readerutils.HEADERS, params=params, cookies=cookies)
+        r = self.session.post(readerutils.hnUrl(info[4]), data=params)
         return True
 
     def postComment(self, source, comment):
@@ -115,7 +111,7 @@ class HNapi():
         comment = cgi.escape(comment)
         try:
             r = self.session.get(
-                readerutils.hnUrl('reply?id=' + source), headers=readerutils.HEADERS, cookies=cookies)
+                readerutils.hnUrl('reply?id=' + source))
         except:
             return False
         soup = BeautifulSoup(r.content)
@@ -125,8 +121,7 @@ class HNapi():
         params = {'hmac': hmac, 'text': comment, 'parent': source, 'whence': 'news'}
 
         try:
-            r = self.session.post(
-                readerutils.hnUrl(endpoint), params=params, headers=readerutils.HEADERS, cookies=cookies)
+            r = self.session.post(readerutils.hnUrl(endpoint), data=params)
         except Exception:
             print(Exception)
             return False
@@ -146,8 +141,7 @@ class HNapi():
             text = cgi.escape(text)
 
         try:
-            r = self.session.get(
-                readerutils.hnUrl('submit'), headers=readerutils.HEADERS, cookies=cookies)
+            r = self.session.get(readerutils.hnUrl('submit'))
         except:
             return False
         soup = BeautifulSoup(r.content)
@@ -158,7 +152,7 @@ class HNapi():
         params = {'fnid': fnid, 't': title, 'u': link, 'x': text}
         try:
             r = self.session.post(
-                readerutils.hnUrl(endpoint), params=params, headers=readerutils.HEADERS, cookies=cookies)
+                readerutils.hnUrl(endpoint), data=params)
         except:
             return False
 
@@ -167,13 +161,13 @@ class HNapi():
         return False
 
     def getStories(self, list):
-        stories = self.stories.parseStories(readerutils.hnUrl(list))
+        stories = self.stories.parseStories(readerutils.hnUrl(list), self.session)
         return stories
 
     def getComments(self, ident, isAsk=False, legacy=False):
-        text, comments = self.comments.parseComments(ident, isAsk, legacy)
+        text, comments = self.comments.parseComments(ident, self.session, isAsk, legacy)
         return text, comments
 
     def getSearchStories(self, startIndex, source):
-        res = self.searchStories.parseSearchStories(startIndex, source)
+        res = self.searchStories.parseSearchStories(startIndex, source, self.session)
         return res

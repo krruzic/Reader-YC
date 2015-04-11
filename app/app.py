@@ -35,7 +35,7 @@ class App(tart.Application):
             'readerMode': False,
             'loggedIn': False,
             'username': '',
-            'legacyFetch': False
+            'legacyFetch': False,
             'darkTheme': False
         }
         self.restore_data(self.settings, self.SETTINGS_FILE)
@@ -124,18 +124,18 @@ class App(tart.Application):
 
 # GET functions
     def storyRoutine(self, source, sentBy):
-        try:
-            stories, moreLink = self.sess.getStories(source)
-        except requests.exceptions.ConnectionError:
-            tart.send('{0}ListError'.format(sentBy),
-                      text="<b><span style='color:#f99925'>Error getting stories</span></b>\nCheck your connection and try again!")
-            return
-        except IndexError:
-            print("Expired link?")
-            tart.send('{0}ListError'.format(sentBy),
-                      text="<b><span style='color:#f99925'>Link expired</span></b>\nPlease refresh the page")
-            return
-
+        # try:
+        stories, moreLink = self.sess.getStories(source)
+        # except requests.exceptions.ConnectionError:
+        # tart.send('{0}ListError'.format(sentBy),
+        #               text="<b><span style='color:#f99925'>Error getting stories</span></b>\nCheck your connection and try again!")
+        # return
+        # except IndexError:
+        #     print("Expired link?")
+        #     tart.send('{0}ListError'.format(sentBy),
+        #               text="<b><span style='color:#f99925'>Link expired</span></b>\nPlease refresh the page")
+        #     return
+        print(stories)
         for story in stories:
             tart.send('add{0}Stories'.format(sentBy),
                       story=story, moreLink=moreLink, sentTo=sentBy)

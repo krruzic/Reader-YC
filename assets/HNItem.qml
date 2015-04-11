@@ -1,8 +1,11 @@
-import bb.cascades 1.2
+import bb.cascades 1.4
 import bb.system 1.2
 import "tart.js" as Tart
 
 Container {
+    property variant baseColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? Color.create("#ffdddddf") : Color.create("#434344")
+    property variant secondaryColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "" : Color.create("#f99925")
+
     id: hnPage
     property string postArticle: ''
     property string askPost: ''
@@ -213,6 +216,7 @@ Container {
                             translationY: 2
                             verticalAlignment: VerticalAlignment.Center
                             horizontalAlignment: HorizontalAlignment.Right
+                            filterColor: baseColour
                         }
                         Label {
                             
@@ -223,7 +227,7 @@ Container {
                             textStyle.fontSizeValue: 5
                             horizontalAlignment: HorizontalAlignment.Right
                             verticalAlignment: VerticalAlignment.Center
-                            textStyle.color: Color.create("#646464")
+                            textStyle.color: baseColour
                             textStyle.base: lightStyle.style
                             textFormat: TextFormat.Html
                         }
@@ -234,7 +238,7 @@ Container {
                             textStyle.fontSizeValue: 5
                             horizontalAlignment: HorizontalAlignment.Right
                             verticalAlignment: VerticalAlignment.Center
-                            textStyle.color: Color.create("#646464")
+                            textStyle.color: baseColour
                             textStyle.base: lightStyle.style
                             textFormat: TextFormat.Html
                         }

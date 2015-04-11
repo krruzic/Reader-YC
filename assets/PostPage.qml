@@ -55,16 +55,14 @@ Page {
             ]
             Container {
                 Container {
-                    background: background.imagePaint
                     TextField {
                         id: titleField
                         hintText: "Title"
-                        backgroundVisible: false
+                        backgroundVisible: true
                     }
                     bottomMargin: 20
                 }
                 Container {
-                    background: background.imagePaint
                     TextField {
                         id: urlField
                         hintText: "Story URL"
@@ -86,7 +84,6 @@ Page {
                     bottomMargin: 20
                 }
                 Container {
-                    background: background.imagePaint
                     TextArea {
                         id: bodyField
                         enabled: true

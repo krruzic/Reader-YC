@@ -5,7 +5,7 @@ class readerutils():
     SETTINGS_FILE = 'data/settings.state'
     COOKIE = os.path.join('data/', 'hackernews.cookie')
     HEADERS = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.29 Safari/537.22',
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:37.0) Gecko/20100101 Firefox/37.0',
     }
 
     def hnUrl(address):
@@ -24,7 +24,7 @@ class readerutils():
         return text
 
     def prettyDate(time):
-        """ 
+        """
         Get a datetime object or a int() Epoch timestamp and return a
         pretty string like 'an hour ago', 'Yesterday', '3 months ago',
         'just now', etc

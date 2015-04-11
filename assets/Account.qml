@@ -11,7 +11,7 @@ Container {
     
     id: account
     visible: true
-    horizontalAlignment: HorizontalAlignment.Fill
+    horizontalAlignment: HorizontalAlignment.Center
     verticalAlignment: VerticalAlignment.Center
     leftPadding: 10
     rightPadding: 10
@@ -35,7 +35,6 @@ Container {
     ScrollView {
         scrollViewProperties.scrollMode: ScrollMode.Vertical
         Container {
-            bottomPadding: 10
             Label {
                 horizontalAlignment: HorizontalAlignment.Fill
                 textStyle.base: lightStyle.style
@@ -59,7 +58,6 @@ Container {
                     textStyle.base: lightStyle.style
                     text: "Edit your bio\n(email is private)"
                     textStyle.fontSize: FontSize.PointValue
-                    //        textStyle.textAlign: TextAlign.Center
                     textStyle.fontSizeValue: 7
                     textStyle.color: baseColour
                     textFormat: TextFormat.Html
@@ -68,28 +66,24 @@ Container {
 
                 }
                 Container {
-                    background: background.imagePaint
                     TextField {
                         textStyle.color: Color.create("#262626")
                         enabled: false
-                        backgroundVisible: false
+                        backgroundVisible: true
                         verticalAlignment: VerticalAlignment.Center
                         id: emailField
                         hintText: "Email"
-                        bottomMargin: 100
                     }
                 }
             }
             Container {
-                background: background.imagePaint
                 TextArea {
                     textStyle.color: Color.create("#262626")
                     autoSize.maxLineCount: 20
-                    backgroundVisible: false
+                    backgroundVisible: true
                     enabled: false
                     id: bioField
                     verticalAlignment: VerticalAlignment.Fill
-                    minHeight: 400
                     hintText: "Bio"
                 }
             }
@@ -102,8 +96,8 @@ Container {
                 layout: StackLayout {
                     orientation: LayoutOrientation.LeftToRight
                 }
+                horizontalAlignment: HorizontalAlignment.Center
                 Button {
-                    horizontalAlignment: HorizontalAlignment.Center
                     text: "Save"
                     onClicked: {
                         Tart.send('saveProfile', {
@@ -115,7 +109,6 @@ Container {
                 }
                 Button {
                     leftMargin: 150
-                    horizontalAlignment: HorizontalAlignment.Center
                     text: "Logout"
                     onClicked: {
                         Tart.send('logout', {

@@ -115,7 +115,7 @@ class HNComments():
             comments.append(comment)
         return text, comments
 
-    def parseComments(self, source, isAsk=False, legacy=False):
+    def parseComments(self, source, sess, isAsk=False, legacy=False):
         """Gets the comments and text of the post
         """
 
@@ -125,11 +125,11 @@ class HNComments():
 
         if (legacy == True):
             print("scraping to fetch comments")
-            r = requests.get(scrapeURL, headers=readerutils.HEADERS)
+            r = sess.get(scrapeURL) #, verify=os.path.dirname(os.path.realpath(__file__)) + '/cacert.pem')
             text, comments = self.legacyFetch(r, isAsk)
         elif (legacy == False):
             print("using api to fetch comments")
-            r = requests.get(commentsURL, headers=readerutils.HEADERS)
+            r = sess.get(commentsURL) #, verify=os.path.dirname(os.path.realpath(__file__)) + '/cacert.pem')
             text, comments = self.apiFetch(r, isAsk)
         return text, comments
 
@@ -193,10 +193,11 @@ class HNStory():
             stories.append(story)
         return stories, head[-1].find_all('a')[0]['href']
 
-    def parseStories(self, source):
+    def parseStories(self, source, sess):
         url = source
         print("curling page: " + url)
-        r = requests.get(url=url, headers=readerutils.HEADERS)
+        print(os.path.dirname(os.path.realpath(__file__)) + "/cacert.pem")
+        r = sess.get(url=url, headers=readerutils.HEADERS, verify=os.path.dirname(os.path.realpath(__file__)) + '/cacert.pem')#, verify=os.path.dirname(os.path.realpath(__file__)) + '/cacert.pem')
         page = r.content
         print("page curled")
         if ("Unknown or expired link." in str(page)):
@@ -207,7 +208,7 @@ class HNStory():
 
 class HNSearchStory():
 
-    def parseSearchStories(self, pageNumber, source):
+    def parseSearchStories(self, pageNumber, source, sess):
         """
         Queries the HNSearch API and returns
         tuples of the results
@@ -219,7 +220,7 @@ class HNSearchStory():
         url = "http://hn.algolia.com/api/v1/search_by_date?query={0}&page={1}&tags=story{2}".format(
             quote(source[0]), pageNumber, author)
         # reads the returned data
-        r = requests.get(url, headers=readerutils.HEADERS)
+        r = requests.get(url, headers=readerutils.HEADERS) #, verify=os.path.dirname(os.path.realpath(__file__)) + '/cacert.pem')
         print("Page curled")
         items = r.json()
 
