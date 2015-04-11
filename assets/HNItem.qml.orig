@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import bb.cascades 1.4
+=======
+import bb.cascades 1.3
+>>>>>>> bfb6b4681c97299236252acf040b83c7df72778e
 import bb.system 1.2
 import "tart.js" as Tart
 
@@ -214,6 +218,7 @@ Container {
                             maxHeight: 26
                             maxWidth: 26
                             translationY: 2
+                            filterColor: ui.palette.primarySoft     
                             verticalAlignment: VerticalAlignment.Center
                             horizontalAlignment: HorizontalAlignment.Right
                             filterColor: baseColour
@@ -227,7 +232,11 @@ Container {
                             textStyle.fontSizeValue: 5
                             horizontalAlignment: HorizontalAlignment.Right
                             verticalAlignment: VerticalAlignment.Center
+<<<<<<< HEAD
                             textStyle.color: baseColour
+=======
+                            textStyle.color: ui.palette.primarySoft     
+>>>>>>> bfb6b4681c97299236252acf040b83c7df72778e
                             textStyle.base: lightStyle.style
                             textFormat: TextFormat.Html
                         }
@@ -238,7 +247,11 @@ Container {
                             textStyle.fontSizeValue: 5
                             horizontalAlignment: HorizontalAlignment.Right
                             verticalAlignment: VerticalAlignment.Center
+<<<<<<< HEAD
                             textStyle.color: baseColour
+=======
+                            textStyle.color: ui.palette.primarySoft     
+>>>>>>> bfb6b4681c97299236252acf040b83c7df72778e
                             textStyle.base: lightStyle.style
                             textFormat: TextFormat.Html
                         }
