@@ -46,7 +46,6 @@ class HNapi():
             self.username = username
             self.loggedIn = True
             return True
-        r = self.session.get(readerutils.hnUrl('user?id={}'.format(username)), cookies=self.session.cookies)
         return False
 
     def logout(self):

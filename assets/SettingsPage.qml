@@ -44,7 +44,7 @@ Page {
         if (data.result == true) {
             settings.username = username;
             settings.loggedIn = true;
-            account.visible = true;
+            profileContainer.visible = true;
             cnt2.visible = false;
         } else {
             settings.loggedIn = false;
@@ -65,7 +65,7 @@ Page {
         cacheDeleteToast.body = data.text;
         cacheDeleteToast.cancel();
         cacheDeleteToast.show();
-        account.visible = false;
+        profileContainer.visible = false;
         cnt2.visible = true;
     }
 
@@ -81,10 +81,10 @@ Page {
             cacheDeleteToast.cancel();
             cacheDeleteToast.show();
         }
-        account.bioField.enabled = true;
-        account.emailField.enabled = true;
-        account.emailField.text = data.email;
-        account.bioField.text = data.about;
+        profileContainer.bioField.enabled = true;
+        profileContainer.emailField.enabled = true;
+        profileContainer.emailField.text = data.email;
+        profileContainer.bioField.text = data.about;
     }
     ScrollView {
 
@@ -126,11 +126,11 @@ Page {
                         if (selectedIndex == 0) {
                             cnt1.visible = true;
                             cnt2.visible = false;
-                            account.visible = false;
+                            profileContainer.visible = false;
                         } else if (selectedIndex == 1) {
                             if (loggedIn != "") {
                                 cnt2.visible = false;
-                                account.visible = true;
+                                profileContainer.visible = true;
                             } else {
                                 cnt2.visible = true;
                             }
@@ -315,7 +315,7 @@ Page {
                             ToggleButton {
                                 horizontalAlignment: HorizontalAlignment.Right
 
-                                id: themeToggle
+                                id: darkThemeToggle
                                 onCheckedChanged: {
                                     if (checked == true) {
                                         Application.themeSupport.setVisualStyle(VisualStyle.Dark);
@@ -443,103 +443,23 @@ Page {
                         }
                     }
                 }
-            }
-            Container {
-                id: account
-                visible: false
-                onVisibleChanged: {
-                    if (visible) {
-                        Tart.send('getProfile', {
-                                username: username
-                            });
-                    }
-                }
-                property alias bioField: bioField
-                property alias emailField: emailField
-                leftPadding: 10
-                rightPadding: 10
                 Container {
-                    Label {
-                        horizontalAlignment: HorizontalAlignment.Fill
-                        textStyle.base: lightStyle.style
-                        id: userLabel
-                        text: "<span style='color:#f99925'>Logged in as:  </span>" + settings.username
-                        textStyle.fontSize: FontSize.PointValue
-                        textStyle.fontSizeValue: 7
-                        textStyle.color: baseColour
-                        textFormat: TextFormat.Html
-                        multiline: true
-                    }
-                    Container {
-                        bottomMargin: 10
-
-                        layout: StackLayout {
-                            orientation: LayoutOrientation.LeftToRight
-                        }
-                        Label {
-                            horizontalAlignment: HorizontalAlignment.Fill
-                            textStyle.base: lightStyle.style
-                            text: "Edit your bio\n(email is private)"
-                            textStyle.fontSize: FontSize.PointValue
-                            textStyle.fontSizeValue: 7
-                            textStyle.color: baseColour
-                            textFormat: TextFormat.Html
-                            multiline: true
-                            bottomMargin: 100
-
-                        }
-                        Container {
-                            TextField {
-                                textStyle.color: Color.create("#262626")
-                                enabled: false
-                                backgroundVisible: true
-                                id: emailField
-                                hintText: "Email"
-                            }
+                    verticalAlignment: VerticalAlignment.Center
+                    horizontalAlignment: HorizontalAlignment.Center
+                    id: profileContainer
+                    visible: false
+                    onVisibleChanged: {
+                        if (visible) {
+                            Tart.send('getProfile', {
+                                    username: username
+                                });
                         }
                     }
-                    Container {
-                        TextArea {
-                            textStyle.color: Color.create("#262626")
-                            autoSize.maxLineCount: 8
-                            backgroundVisible: true
-                            enabled: false
-                            id: bioField
-                            hintText: "Bio"
-                        }
-                    }
-                    Label {
-                        text: "Text surrounded by asterisks is italicized, if the character after the first asterisk isn't whitespace."
-                        multiline: true
-                        textStyle.fontSizeValue: 5
-                    }
-                    Container {
-                        layout: StackLayout {
-                            orientation: LayoutOrientation.LeftToRight
-                        }
-                        horizontalAlignment: HorizontalAlignment.Center
-                        Button {
-                            text: "Save"
-                            onClicked: {
-                                Tart.send('saveProfile', {
-                                        username: settings.username,
-                                        email: emailField.text,
-                                        about: bioField.text
-                                    });
-                            }
-                        }
-                        Button {
-                            leftMargin: 150
-                            text: "Logout"
-                            onClicked: {
-                                Tart.send('logout', {
-                                    });
-                            }
-                        }
+                    Account {
+                        id: account
                     }
                 }
             }
         }
-
     }
 } // Page
