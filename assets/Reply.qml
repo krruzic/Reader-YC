@@ -26,7 +26,7 @@ Container {
         replyButton.enabled = true;
     }
 
-    
+
     leftPadding: 10
     rightPadding: 10
     topPadding: 10
@@ -49,7 +49,6 @@ Container {
     ]
 
     Container {
-        background: background.imagePaint
 
         TextArea {
             onCreationCompleted: {
@@ -57,7 +56,7 @@ Container {
                 true;
             }
             autoSize.maxLineCount: 10
-            backgroundVisible: false
+            backgroundVisible: true
             enabled: true
             editable: true
             text: ""
@@ -86,7 +85,7 @@ Container {
             textStyle.fontStyle: FontStyle.Italic
         }
         Label {
-            text: "Lines starting with 4 spaces will be wrapped in code tags" 
+            text: "Lines starting with 4 spaces will be wrapped in code tags"
             bottomMargin: 0
             topMargin: 0
             textStyle.fontSizeValue: 5

@@ -3,7 +3,7 @@ import bb.system 1.2
 import "tart.js" as Tart
 
 Container {
-    property variant baseColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? Color.create("#ffdddddf") : Color.create("#434344")
+    property variant baseColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? Color.create("#B5B5B5") : Color.create("#333333")
     property variant secondaryColour: Application.themeSupport.theme.colorTheme.style == VisualStyle.Dark ? "" : Color.create("#f99925")
 
     id: hnPage
@@ -193,6 +193,7 @@ Container {
                         id: labelTimePosted
                         textStyle.fontSizeValue: 6
                         textStyle.base: lightStyle.style
+                        textStyle.color: baseColour
                     }
                 }
                 Container {

@@ -100,7 +100,7 @@ class HNapi():
         return True
 
     def postComment(self, source, comment):
-        if(not self.loggedIn):
+        if (not self.loggedIn):
             raise LoginRequiredException('Not signed in!')
 
         f = open(readerutils.COOKIE, 'rb')
@@ -116,15 +116,14 @@ class HNapi():
         soup = BeautifulSoup(r.content)
         hmac = soup.find('input', {'name': 'hmac'})['value']
         endpoint = soup.find('form', {'method': 'post'})['action']
-        endpoint = endpoint.replace("/", "")
-        params = {'hmac': hmac, 'text': comment, 'parent': source, 'whence': 'news'}
+        params = {'hmac': hmac, 'text': comment, 'parent': source, 'goto': "item%3Fid%3D" + source}
 
         try:
             r = self.session.post(readerutils.hnUrl(endpoint), data=params)
         except Exception:
             print(Exception)
             return False
-        if(r.url == "https://news.ycombinator.com/news"):
+        if (r.url == "https://news.ycombinator.com/item%3Fid%3D" + source):
             return True
         return False
 
@@ -145,17 +144,18 @@ class HNapi():
             return False
         soup = BeautifulSoup(r.content)
         fnid = soup.find('input', {'name': 'fnid'})['value']
+        fnop = soup.find('input', {'name': 'fnop'})['value']
         endpoint = soup.find('form', {'method': 'post'})['action']
         endpoint = endpoint.replace("/", "")
 
-        params = {'fnid': fnid, 't': title, 'u': link, 'x': text}
+        params = {'fnid': fnid, 'fnop': fnop, 'title': title, 'url': link, 'text': text}
         try:
             r = self.session.post(
                 readerutils.hnUrl(endpoint), data=params)
         except:
             return False
 
-        if(r.url == "https://news.ycombinator.com/news"):
+        if (r.url == "https://news.ycombinator.com/newest"):
             return True
         return False
 

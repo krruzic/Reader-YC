@@ -66,19 +66,18 @@ Page {
                     TextField {
                         id: urlField
                         hintText: "Story URL"
-                        backgroundVisible: ! enabled
+                        backgroundVisible: true
                         onTextChanging: {
                             if (text != "") {
                                 bodyField.enabled = false;
                             }
                             if (text == "") {
                                 bodyField.enabled = true;
+                                submitButton.enabled = false;
                             }
                             if (text != "" && titleField.text != "") {
                                 submitButton.enabled = true;
-                            } else {
-                                submitButton.enabled = false;
-                            }
+                            } 
                         }
                     }
                     bottomMargin: 20
@@ -88,21 +87,20 @@ Page {
                         id: bodyField
                         enabled: true
                         hintText: "Text body "
-                        backgroundVisible: ! enabled
+                        backgroundVisible: true
                         autoSize.maxLineCount: 10
                         minHeight: 200
                         onTextChanging: {
                             if (text != "") {
-                                urlField.enabled = false
+                                urlField.enabled = false;
                             }
                             if (text == "") {
-                                urlField.enabled = true
-                            }
-                            if (text != "" && titleField.text != "") {
-                                submitButton.enabled = true
-                            } else {
+                                urlField.enabled = true;
                                 submitButton.enabled = false;
                             }
+                            if (text != "" && titleField.text != "") {
+                                submitButton.enabled = true;
+                            } 
                         }
                     }
                     bottomMargin: 20

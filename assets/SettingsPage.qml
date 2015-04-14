@@ -81,10 +81,11 @@ Page {
             cacheDeleteToast.cancel();
             cacheDeleteToast.show();
         }
-        profileContainer.bioField.enabled = true;
-        profileContainer.emailField.enabled = true;
-        profileContainer.emailField.text = data.email;
-        profileContainer.bioField.text = data.about;
+        console.log(data);
+        account.bioField.enabled = true;
+        account.emailField.enabled = true;
+        account.emailField.text = data.email;
+        account.bioField.text = data.about;
     }
     ScrollView {
 

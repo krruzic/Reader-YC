@@ -2,3 +2,5 @@
 var stories = [];
 var showImgCover = true;
 var username = "";
+var softColour = "#";
+var primaryColour = "#";

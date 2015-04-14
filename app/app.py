@@ -202,7 +202,7 @@ class App(tart.Application):
             tart.send(
                 'logoutResult', text="Unable to get profile, forcing logout...")
             return
-        tart.send('profileRetrieved', email=info[2], about=info[1])
+        tart.send('profileRetrieved', email=info[3], about=info[2])
 
     def onSaveProfile(self, username, email, about):
         res = False

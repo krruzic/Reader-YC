@@ -8,7 +8,7 @@ Container {
     property alias bioField: bioField
     property alias emailField: emailField
 
-    
+
     id: account
     visible: true
     horizontalAlignment: HorizontalAlignment.Center
@@ -32,88 +32,85 @@ Container {
             id: background
         }
     ]
-    ScrollView {
-        scrollViewProperties.scrollMode: ScrollMode.Vertical
+    Container {
+        Label {
+            horizontalAlignment: HorizontalAlignment.Fill
+            textStyle.base: lightStyle.style
+            id: userLabel
+            text: "<span style='color:#f99925'>Logged in as:  </span>" + settings.username
+            textStyle.fontSize: FontSize.PointValue
+            textStyle.fontSizeValue: 7
+            textStyle.color: baseColour
+            textFormat: TextFormat.Html
+            multiline: true
+        }
         Container {
+            bottomMargin: 10
+
+            layout: StackLayout {
+                orientation: LayoutOrientation.LeftToRight
+            }
             Label {
+                verticalAlignment: VerticalAlignment.Center
                 horizontalAlignment: HorizontalAlignment.Fill
                 textStyle.base: lightStyle.style
-                id: userLabel
-                text: "<span style='color:#f99925'>Logged in as:  </span>" + settings.username
+                text: "Edit your bio\n(email is private)"
                 textStyle.fontSize: FontSize.PointValue
                 textStyle.fontSizeValue: 7
                 textStyle.color: baseColour
                 textFormat: TextFormat.Html
                 multiline: true
+                bottomMargin: 100
+
             }
             Container {
-                bottomMargin: 10
-
-                layout: StackLayout {
-                    orientation: LayoutOrientation.LeftToRight
-                }
-                Label {
-                    verticalAlignment: VerticalAlignment.Center
-                    horizontalAlignment: HorizontalAlignment.Fill
-                    textStyle.base: lightStyle.style
-                    text: "Edit your bio\n(email is private)"
-                    textStyle.fontSize: FontSize.PointValue
-                    textStyle.fontSizeValue: 7
-                    textStyle.color: baseColour
-                    textFormat: TextFormat.Html
-                    multiline: true
-                    bottomMargin: 100
-
-                }
-                Container {
-                    TextField {
-                        textStyle.color: Color.create("#262626")
-                        enabled: false
-                        backgroundVisible: true
-                        verticalAlignment: VerticalAlignment.Center
-                        id: emailField
-                        hintText: "Email"
-                    }
-                }
-            }
-            Container {
-                TextArea {
+                TextField {
                     textStyle.color: Color.create("#262626")
-                    autoSize.maxLineCount: 20
-                    backgroundVisible: true
                     enabled: false
-                    id: bioField
-                    verticalAlignment: VerticalAlignment.Fill
-                    hintText: "Bio"
+                    backgroundVisible: true
+                    verticalAlignment: VerticalAlignment.Center
+                    id: emailField
+                    hintText: "Email"
                 }
             }
-            Label {
-                text: "Text surrounded by asterisks is italicized, if the character after the first asterisk isn't whitespace."
-                multiline: true
-                textStyle.fontSizeValue: 5
+        }
+        Container {
+            TextArea {
+                textStyle.color: Color.create("#262626")
+                autoSize.maxLineCount: 20
+                backgroundVisible: true
+                enabled: false
+                id: bioField
+                verticalAlignment: VerticalAlignment.Fill
+                hintText: "Bio"
             }
-            Container {
-                layout: StackLayout {
-                    orientation: LayoutOrientation.LeftToRight
+        }
+        Label {
+            text: "Text surrounded by asterisks is italicized, if the character after the first asterisk isn't whitespace."
+            multiline: true
+            textStyle.fontSizeValue: 5
+        }
+        Container {
+            layout: StackLayout {
+                orientation: LayoutOrientation.LeftToRight
+            }
+            horizontalAlignment: HorizontalAlignment.Center
+            Button {
+                text: "Save"
+                onClicked: {
+                    Tart.send('saveProfile', {
+                        	username: settings.username,
+                            email: emailField.text,
+                            about: bioField.text
+                        });
                 }
-                horizontalAlignment: HorizontalAlignment.Center
-                Button {
-                    text: "Save"
-                    onClicked: {
-                        Tart.send('saveProfile', {
-                            	username: settings.username,
-                                email: emailField.text,
-                                about: bioField.text
-                            });
-                    }
-                }
-                Button {
-                    leftMargin: 150
-                    text: "Logout"
-                    onClicked: {
-                        Tart.send('logout', {
-                            });
-                    }
+            }
+            Button {
+                leftMargin: 150
+                text: "Logout"
+                onClicked: {
+                    Tart.send('logout', {
+                        });
                 }
             }
         }
