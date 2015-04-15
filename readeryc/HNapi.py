@@ -110,21 +110,24 @@ class HNapi():
         comment = cgi.escape(comment)
         try:
             r = self.session.get(
-                readerutils.hnUrl('reply?id=' + source))
+                readerutils.hnUrl('item?id=' + source))
         except:
+            print("error getting page")
             return False
         soup = BeautifulSoup(r.content)
         hmac = soup.find('input', {'name': 'hmac'})['value']
         endpoint = soup.find('form', {'method': 'post'})['action']
-        params = {'hmac': hmac, 'text': comment, 'parent': source, 'goto': "item%3Fid%3D" + source}
+        params = {'hmac': hmac, 'text': comment, 'parent': source, 'goto': "item?id=" + source}
 
         try:
             r = self.session.post(readerutils.hnUrl(endpoint), data=params)
         except Exception:
             print(Exception)
             return False
-        if (r.url == "https://news.ycombinator.com/item%3Fid%3D" + source):
+        if (r.url == ("https://news.ycombinator.com/item?id=" + source)):
             return True
+        else:
+            print(r.url)
         return False
 
     def postStory(self, title, link, text):
