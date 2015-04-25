@@ -4,8 +4,6 @@ Reader YC
 
 Reader YC is a native hackernews client built with Cascades and Python (using Blackberry-tart). Instead of using often unstable APIs, this app directly scrapes Hackernews for posts, and optionally comments, to ensure maximum uptime. Currently the app is at V1.5.4 (don't usually update the readme), and is available on BlackBerry World
 
-The post scraping is based heavily off of Dimillian's Sublime plugin found [here](https://github.com/Dimillian/Sublime-Hacker-News-Reader)
-
 To fetch comments, the user has a choice to either use BeautifulSoup scraping or the [HN Search API](https://hn.algolia.com). The api is much faster, so I recommend it. However it can be unreliable, and doesn't sort comments properly until a few days after the post was submitted. 
 Since 1.5, the scraping is faster and works better. A setting to enable Legacy Scraping can be found within the app.
 
@@ -16,27 +14,37 @@ Here is a current screenshot of the main page:
 An up to date signed BAR file is almost always available at this repo.
 ## Requirements:
 I recommend you use virtualenv for this, makes the process much easier
+
 BeautifulSoup4
+
     `pip install bs4`
+
 Requests
+
     `pip install requests`
-Tartutil
-    `pip install /path/to/bbtart/
-The bbtart package is also available on my github.
+
+bbtart
+
+    `pip install /path/to/bbtart/`
+
+The bbtart package is available on my github.
+
 ## Steps to build:
 Since making bbtart an installable package, building is a lot easier.
+
 **First Step**
 First create a root directory, I called mine 'apps', then
 
 **Install Blackberry Tart**
 To do this you'll need to download the bbtart package [here](https://github.com/krruzic/BlackBerry-Tart/)
+
 **REQUEST DEBUG TOKEN BAR FILE**
 `blackberry-debugtokenrequest -storepass STOREPASS -devicepin DEVICEPIN debugtoken.bar`
 
 note: the storepass is the password you used to first register for debug tokens with RIM
 
 **BUILD DEBUG BAR:**
-after installing bbtart with pip, run `packager.py package -mdebug
+after installing bbtart with pip, run `packager.py package -mdebug`
 
 **BUILD RELEASE BAR:**
 Same as above, except specify the `-mrelease` flag after `package`

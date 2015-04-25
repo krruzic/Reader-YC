@@ -9,3 +9,4 @@ imgs/
 data/
 config.pri
 readeryc/__pycache__/
+.cproject
