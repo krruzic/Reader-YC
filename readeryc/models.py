@@ -232,7 +232,7 @@ class HNSearchStory():
             articleURL = e['url']
             parsed_uri = urlparse(articleURL)
             commentURL = 'https://news.ycombinator.com/item?id=' + str(e['objectID'])
-            if e['story_text'] != "":  # Javascript uses lowercase for bools...
+            if e['story_text'] != "":
                 isAsk = 'true'
                 domain = "news.ycombinator.com"
                 articleURL = commentURL

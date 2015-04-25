@@ -3,3 +3,9 @@
 .project
 tartutil
 *.sublime-workspace
+deploy.ini
+*.bak
+imgs/
+data/
+config.pri
+readeryc/__pycache__/
