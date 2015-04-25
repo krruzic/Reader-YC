@@ -21,26 +21,22 @@ BeautifulSoup4
 Requests
     `pip install requests`
 Tartutil
-    `pip install /path/to/tartutil/`
-
-The tartutil package isn't up yet but I'm working on it. The build steps should be a lot simpler too
-
+    `pip install /path/to/bbtart/
+The bbtart package is also available on my github.
 ## Steps to build:
-Since the release of tart V1.1, I have switched to the recommended method of building described [here](http://hg.microcode.ca/blackberry-py/wiki/Building%20HelloWorld)
-
+Since making bbtart an installable package, building is a lot easier.
 **First Step**
 First create a root directory, I called mine 'apps', then
 
 **Install Blackberry Tart**
-To do this you'll need to grab the tartV1.1 zip found [here](http://blackberry-py.microcode.ca/downloads/), and extract it to the root directory you created previously
-
+To do this you'll need to download the bbtart package [here](https://github.com/krruzic/BlackBerry-Tart/)
 **REQUEST DEBUG TOKEN BAR FILE**
 `blackberry-debugtokenrequest -storepass STOREPASS -devicepin DEVICEPIN debugtoken.bar`
 
 note: the storepass is the password you used to first register for debug tokens with RIM
 
 **BUILD DEBUG BAR:**
-cd into the bin folder and execute the tart.sh or tart.cmd file with these parameters: `package ../Reader-YC/`. If you want to change some details like permissions, just edit the tart-project.ini file in Reader-YC.
+after installing bbtart with pip, run `packager.py package -mdebug
 
 **BUILD RELEASE BAR:**
 Same as above, except specify the `-mrelease` flag after `package`
@@ -52,8 +48,12 @@ Same as above, except specify the `-mrelease` flag after `package`
 `blackberry-deploy -installApp -password DEVICEPASS -device DEVICEIP -package NAMEOFBAR`
 
 
-NOTE: The bars will be placed in the bin directory after being built.
+**SHORTCUT**
+I've defined an INI file called deploy.ini, where you can set up all your parameters for building/installing.
+Then install becomes a one liner: `packager.py deploy -c path/to/deploy.ini`
+I've uploaded my deploy.ini file, which describes all the parameters.
 
+NOTE: The bars will be placed in the current directory
 
 ###Current Features:
 * Get the main hackernews pages in a nice tabbed format
@@ -70,6 +70,7 @@ NOTE: The bars will be placed in the bin directory after being built.
 * Clear cached stuff (No clue why you'd want to)
 * Post stories
 * Favourite posts to save for later
+* dark theme
 
 ###Thanks:
     Huge thanks to all the developers of The BBPY project (Peter Hansen, Xitij Ritesh Patel, etc.) and special thanks to  Jerónimo Barraco for helping with the comment API.
