@@ -33,9 +33,8 @@ class HNapi():
         self.session = requests.session()
 
     def login(self, username, password):
-        params = {'acct': username, 'pw': password, 'goto': 'item?id=9358480'} # random goto value to save some time
-        r = self.session.post('https://news.ycombinator.com/login?goto=item?id=9358480',
-                      headers=readerutils.HEADERS, data=params)
+        payload = {'acct': username, 'pw': password, 'goto': 'news'} # random goto value to save some time
+        r = self.session.post('https://news.ycombinator.com/login', headers=readerutils.HEADERS, data=payload, allow_redirects=False)
         if ("Bad login" not in r.text):
             print("no bad login")
             cookies = self.session.cookies
