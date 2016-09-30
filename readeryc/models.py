@@ -182,7 +182,7 @@ class HNStory():
                     story['commentCount'] = '0'
                 else:
                     try:
-                        story['commentCount'] = hrefs[2].get_text().split()[0]
+                        story['commentCount'] = hrefs[3].get_text().split()[0]
                     except AttributeError:
                         story['commentCount'] = '?'
             else:  # Jobs post

@@ -62,17 +62,17 @@ class HNapi():
         r = self.session.get(
             readerutils.hnUrl('user?id={}'.format(username)), cookies=cookies)
         soup = BeautifulSoup(r.content)
-        fnid = soup.find('input', {'name': 'fnid'})['value']
-        fnop = soup.find('input', {'name': 'fnop'})['value']
+        id = soup.find('input', {'name': 'id'})['value']
+        hmac = soup.find('input', {'name': 'hmac'})['value']
         about = soup.find('textarea', {'name': 'about'}).get_text()
         endpoint = soup.find('form', {'method': 'post'})['action']
         endpoint = endpoint.replace("/", "")
 
         try:
-            email = soup.find('input', {'name': 'email'})['value']
+            uemail = soup.find('input', {'name': 'uemail'})['value']
         except:
             email = ""
-        return [fnop, fnid, about, email, endpoint]
+        return [hmac, id, about, uemail, endpoint]
 
     def postProfile(self, username, email, about):
         if(not self.loggedIn):
@@ -89,10 +89,10 @@ class HNapi():
             return False
 
         params = {
-            'fnop': info[0],
-            'fnid': info[1],
+            'id': info[0],
+            'hmac': info[1],
             'about': about,
-            'email': email,
+            'uemail': email,
         }
 
         r = self.session.post(readerutils.hnUrl(info[4]), data=params)
