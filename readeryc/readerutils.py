@@ -8,10 +8,10 @@ class readerutils():
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:37.0) Gecko/20100101 Firefox/37.0',
     }
 
-    def hnUrl(address):
+    def hn_url(address):
         return 'https://news.ycombinator.com/{}'.format(address)
 
-    def textReplace(text):
+    def text_replace(text):
         text = text.replace('rel="nofollow"', '')
         # Replace unclosed <p>'s with new lines
         text = text.replace('<p>', '\n')
@@ -20,7 +20,7 @@ class readerutils():
         text = text.replace('\\t', '\t')
         return text
 
-    def prettyDate(time):
+    def pretty_date(time):
         """
         Get a datetime object or a int() Epoch timestamp and return a
         pretty string like 'an hour ago', 'Yesterday', '3 months ago',
@@ -80,7 +80,7 @@ class readerutils():
             results.append(res)
         return results
 
-    def getColour(location):
+    def get_colour(location):
         gradient = [
             "ff8e00", "FF8B00", "FA8904", "F68608", "F2840C", "ED8110", "E97F13",
             "E57C17", "E07A1A", "DC781D", "D87620", "D37423", "CF7226", "CB7929",

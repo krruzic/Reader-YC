@@ -45,7 +45,7 @@ class HNComments():
 
         return res
 
-    def apiFetch(self, source, isAsk):
+    def api_fetch(self, source, isAsk):
 
         toFlatten = source.json()
         text = ""
@@ -60,7 +60,7 @@ class HNComments():
         comments = self.flatten(toFlatten['children'])
         return text, comments  # possibly zero comments
 
-    def legacyText(self, soup):
+    def legacy_text(self, soup):
         """ Returns the text of an 'Ask HN' post
         """
         text = ""
@@ -68,7 +68,7 @@ class HNComments():
             text = text + str(child)
         return text
 
-    def legacyFetch(self, page, isAsk):
+    def legacy_fetch(self, page, isAsk):
         """ Extract all the comments from a comments page.
             Returns None if this page has no comments.
             Otherwise returns dicts of comments EG)
@@ -115,7 +115,7 @@ class HNComments():
             comments.append(comment)
         return text, comments
 
-    def parseComments(self, source, sess, isAsk=False, legacy=False):
+    def parse_comments(self, source, sess, isAsk=False, legacy=False):
         """Gets the comments and text of the post
         """
 
@@ -136,7 +136,7 @@ class HNComments():
 
 class HNStory():
 
-    def parseData(self, page):
+    def parse_data(self, page):
         """ Extract all the stories from a story page.
         Returns dicts representing stories EG)
         {
@@ -193,7 +193,7 @@ class HNStory():
             stories.append(story)
         return stories, head[-1].find_all('a')[0]['href']
 
-    def parseStories(self, source, sess):
+    def parse_stories(self, source, sess):
         url = source
         print("curling page: " + url)
         print(os.path.dirname(os.path.realpath(__file__)) + "/cacert.pem")
@@ -208,7 +208,7 @@ class HNStory():
 
 class HNSearchStory():
 
-    def parseSearchStories(self, pageNumber, source, sess):
+    def parse_search_stories(self, pageNumber, source, sess):
         """
         Queries the HNSearch API and returns
         tuples of the results

@@ -7,7 +7,7 @@ import re
 import html.parser
 import cgi
 import sqlite3
-from .readerutils import readerutils
+from .readerutils import readerutils as ru
 from .models import HNStory, HNComments, HNSearchStory
 
 
@@ -34,11 +34,12 @@ class HNapi():
 
     def login(self, username, password):
         payload = {'acct': username, 'pw': password, 'goto': 'news'} # random goto value to save some time
-        r = self.session.post('https://news.ycombinator.com/login', headers=readerutils.HEADERS, data=payload, allow_redirects=False)
+        r = self.session.post('https://news.ycombinator.com/login',
+                              headers=ru.HEADERS, data=payload, allow_redirects=False)
         if ("Bad login" not in r.text):
             print("no bad login")
             cookies = self.session.cookies
-            f = open(readerutils.COOKIE, 'wb')
+            f = open(ru.COOKIE, 'wb')
             pickle.dump(requests.utils.dict_from_cookiejar(cookies), f)
             print(cookies)
             f.close()
@@ -50,19 +51,20 @@ class HNapi():
     def logout(self):
         self.loggedIn = False
         self.username = ''
+        cookiefile = open(ru.COOKIE, 'w').close() # clear the cookie file
 
-    def getProfile(self, username):
+    def get_profile(self, username):
         if(not self.loggedIn):
             raise LoginRequiredException('Not signed in!')
 
-        f = open(readerutils.COOKIE, 'rb')
+        f = open(ru.COOKIE, 'rb')
         cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
         f.close()
 
         r = self.session.get(
-            readerutils.hnUrl('user?id={}'.format(username)), cookies=cookies)
+            ru.hnUrl('user?id={}'.format(username)), cookies=cookies)
         soup = BeautifulSoup(r.content)
-        id = soup.find('input', {'name': 'id'})['value']
+        hnid = soup.find('input', {'name': 'id'})['value']
         hmac = soup.find('input', {'name': 'hmac'})['value']
         about = soup.find('textarea', {'name': 'about'}).get_text()
         endpoint = soup.find('form', {'method': 'post'})['action']
@@ -71,13 +73,13 @@ class HNapi():
         try:
             uemail = soup.find('input', {'name': 'uemail'})['value']
         except:
-            email = ""
-        return [hmac, id, about, uemail, endpoint]
+            uemail = ""
+        return [hmac, hnid, about, uemail, endpoint]
 
-    def postProfile(self, username, email, about):
+    def post_profile(self, username, email, about):
         if(not self.loggedIn):
             raise LoginRequiredException('Not signed in!')
-        f = open(readerutils.COOKIE, 'rb')
+        f = open(ru.COOKIE, 'rb')
         cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
         f.close()
 
@@ -95,21 +97,21 @@ class HNapi():
             'uemail': email,
         }
 
-        r = self.session.post(readerutils.hnUrl(info[4]), data=params)
+        r = self.session.post(ru.hnUrl(info[4]), data=params)
         return True
 
-    def postComment(self, source, comment):
+    def post_comment(self, source, comment):
         if (not self.loggedIn):
             raise LoginRequiredException('Not signed in!')
 
-        f = open(readerutils.COOKIE, 'rb')
+        f = open(ru.COOKIE, 'rb')
         cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
         f.close()
 
         comment = cgi.escape(comment)
         try:
             r = self.session.get(
-                readerutils.hnUrl('item?id=' + source))
+                ru.hnUrl('item?id=' + source))
         except:
             print("error getting page")
             return False
@@ -119,7 +121,7 @@ class HNapi():
         params = {'hmac': hmac, 'text': comment, 'parent': source, 'goto': "item?id=" + source}
 
         try:
-            r = self.session.post(readerutils.hnUrl(endpoint), data=params)
+            r = self.session.post(ru.hnUrl(endpoint), data=params)
         except Exception:
             print(Exception)
             return False
@@ -129,11 +131,11 @@ class HNapi():
             print(r.url)
         return False
 
-    def postStory(self, title, link, text):
+    def post_story(self, title, link, text):
         if(not self.loggedIn):
             raise LoginRequiredException('Not signed in!')
 
-        f = open(readerutils.COOKIE, 'rb')
+        f = open(ru.COOKIE, 'rb')
         cookies = requests.utils.cookiejar_from_dict(pickle.load(f))
         f.close()
 
@@ -141,7 +143,7 @@ class HNapi():
             text = cgi.escape(text)
 
         try:
-            r = self.session.get(readerutils.hnUrl('submit'))
+            r = self.session.get(ru.hnUrl('submit'))
         except:
             return False
         soup = BeautifulSoup(r.content)
@@ -153,7 +155,7 @@ class HNapi():
         params = {'fnid': fnid, 'fnop': fnop, 'title': title, 'url': link, 'text': text}
         try:
             r = self.session.post(
-                readerutils.hnUrl(endpoint), data=params)
+                ru.hnUrl(endpoint), data=params)
         except:
             return False
 
@@ -161,14 +163,14 @@ class HNapi():
             return True
         return False
 
-    def getStories(self, list):
-        stories = self.stories.parseStories(readerutils.hnUrl(list), self.session)
+    def get_stories(self, list):
+        stories = self.stories.parseStories(ru.hnUrl(list), self.session)
         return stories
 
-    def getComments(self, ident, isAsk=False, legacy=False):
+    def get_comments(self, ident, isAsk=False, legacy=False):
         text, comments = self.comments.parseComments(ident, self.session, isAsk, legacy)
         return text, comments
 
-    def getSearchStories(self, startIndex, source):
+    def get_search_stories(self, startIndex, source):
         res = self.searchStories.parseSearchStories(startIndex, source, self.session)
         return res
