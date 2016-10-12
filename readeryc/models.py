@@ -18,27 +18,31 @@ class ExpiredLinkException(Exception):
 
 class HNComments():
 
+    def __init__(self, pageURL=''):
+ 	self.pageURL = pageURL
+        self.comments = []
+        self.soup = None
+
     def flatten(self, comments, level=0):
         # comments is a list
 
         if not comments:
             return []  # exit case
 
-        res = []
         # add the level key so you can keep track of the original level
 
-        for comment in comments:
-            if ('created_at' in comment):
-                comment['text'] = comment['text'][3:]
-                comment['indent'] = level * 40
-                parts = comment['created_at'].split('.')
+        for c in comments:
+            if ('created_at' in c):
+                c['text'] = c['text'][3:]
+                c['indent'] = level * 40
+                parts = c['created_at'].split('.')
                 dt = datetime.strptime(parts[0], "%Y-%m-%dT%H:%M:%S")
                 # returns a relative date
-                comment['time'] = readerutils.prettyDate(dt)
+                c['time'] = readerutils.pretty_date(dt)
                 # adds the item to the result
-                res.append(comment)
+                res.append(c)
             # removes the childs from the item (important)
-            childs = comment.pop('children', [])
+            childs = c.pop('children', [])
             # and the flattened childs later
             res += self.flatten(childs, level + 1)
             # in the next loop the next sibling will be added
@@ -48,25 +52,21 @@ class HNComments():
     def api_fetch(self, source, isAsk):
 
         toFlatten = source.json()
-        text = ""
         if (isAsk == "true"):
-            text = toFlatten['text'][3:]
+            self.text = toFlatten['text'][3:]
 
         # toFlatten = json.loads(decoded)
         print("Flattening comments")
         if ('message' in toFlatten):
             if (toFlatten['message'] == 'ObjectID does not exist'):
-                return text, []
-        comments = self.flatten(toFlatten['children'])
-        return text, comments  # possibly zero comments
+                return self.text, []
+        self.comments = self.flatten(toFlatten['children'])
 
-    def legacy_text(self, soup):
+    def legacy_text(self):
         """ Returns the text of an 'Ask HN' post
         """
-        text = ""
-        for child in soup.find_all('td')[10].contents:
-            text = text + str(child)
-        return text
+        for child in self.soup.find_all('td')[10].contents:
+            self.text += str(child)
 
     def legacy_fetch(self, page, isAsk):
         """ Extract all the comments from a comments page.
@@ -80,17 +80,17 @@ class HNComments():
             }
         """
 
-        soup = BeautifulSoup(page.content)
+        self.soup = BeautifulSoup(page.content)
         if (isAsk == "true"):
             print("Getting text...")
-            text = self.legacyText(soup)
+            self.text = self.legacy_text(self.soup)
         else:
-            text = ''
+            self.text = ''
 
-        comment_tables = soup.find_all('table', 0)
+        comment_tables = self.soup.find_all('table', 0)
         del comment_tables[0:4]
         if (len(comment_tables) == 0):
-            return text, []
+            return self.text, []
         del comment_tables[-1]
 
         comments = []
@@ -112,8 +112,7 @@ class HNComments():
                     comment['text'] = comment['text'] + str(child)
             except:
                 comment['text'] = '[deleted]'
-            comments.append(comment)
-        return text, comments
+            self.comments.append(comment)
 
     def parse_comments(self, source, sess, isAsk=False, legacy=False):
         """Gets the comments and text of the post
@@ -124,17 +123,22 @@ class HNComments():
         text = ""
 
         if (legacy == True):
+            self.pageURL = scrapeURL
             print("scraping to fetch comments")
             r = sess.get(scrapeURL) #, verify=os.path.dirname(os.path.realpath(__file__)) + '/cacert.pem')
-            text, comments = self.legacyFetch(r, isAsk)
+            self.legacyFetch(r, isAsk)
         elif (legacy == False):
+            self.pageURL = commentsURL
             print("using api to fetch comments")
             r = sess.get(commentsURL) #, verify=os.path.dirname(os.path.realpath(__file__)) + '/cacert.pem')
-            text, comments = self.apiFetch(r, isAsk)
-        return text, comments
+            self.apiFetch(r, isAsk)
 
 
 class HNStory():
+    def __init__(self, pageURL=''):
+        self.pageURL = pageURL
+        self.stories = []
+        self.soup = None
 
     def parse_data(self, page):
         """ Extract all the stories from a story page.
@@ -146,19 +150,19 @@ class HNStory():
             author: 'pg'
         }
         """
-        soup = BeautifulSoup(page)
+        story = {
+                'title': None, 'domain': None, 'score': None, 'author': None, 'time': None, 'commentCount': None,
+                'link': None, 'commentURL': 'news.ycombinator.com/item?id=-1', 'hnid': '-1', 'askPost': 'false'
+        }
+
+        self.soup = BeautifulSoup(page)
         story_tables = soup.find_all('table', 0)
         del story_tables[0:2]
         del story_tables[-1]
 
         metadata = story_tables[0].find_all("td", "subtext")
         head = story_tables[0].find_all("td", "title", align=False)
-        stories = []
         for i, m in zip(head, metadata):
-            story = {
-                'title': None, 'domain': None, 'score': None, 'author': None, 'time': None, 'commentCount': None,
-                'link': None, 'commentURL': 'news.ycombinator.com/item?id=-1', 'hnid': '-1', 'askPost': 'false'
-            }
             story['title'] = i.find_all('a')[0].textl
             story['link'] = i.find("a")["href"]
             if 'item?id='in story['link']:
@@ -195,7 +199,7 @@ class HNStory():
     def parse_stories(self, source, sess):
         url = source
         r = sess.get(url=url, headers=readerutils.HEADERS, verify=os.path.dirname(os.path.realpath(__file__)) + '/cacert.pem')
-        page = r.content
+        self.page = r.content
         print("page curled")
         if ("Unknown or expired link." in str(page)):
             raise ExpiredLinkException("Expired link!")
