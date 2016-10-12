@@ -159,15 +159,14 @@ class HNStory():
                 'title': None, 'domain': None, 'score': None, 'author': None, 'time': None, 'commentCount': None,
                 'link': None, 'commentURL': 'news.ycombinator.com/item?id=-1', 'hnid': '-1', 'askPost': 'false'
             }
-            story['title'] = i.find_all('a')[0].text
+            story['title'] = i.find_all('a')[0].textl
             story['link'] = i.find("a")["href"]
             if 'item?id='in story['link']:
                 story['link'] = 'https://news.ycombinator.com/' + story['link']
                 story['askPost'] = "true"
             try:
                 story['domain'] = i.find("span", "sitebit comhead").text
-                story['domain'] = re.search(r'\(([^)]*)\)', story['domain']).group(
-                    1)  # Remove brackets from domain
+                story['domain'] = re.search(r'\(([^)]*)\)', story['domain']).group(1)  # Remove brackets from domain
             except:
                 story['domain'] = "news.ycombinator.com"
             if 'point' in m.text:
@@ -195,9 +194,7 @@ class HNStory():
 
     def parse_stories(self, source, sess):
         url = source
-        print("curling page: " + url)
-        print(os.path.dirname(os.path.realpath(__file__)) + "/cacert.pem")
-        r = sess.get(url=url, headers=readerutils.HEADERS, verify=os.path.dirname(os.path.realpath(__file__)) + '/cacert.pem')#, verify=os.path.dirname(os.path.realpath(__file__)) + '/cacert.pem')
+        r = sess.get(url=url, headers=readerutils.HEADERS, verify=os.path.dirname(os.path.realpath(__file__)) + '/cacert.pem')
         page = r.content
         print("page curled")
         if ("Unknown or expired link." in str(page)):
@@ -220,10 +217,11 @@ class HNSearchStory():
         url = "http://hn.algolia.com/api/v1/search_by_date?query={0}&page={1}&tags=story{2}".format(
             quote(source[0]), pageNumber, author)
         # reads the returned data
-        r = requests.get(url, headers=readerutils.HEADERS) #, verify=os.path.dirname(os.path.realpath(__file__)) + '/cacert.pem')
+        r = requests.get(url, headers=readerutils.HEADERS)
         print("Page curled")
-        items = r.json()
+        return self.parse_data(r.json())
 
+    def parse_data(self, items):
         # The time is returned in this format
         incomplete_iso_8601_format = '%Y-%m-%dT%H:%M:%S.000Z'
         res = []
