@@ -5,7 +5,7 @@ import requests
 import html.parser
 import cgi
 from .readerutils import readerutils as ru
-from .models import HNStory, HNComments, HNSearchStory
+from .models import HNStory, HNComments
 
 
 class LoginRequiredException(Exception):
@@ -22,14 +22,12 @@ class HNapi():
     def __init__(self, username=''):
         if username != '':
             self.loggedIn = True
-        self.stories = HNStory()
         self.comments = HNComments()
-        self.searchStories = HNSearchStory()
 
         self.username = username
         self.session = requests.session()
         self.session.headers.update = ru.HEADERS
-        self.session.verify = os.path.dirname(os.path.realpath('__file__')) + '/cacert.pem')
+        self.session.verify = os.path.dirname(os.path.realpath('__file__')) + '/cacert.pem'
 
     def login(self, username, password):
         payload = {'acct': username, 'pw': password, 'goto': 'news'} # random goto value to save some time
@@ -61,7 +59,7 @@ class HNapi():
         f.close()
 
         r = self.session.get(
-            ru.hnUrl('user?id={}'.format(username)), cookies=cookies)
+            ru.hn_url('user?id={}'.format(username)), cookies=cookies)
         soup = BeautifulSoup(r.content)
         hnid = soup.find('input', {'name': 'id'})['value']
         hmac = soup.find('input', {'name': 'hmac'})['value']
@@ -96,7 +94,7 @@ class HNapi():
             'uemail': email,
         }
 
-        r = self.session.post(ru.hnUrl(info[4]), data=params)
+        r = self.session.post(ru.hn_url(info[4]), data=params)
         return True
 
     def post_comment(self, source, comment):
@@ -120,18 +118,18 @@ class HNapi():
         params = {'hmac': hmac, 'text': comment, 'parent': source, 'goto': "item?id=" + source}
 
         try:
-            r = self.session.post(ru.hnUrl(endpoint), data=params)
+            r = self.session.post(ru.hn_url(endpoint), data=params)
         except Exception:
             print(Exception)
             return False
-       if (r.url == ("https://news.ycombinator.com/item?id=" + source)):
+        if (r.url == ("https://news.ycombinator.com/item?id=" + source)):
             return True
         else:
             print(r.url)
         return False
 
     def post_story(self, title, link, text):
-        if(not self.loggedIn):
+        if not self.loggedIn:
             raise LoginRequiredException('Not signed in!')
 
         f = open(ru.COOKIE, 'rb')
@@ -142,7 +140,7 @@ class HNapi():
             text = cgi.escape(text)
 
         try:
-            r = self.session.get(ru.hnUrl('submit'))
+            r = self.session.get(ru.hn_url('submit'))
         except:
             return False
         soup = BeautifulSoup(r.content)
@@ -154,7 +152,7 @@ class HNapi():
         params = {'fnid': fnid, 'fnop': fnop, 'title': title, 'url': link, 'text': text}
         try:
             r = self.session.post(
-                ru.hnUrl(endpoint), data=params)
+                ru.hn_url(endpoint), data=params)
         except:
             return False
 
@@ -168,12 +166,12 @@ class HNapi():
         return storyPage.stories, storyPage.moreLink
 
     def get_search_stories(self, props):
-        storyPage = HNStory(ru.search_url(props), self.session, "search")
+        storyPage = HNStory(self.session, ru.search_url(props), "search")
         storyPage.parse_stories()
         return storyPage.stories
 
     def get_comments(self, ident, isAsk=False, legacy=False):
-        commentPage = HNComment(ru.hn_url())
+        commentPage = HNComments(ru.hn_url())
         text, comments = self.comments.parse_comments(ident, self.session, isAsk, legacy)
         return text, comments
 

@@ -18,7 +18,7 @@ class ExpiredLinkException(Exception):
 
 class HNComments():
 
-    def __init__(self, pageURL=''):
+    def __init__(self, pageURL):
         self.pageURL = pageURL
         self.comments = []
         self.soup = None
@@ -135,7 +135,7 @@ class HNComments():
 
 
 class HNStory():
-    def __init__(self, pageURL='', sess, st=''):
+    def __init__(self, sess, pageURL, st=''):
         self.sess = sess
         self.stories = []
         self.story_type = st
