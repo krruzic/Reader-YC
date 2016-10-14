@@ -124,7 +124,7 @@ class HNapi():
         except Exception:
             print(Exception)
             return False
-        if (r.url == ("https://news.ycombinator.com/item?id=" + source)):
+       if (r.url == ("https://news.ycombinator.com/item?id=" + source)):
             return True
         else:
             print(r.url)
@@ -163,14 +163,18 @@ class HNapi():
         return False
 
     def get_stories(self, list):
+        storyPage = HNStory(ru.hn_url(list), self.session)
+        storyPage.parse_stories()
+        return storyPage.stories, storyPage.moreLink
 
-        stories = self.stories.parse_stories(ru.hnUrl(list), self.session)
-        return stories
+    def get_search_stories(self, props):
+        storyPage = HNStory(ru.search_url(props), self.session, "search")
+        storyPage.parse_stories()
+        return storyPage.stories
 
     def get_comments(self, ident, isAsk=False, legacy=False):
+        commentPage = HNComment(ru.hn_url())
         text, comments = self.comments.parse_comments(ident, self.session, isAsk, legacy)
         return text, comments
 
-    def get_search_stories(self, startIndex, source):
-        res = self.searchStories.parse_searchStories(startIndex, source, self.session)
-        return res
+

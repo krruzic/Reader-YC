@@ -135,15 +135,19 @@ class HNComments():
 
 
 class HNStory():
-    def __init__(self, pageURL=''):
+    def __init__(self, pageURL='', sess, st=''):
+        self.sess = sess
         self.stories = []
-        self.content = sess.get(url=pageURL).content
-
-        if ("Unknown or expired link." in str(self.content)):
-            raise ExpiredLinkException("Expired link!")
+        self.story_type = st
+        if st != '':
+            self.content = self.sess.get(url=pageURL).content
+            if ("Unknown or expired link." in str(self.content)):
+                raise ExpiredLinkException("Expired link!")
+        else:
+            self.content = self.sess.get(url=pageURL).json
         self.soup = None
 
-    def parse_data(self, page):
+    def parse_data(self):
         """ Extract all the stories from a story page.
         Returns dicts representing stories EG)
         {
@@ -158,7 +162,7 @@ class HNStory():
                 'link': None, 'commentURL': 'news.ycombinator.com/item?id=-1', 'hnid': '-1', 'askPost': 'false'
         }
 
-        self.soup = BeautifulSoup(page)
+        soup = BeautifulSoup(self.content)
         story_tables = soup.find_all('table', 0)
         del story_tables[0:2]
         del story_tables[-1]
@@ -199,36 +203,17 @@ class HNStory():
             self.stories.append(story)
             self.moreLink = head[-1].find_all('a')[0]['href']
 
-    def parse_stories(self, source, sess):
-        if ("Unknown or expired link." in str(page)):
-            raise ExpiredLinkException("Expired link!")
-        self.parse_data(page)
-        return stories, moreLink
+    def parse_stories(self):
+        if self.story_type == "search":
+            self.parse_search_data()
+        else:
+            self.parse_data()
 
-
-class HNSearchStory():
-
-    def parse_search_stories(self, pageNumber, source, sess):
-        """
-        Queries the HNSearch API and returns
-        tuples of the results
-        """
-        author = ""
-        print("STARTING: " + str(pageNumber))
-        if (source[1] != ""):
-            author = ",author_" + source[1]
-        url = "http://hn.algolia.com/api/v1/search_by_date?query={0}&page={1}&tags=story{2}".format(
-            quote(source[0]), pageNumber, author)
-        # reads the returned data
-        r = requests.get(url, headers=readerutils.HEADERS)
-        print("Page curled")
-        return self.parse_data(r.json())
-
-    def parse_data(self, items):
+    def parse_search_data(self):
         # The time is returned in this format
         incomplete_iso_8601_format = '%Y-%m-%dT%H:%M:%S.000Z'
         res = []
-        for e in items['hits']:
+        for e in self.content['hits']:
 
             articleURL = e['url']
             parsed_uri = urlparse(articleURL)
@@ -247,6 +232,4 @@ class HNSearchStory():
                 'timestamp': timestamp, 'id': str(e['objectID']), 'domain': domain,
                 'articleURL': articleURL, 'commentURL': commentURL, 'isAsk': isAsk
             }
-            res.append(result)
-
-        return res
+            self.stories.append(result)

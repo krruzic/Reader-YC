@@ -8,6 +8,12 @@ class readerutils():
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:37.0) Gecko/20100101 Firefox/37.0',
     }
 
+    def search_url(properties):
+        if (properties[1] != ""):
+            author = ",author_" + source[1]
+        return "http://hn.algolia.com/api/v1/search_by_date?query={0}&page={1}&tags=story{2}".format(
+            quote(properites[0]), properties[2], author)
+
     def hn_url(address):
         return 'https://news.ycombinator.com/{}'.format(address)
 
