@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import requests
 import html.parser
 import cgi
+import pickle
 from .readerutils import readerutils as ru
 from .models import HNStory, HNComments
 

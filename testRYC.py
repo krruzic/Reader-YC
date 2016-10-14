@@ -6,27 +6,28 @@ import requests
 api = HNapi()
 
 def testGetComments(cid):
-    return api.getComments(cid, False, True)
+    return api.get_comments(cid, False, True)
 
 
 def testGetStories(list):
-    return api.getStories(list)
+    return api.get_stories(list)
 
-def testSearchStories(start, source):
-    return api.getSearchStories(start, source)
+def testSearchStories(props):
+    return api.get_search_stories(props)
 
 def testGetUser(username, password):
     res = api.login(username, password)
     if res:
-        return api.getProfile(username)
+        return api.get_profile(username)
 
 
-text, comments = testGetComments('9317159')
-for c in comments:
-    print(c)
-stories, next = testGetStories('news')
-for s in stories:
-     print(s)
-res = testSearchStories(0, ['test', ''])
-res = testGetUser('deft', '278lban')
-print(res)
+text, comments = testGetComments('item?id=9317159')
+print(text)
+#for c in comments:
+#    print(c)
+#stories, next = testGetStories('news')
+#print(stories)
+#print(next)
+#res = testSearchStories(['test', 0, ''])
+#res = testGetUser('deft', '278lban')
+#print(res)
