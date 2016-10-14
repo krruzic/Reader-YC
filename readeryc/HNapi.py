@@ -2,11 +2,8 @@ import os
 import glob
 from bs4 import BeautifulSoup
 import requests
-import pickle
-import re
 import html.parser
 import cgi
-import sqlite3
 from .readerutils import readerutils as ru
 from .models import HNStory, HNComments, HNSearchStory
 
@@ -31,6 +28,8 @@ class HNapi():
 
         self.username = username
         self.session = requests.session()
+        self.session.headers.update = ru.HEADERS
+        self.session.verify = os.path.dirname(os.path.realpath('__file__')) + '/cacert.pem')
 
     def login(self, username, password):
         payload = {'acct': username, 'pw': password, 'goto': 'news'} # random goto value to save some time
@@ -164,13 +163,14 @@ class HNapi():
         return False
 
     def get_stories(self, list):
-        stories = self.stories.parseStories(ru.hnUrl(list), self.session)
+
+        stories = self.stories.parse_stories(ru.hnUrl(list), self.session)
         return stories
 
     def get_comments(self, ident, isAsk=False, legacy=False):
-        text, comments = self.comments.parseComments(ident, self.session, isAsk, legacy)
+        text, comments = self.comments.parse_comments(ident, self.session, isAsk, legacy)
         return text, comments
 
     def get_search_stories(self, startIndex, source):
-        res = self.searchStories.parseSearchStories(startIndex, source, self.session)
+        res = self.searchStories.parse_searchStories(startIndex, source, self.session)
         return res

@@ -19,7 +19,7 @@ class ExpiredLinkException(Exception):
 class HNComments():
 
     def __init__(self, pageURL=''):
- 	self.pageURL = pageURL
+        self.pageURL = pageURL
         self.comments = []
         self.soup = None
 
@@ -125,19 +125,22 @@ class HNComments():
         if (legacy == True):
             self.pageURL = scrapeURL
             print("scraping to fetch comments")
-            r = sess.get(scrapeURL) #, verify=os.path.dirname(os.path.realpath(__file__)) + '/cacert.pem')
-            self.legacyFetch(r, isAsk)
+            r = sess.get(scrapeURL)
+            self.legacy_fetch(r, isAsk)
         elif (legacy == False):
             self.pageURL = commentsURL
             print("using api to fetch comments")
-            r = sess.get(commentsURL) #, verify=os.path.dirname(os.path.realpath(__file__)) + '/cacert.pem')
+            r = sess.get(commentsURL)
             self.apiFetch(r, isAsk)
 
 
 class HNStory():
     def __init__(self, pageURL=''):
-        self.pageURL = pageURL
         self.stories = []
+        self.content = sess.get(url=pageURL).content
+
+        if ("Unknown or expired link." in str(self.content)):
+            raise ExpiredLinkException("Expired link!")
         self.soup = None
 
     def parse_data(self, page):
@@ -193,17 +196,13 @@ class HNStory():
                 story['commentCount'] = '0'
                 story['score'] = '0'
                 story['author'] = 'ycombinator'
-            stories.append(story)
-        return stories, head[-1].find_all('a')[0]['href']
+            self.stories.append(story)
+            self.moreLink = head[-1].find_all('a')[0]['href']
 
     def parse_stories(self, source, sess):
-        url = source
-        r = sess.get(url=url, headers=readerutils.HEADERS, verify=os.path.dirname(os.path.realpath(__file__)) + '/cacert.pem')
-        self.page = r.content
-        print("page curled")
         if ("Unknown or expired link." in str(page)):
             raise ExpiredLinkException("Expired link!")
-        stories, moreLink = self.parseData(page)
+        self.parse_data(page)
         return stories, moreLink
 
 
