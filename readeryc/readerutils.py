@@ -1,5 +1,5 @@
 import os
-
+import urllib.parse
 
 class readerutils():
     SETTINGS_FILE = 'data/settings.state'
@@ -9,10 +9,14 @@ class readerutils():
     }
 
     def search_url(properties):
-        if (properties[1] != ""):
-            author = ",author_" + source[1]
+        author = ''
+        if (properties[2] != ""):
+            author = ",author_" + properties[2]
         return "http://hn.algolia.com/api/v1/search_by_date?query={0}&page={1}&tags=story{2}".format(
-            quote(properites[0]), properties[2], author)
+            urllib.parse.quote(properties[0]), properties[1], author)
+
+    def api_url(address):
+        return 'http://hn.algolia.com/api/v1/items/{0}'.format(address)
 
     def hn_url(address):
         return 'https://news.ycombinator.com/{}'.format(address)

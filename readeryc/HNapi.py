@@ -22,10 +22,8 @@ class HNapi():
     def __init__(self, username=''):
         if username != '':
             self.loggedIn = True
-        self.comments = HNComments()
-
         self.username = username
-        self.session = requests.session()
+        self.session = requests.Session()
         self.session.headers.update = ru.HEADERS
         self.session.verify = os.path.dirname(os.path.realpath('__file__')) + '/cacert.pem'
 
@@ -160,8 +158,8 @@ class HNapi():
             return True
         return False
 
-    def get_stories(self, list):
-        storyPage = HNStory(ru.hn_url(list), self.session)
+    def get_stories(self, ident):
+        storyPage = HNStory(self.session, ru.hn_url(ident))
         storyPage.parse_stories()
         return storyPage.stories, storyPage.moreLink
 
@@ -171,8 +169,8 @@ class HNapi():
         return storyPage.stories
 
     def get_comments(self, ident, isAsk=False, legacy=False):
-        commentPage = HNComments(ru.hn_url())
-        text, comments = self.comments.parse_comments(ident, self.session, isAsk, legacy)
-        return text, comments
+        commentPage = HNComments(self.session, ru.hn_url(ident), isAsk, legacy)
+        commentPage.parse_comments()
+        return commentPage.comments, commentPage.text
 
 

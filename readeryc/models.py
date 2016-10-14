@@ -18,10 +18,14 @@ class ExpiredLinkException(Exception):
 
 class HNComments():
 
-    def __init__(self, pageURL):
-        self.pageURL = pageURL
+    def __init__(self, sess, pageURL, isAsk, legacy):
         self.comments = []
-        self.soup = None
+        if not legacy:
+            self.page = sess.get(pageURL).json()
+        else:
+            self.page = sess.get(pageURL)
+        self.isAsk = isAsk
+        self.legacy = legacy
 
     def flatten(self, comments, level=0):
         # comments is a list
@@ -49,26 +53,24 @@ class HNComments():
 
         return res
 
-    def api_fetch(self, source, isAsk):
+    def api_fetch(self):
 
-        toFlatten = source.json()
-        if (isAsk == "true"):
-            self.text = toFlatten['text'][3:]
+        if (self.isAsk == "true"):
+            self.text = self.page['text'][3:]
 
         # toFlatten = json.loads(decoded)
-        print("Flattening comments")
         if ('message' in toFlatten):
-            if (toFlatten['message'] == 'ObjectID does not exist'):
+            if (self.content['message'] == 'ObjectID does not exist'):
                 return self.text, []
-        self.comments = self.flatten(toFlatten['children'])
+        self.comments = self.flatten(self.content['children'])
 
     def legacy_text(self):
         """ Returns the text of an 'Ask HN' post
         """
-        for child in self.soup.find_all('td')[10].contents:
+        for child in soup.find_all('td')[10].contents:
             self.text += str(child)
 
-    def legacy_fetch(self, page, isAsk):
+    def legacy_fetch(self):
         """ Extract all the comments from a comments page.
             Returns None if this page has no comments.
             Otherwise returns dicts of comments EG)
@@ -80,27 +82,24 @@ class HNComments():
             }
         """
 
-        self.soup = BeautifulSoup(page.content)
-        if (isAsk == "true"):
-            print("Getting text...")
-            self.text = self.legacy_text(self.soup)
+        soup = BeautifulSoup(self.page.content, "html.parser")
+        if (self.isAsk == "true"):
+            self.text = self.legacy_text(soup)
         else:
             self.text = ''
-
-        comment_tables = self.soup.find_all('table', 0)
+        comment_tables = soup.find_all('table', 0)
         del comment_tables[0:4]
         if (len(comment_tables) == 0):
             return self.text, []
         del comment_tables[-1]
 
-        comments = []
         itercomments = iter(comment_tables)
         for table in comment_tables:
             # startTime = time.time()
             comment = {'indent': None, 'author': "Deleted",
                        'time': "???", 'text': "", 'id': ""}
             head = table.find('span', 'comhead')
-            body = table.find('span', 'comment')
+            body = table.find('span', 'c00')
             for img in table.find_all('img', {"src": "s.gif"}):
                 comment['indent'] = int(img.get('width'))
             try:
@@ -108,44 +107,31 @@ class HNComments():
                 comment['author'] = hrefs[0].get_text()
                 comment['time'] = hrefs[1].get_text()
                 comment['id'] = hrefs[1]['href'].split('item?id=')[1]
-                for child in body.find('font').contents:
+                comment['text'] = body.text
+                for child in body.contents:
                     comment['text'] = comment['text'] + str(child)
+                comment['text'] = comment['text'][:-66]
             except:
                 comment['text'] = '[deleted]'
             self.comments.append(comment)
 
-    def parse_comments(self, source, sess, isAsk=False, legacy=False):
+    def parse_comments(self):
         """Gets the comments and text of the post
         """
-
-        scrapeURL = 'https://news.ycombinator.com/item?id=%s' % source
-        commentsURL = 'http://hn.algolia.com/api/v1/items/{0}'.format(source)
-        text = ""
-
-        if (legacy == True):
-            self.pageURL = scrapeURL
-            print("scraping to fetch comments")
-            r = sess.get(scrapeURL)
-            self.legacy_fetch(r, isAsk)
-        elif (legacy == False):
-            self.pageURL = commentsURL
-            print("using api to fetch comments")
-            r = sess.get(commentsURL)
-            self.apiFetch(r, isAsk)
+        if self.legacy == True:
+            self.legacy_fetch()
+        else:
+            self.api_fetch()
 
 
 class HNStory():
     def __init__(self, sess, pageURL, st=''):
-        self.sess = sess
         self.stories = []
         self.story_type = st
+        self.page = sess.get(url=pageURL)
         if st != '':
-            self.content = self.sess.get(url=pageURL).content
-            if ("Unknown or expired link." in str(self.content)):
+            if ("Unknown or expired link." in str(self.page.content)):
                 raise ExpiredLinkException("Expired link!")
-        else:
-            self.content = self.sess.get(url=pageURL).json
-        self.soup = None
 
     def parse_data(self):
         """ Extract all the stories from a story page.
@@ -157,20 +143,21 @@ class HNStory():
             author: 'pg'
         }
         """
-        story = {
-                'title': None, 'domain': None, 'score': None, 'author': None, 'time': None, 'commentCount': None,
-                'link': None, 'commentURL': 'news.ycombinator.com/item?id=-1', 'hnid': '-1', 'askPost': 'false'
-        }
 
-        soup = BeautifulSoup(self.content)
+        soup = BeautifulSoup(self.page.content)
         story_tables = soup.find_all('table', 0)
         del story_tables[0:2]
         del story_tables[-1]
 
         metadata = story_tables[0].find_all("td", "subtext")
         head = story_tables[0].find_all("td", "title", align=False)
+
         for i, m in zip(head, metadata):
-            story['title'] = i.find_all('a')[0].textl
+            story = {
+                'title': None, 'domain': None, 'score': None, 'author': None, 'time': None, 'commentCount': None,
+                'link': None, 'commentURL': 'news.ycombinator.com/item?id=-1', 'hnid': '-1', 'askPost': 'false'
+            }
+            story['title'] = i.find_all('a')[0].text
             story['link'] = i.find("a")["href"]
             if 'item?id='in story['link']:
                 story['link'] = 'https://news.ycombinator.com/' + story['link']
@@ -201,7 +188,7 @@ class HNStory():
                 story['score'] = '0'
                 story['author'] = 'ycombinator'
             self.stories.append(story)
-            self.moreLink = head[-1].find_all('a')[0]['href']
+        self.moreLink = head[-1].find_all('a')[0]['href']
 
     def parse_stories(self):
         if self.story_type == "search":
@@ -213,7 +200,8 @@ class HNStory():
         # The time is returned in this format
         incomplete_iso_8601_format = '%Y-%m-%dT%H:%M:%S.000Z'
         res = []
-        for e in self.content['hits']:
+        js = self.page.json()
+        for e in js['hits']:
 
             articleURL = e['url']
             parsed_uri = urlparse(articleURL)
@@ -225,7 +213,7 @@ class HNStory():
             else:
                 isAsk = 'false'
                 domain = '{uri.netloc}'.format(uri=parsed_uri)
-            timestamp = readerutils.prettyDate(
+            timestamp = readerutils.pretty_date(
                 datetime.strptime(e['created_at'], incomplete_iso_8601_format))
             result = {
                 'title': e['title'], 'poster': e['author'], 'points': e['points'], 'num_comments': str(e['num_comments']),
